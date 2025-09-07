@@ -36,6 +36,7 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
             Text(
               'Equipo B',
               style: TextStyle(
+                fontFamily: 'Libertinus Keyboard',
                 color: MyColors.lightGray,
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -44,7 +45,11 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
 
             Text(
               widget.playerScore.toString(),
-              style: TextStyle(color: MyColors.light, fontSize: 100),
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 150,
+                color: MyColors.lightGray,
+              ),
             ),
           ],
         ),

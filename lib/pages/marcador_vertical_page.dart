@@ -1,18 +1,16 @@
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/widget/player_game_area.dart';
 
-class MarcadorPage extends StatefulWidget {
-  const MarcadorPage({super.key});
+class MarcadorVerticalPage extends StatefulWidget {
+  const MarcadorVerticalPage({super.key});
 
   @override
-  State<MarcadorPage> createState() => _MarcadorPageState();
+  State<MarcadorVerticalPage> createState() => _MarcadorVerticalPageState();
 }
 
-class _MarcadorPageState extends State<MarcadorPage> {
+class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   int _player1Score = 0;
   int _player2Score = 0;
   int _player1Sets = 0;
@@ -143,29 +141,101 @@ class _MarcadorPageState extends State<MarcadorPage> {
       },
     );
   }
-// hola
+
+  // hola
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: PlayerGameArea(
-              playerNumber: 1,
-              playerScore: _player1Score,
-              backgroundColor: MyColors.primary,
-              onIncrement: incrementScore,
-              onDecrement: decrementScore,
+          Column(
+            children: [
+              Expanded(
+                child: PlayerGameArea(
+                  playerNumber: 1,
+                  playerScore: _player1Score,
+                  backgroundColor: MyColors.primary,
+                  onIncrement: incrementScore,
+                  onDecrement: decrementScore,
+                ),
+              ),
+              Expanded(
+                child: PlayerGameArea(
+                  playerNumber: 2,
+                  playerScore: _player2Score,
+                  backgroundColor: MyColors.secundary,
+                  onIncrement: incrementScore,
+                  onDecrement: decrementScore,
+                ),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: CenterButtons(
+              onResetScores: _resetScores,
+              onResetAll: _resetAll,
             ),
           ),
-          Expanded(
-            child: PlayerGameArea(
-              playerNumber: 2,
-              playerScore: _player2Score,
-              backgroundColor: MyColors.secundary,
-              onIncrement: incrementScore,
-              onDecrement: decrementScore,
-            ),
+        ],
+      ),
+    );
+  }
+}
+
+class CenterButtons extends StatelessWidget {
+  final VoidCallback? onResetScores;
+  final VoidCallback? onResetAll;
+  const CenterButtons({super.key, this.onResetScores, this.onResetAll});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: MyColors.darkContraste,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            onPressed:
+                () => showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Confirmación'),
+                      content: Text(
+                        '¿Estás seguro de jugar una nueva partida?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('Cancelar'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.popAndPushNamed(
+                              context,
+                              AppRoutes.settings,
+                            );
+                          },
+                          child: Text('Aceptar'),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+            icon: Icon(Icons.add_box_outlined, color: MyColors.lightGray),
+          ),
+          IconButton(
+            onPressed: onResetScores,
+            icon: Icon(Icons.refresh, color: MyColors.lightGray),
+          ),
+          IconButton(
+            onPressed: onResetAll,
+            icon: Icon(Icons.restart_alt, color: MyColors.lightGray),
           ),
         ],
       ),

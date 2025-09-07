@@ -5,10 +5,14 @@ class Themes {
   Themes._();
 
   static ThemeData defaultTheme = ThemeData(
-    fontFamily: 'Courier Prime',
+    fontFamily: 'Inter',
     primaryColor: MyColors.primary,
     textTheme: const TextTheme(
-      displayLarge: TextStyle(fontSize: 54, fontWeight: FontWeight.w400),
+      displayLarge: TextStyle(
+        fontSize: 150,
+        fontWeight: FontWeight.w800,
+        color: MyColors.lightGray,
+      ),
       displayMedium: TextStyle(fontSize: 45, fontWeight: FontWeight.normal),
       displaySmall: TextStyle(fontSize: 36, fontWeight: FontWeight.normal),
       // # news text style #
