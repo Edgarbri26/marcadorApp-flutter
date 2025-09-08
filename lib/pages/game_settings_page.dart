@@ -53,7 +53,7 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
           backgroundColor: Colors.redAccent,
         ),
       );
-      Navigator.popAndPushNamed(context, AppRoutes.marcadorVertical);
+      Navigator.pushNamed(context, AppRoutes.marcadorVertical);
       return;
     }
 
