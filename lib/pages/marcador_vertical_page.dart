@@ -11,7 +11,7 @@ class MarcadorVerticalPage extends StatefulWidget {
   @override
   State<MarcadorVerticalPage> createState() => _MarcadorVerticalPageState();
 }
-
+// hola
 class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   int _player1Score = 0;
   int _player2Score = 0;
