@@ -7,6 +7,7 @@ class PlayerGameArea extends StatefulWidget {
   final Color backgroundColor;
   final Function onIncrement;
   final Function onDecrement;
+  final String playerName;
   const PlayerGameArea({
     super.key,
     required this.playerScore,
@@ -14,6 +15,7 @@ class PlayerGameArea extends StatefulWidget {
     required this.onIncrement,
     required this.onDecrement,
     required this.playerNumber,
+    required this.playerName,
   });
 
   @override
@@ -34,7 +36,7 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Equipo B',
+              widget.playerName,
               style: TextStyle(
                 fontFamily: 'Libertinus Keyboard',
                 color: MyColors.lightGray,

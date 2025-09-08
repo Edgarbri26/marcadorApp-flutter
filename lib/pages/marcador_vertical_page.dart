@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/design/spacing.dart';
 import 'package:marcador/widget/player_game_area.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MarcadorVerticalPage extends StatefulWidget {
   const MarcadorVerticalPage({super.key});
@@ -15,6 +17,27 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   int _player2Score = 0;
   int _player1Sets = 0;
   int _player2Sets = 0;
+  String _player1Name = 'Jugador 1';
+  String _player2Name = 'Jugador 2';
+  int _targetPoints = 11;
+  int _targetSets = 3;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings(); // Cargar datos guardados
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      _player1Name = prefs.getString('player1') ?? '';
+      _player2Name = prefs.getString('player2') ?? '';
+      _targetPoints = prefs.getInt('points') ?? 7;
+      _targetSets = prefs.getInt('sets') ?? 1;
+    });
+  }
 
   // @override
   // void initState() {
@@ -43,8 +66,21 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       } else {
         _player2Score++;
       }
-      // _checkWinCondition();
+      _checkWinCondition();
     });
+  }
+
+  void _checkWinCondition() {
+    if (_player1Score >= _targetPoints && _player1Score >= _player2Score + 2) {
+      _player1Sets++;
+      _showSetWinnerDialog(_player1Name);
+      _resetScores();
+    } else if (_player2Score >= _targetPoints &&
+        _player2Score >= _player1Score + 2) {
+      _player2Sets++;
+      _showSetWinnerDialog(_player2Name);
+      _resetScores();
+    }
   }
 
   void decrementScore(int player) {
@@ -73,17 +109,6 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     });
   }
 
-  //   if (_player1Score >= widget.targetPoints && _player1Score >= _player2Score + 2) {
-  //     _player1Sets++;
-  //     _showSetWinnerDialog(widget.player1Name);
-  //     _resetScores();
-  //   } else if (_player2Score >= widget.targetPoints && _player2Score >= _player1Score + 2) {
-  //     _player2Sets++;
-  //     _showSetWinnerDialog(widget.player2Name);
-  //     _resetScores();
-  //   }
-  // }
-
   void _showSetWinnerDialog(String winner) {
     showDialog(
       context: context,
@@ -97,7 +122,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // _checkMatchWinner();
+                _checkMatchWinner();
               },
               child: const Text('Continuar'),
             ),
@@ -107,19 +132,19 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     );
   }
 
-  // void _checkMatchWinner() {
-  //   String? matchWinner;
+  void _checkMatchWinner() {
+    String? matchWinner;
 
-  //   if (_player1Sets >= widget.targetSets) {
-  //     matchWinner = widget.player1Name;
-  //   } else if (_player2Sets >= widget.targetSets) {
-  //     matchWinner = widget.player2Name;
-  //   }
+    if (_player1Sets >= _targetSets) {
+      matchWinner = _player1Name;
+    } else if (_player2Sets >= _targetSets) {
+      matchWinner = _player2Name;
+    }
 
-  //   if (matchWinner != null) {
-  //     _showMatchWinnerDialog(matchWinner);
-  //   }
-  // }
+    if (matchWinner != null) {
+      _showMatchWinnerDialog(matchWinner);
+    }
+  }
 
   void _showMatchWinnerDialog(String winner) {
     showDialog(
@@ -152,6 +177,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
             children: [
               Expanded(
                 child: PlayerGameArea(
+                  playerName: _player1Name,
                   playerNumber: 1,
                   playerScore: _player1Score,
                   backgroundColor: MyColors.primary,
@@ -161,6 +187,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
               ),
               Expanded(
                 child: PlayerGameArea(
+                  playerName: _player2Name,
                   playerNumber: 2,
                   playerScore: _player2Score,
                   backgroundColor: MyColors.secundary,
@@ -175,6 +202,44 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
             child: CenterButtons(
               onResetScores: _resetScores,
               onResetAll: _resetAll,
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Spacing.lg,
+                vertical: Spacing.md,
+              ),
+              margin: const EdgeInsets.only(right: 8.0),
+              decoration: BoxDecoration(
+                color: MyColors.darkContraste,
+                borderRadius: BorderRadius.circular(Spacing.lg),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$_player1Sets',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 32,
+                      color: MyColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  Text(
+                    '$_player2Sets',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 32,
+                      color: MyColors.secundary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

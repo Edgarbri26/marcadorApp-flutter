@@ -53,7 +53,7 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
           backgroundColor: Colors.redAccent,
         ),
       );
-      Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+      // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
       return;
     }
 
@@ -72,12 +72,13 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
       ),
     );
 
-    Navigator.pop(context, {
-      'player1': _player1Controller.text,
-      'player2': _player2Controller.text,
-      'points': _selectedPoints,
-      'sets': _selectedSets,
-    });
+    // Navigator.pop(context, {
+    //   'player1': _player1Controller.text,
+    //   'player2': _player2Controller.text,
+    //   'points': _selectedPoints,
+    //   'sets': _selectedSets,
+    // });
+    Navigator.pushNamed(context, AppRoutes.marcadorVertical);
   }
 
   @override
