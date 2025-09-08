@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
+import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GameSettingsPage extends StatefulWidget {
@@ -141,6 +142,14 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
                 });
               },
             ),
+            const SizedBox(height: 30),
+
+            const Text(
+              "Selecciona el jugador",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            JugadorDropdown(),
             const SizedBox(height: 30),
 
             // Selección de sets

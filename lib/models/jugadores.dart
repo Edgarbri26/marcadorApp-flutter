@@ -1,13 +1,13 @@
 class Jugador {
-  final int id;
-  final String nombre;
+  final String ci;
+  final String nombreCompleto;
 
-  Jugador({required this.id, required this.nombre, });
+  Jugador({required this.ci, required this.nombreCompleto});
 
   factory Jugador.fromJson(Map<String, dynamic> json) {
     return Jugador(
-      id: json['id'],
-      nombre: json['nombre'],
+      ci: json['ci'],
+      nombreCompleto: '${json['first_name']} ${json['last_name']}',
     );
   }
 }
