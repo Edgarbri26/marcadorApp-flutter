@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:marcador/models/jugadores.dart';
 import 'package:marcador/services/api_services.dart';
 
@@ -10,46 +11,50 @@ class JugadorDropdown extends StatefulWidget {
 }
 
 class _JugadorDropdownState extends State<JugadorDropdown> {
-  late Future<List<Jugador>> _jugadores;
   Jugador? _jugadorSeleccionado;
 
   @override
-  void initState() {
-    super.initState();
-    _jugadores = ApiService().fetchJugadores();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Jugador>>(
-      future: _jugadores,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          final jugadores = snapshot.data!;
-          return DropdownButtonFormField<Jugador>(
-            decoration: const InputDecoration(
-              labelText: 'Jugador',
-              prefixIcon: Icon(Icons.person),
-            ),
-            value: _jugadorSeleccionado,
-            items: jugadores.map((jugador) {
-              return DropdownMenuItem(
-                value: jugador,
-                child: Text(jugador.nombreCompleto),
-              );
-            }).toList(),
-            onChanged: (Jugador? nuevo) {
-              setState(() {
-                _jugadorSeleccionado = nuevo;
-              });
-            },
-          );
-        }
+    return DropdownSearch<Jugador>(
+      items: (String? filtro, _) async {
+        final todos = await ApiService().fetchJugadores();
+        return todos
+            .where((j) => j.nombreCompleto
+                .toLowerCase()
+                .contains(filtro?.toLowerCase() ?? ''))
+            .toList();
       },
+      itemAsString: (Jugador j) => j.nombreCompleto,
+      selectedItem: _jugadorSeleccionado,
+      compareFn: (a, b) => a.ci == b.ci,
+      onChanged: (Jugador? nuevo) {
+        setState(() {
+          _jugadorSeleccionado = nuevo;
+        });
+      },
+      popupProps: PopupProps.menu(
+        showSearchBox: true,
+        fit: FlexFit.loose,
+        constraints: const BoxConstraints(maxHeight: 300),
+        searchFieldProps: const TextFieldProps(
+          decoration: InputDecoration(
+            hintText: 'Escribe el nombre...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        itemBuilder: (context, jugador, isSelected, isDisabled) => ListTile(
+        title: Text(jugador.nombreCompleto),
+        leading: const Icon(Icons.person),
+        enabled: !isDisabled,
+      ),
+      ),
+      decoratorProps: const DropDownDecoratorProps(
+        decoration: InputDecoration(
+          labelText: 'Buscar jugador',
+          prefixIcon: Icon(Icons.search),
+          border: OutlineInputBorder(),
+        ),
+      ),
     );
   }
 }

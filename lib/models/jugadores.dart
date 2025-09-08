@@ -6,7 +6,7 @@ class Jugador {
 
   factory Jugador.fromJson(Map<String, dynamic> json) {
     return Jugador(
-      ci: json['ci'],
+      ci: json['CI'],
       nombreCompleto: '${json['first_name']} ${json['last_name']}',
     );
   }
