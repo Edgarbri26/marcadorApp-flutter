@@ -6,7 +6,7 @@ class Themes {
 
   static ThemeData defaultTheme = ThemeData(
     fontFamily: 'Inter',
-    primaryColor: MyColors.primary,
+    primaryColor: MyColors.secundary,
     textTheme: const TextTheme(
       displayLarge: TextStyle(
         fontSize: 150,

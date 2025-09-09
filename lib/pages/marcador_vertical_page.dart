@@ -200,7 +200,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   playerName: _player1Name,
                   playerNumber: 1,
                   playerScore: marcador.player1Score,
-                  backgroundColor: MyColors.primary,
+                  backgroundColor: MyColors.secundary,
                   onIncrement: () {
                     setState(() {
                       marcador.incrementScore(1);
@@ -219,7 +219,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   playerName: _player2Name,
                   playerNumber: 2,
                   playerScore: marcador.player2Score,
-                  backgroundColor: MyColors.secundary,
+                  backgroundColor: MyColors.primary,
                   onIncrement: () {
                     setState(() {
                       marcador.incrementScore(2);
@@ -273,7 +273,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 32,
-                      color: MyColors.primary,
+                      color: MyColors.secundary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -283,7 +283,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 32,
-                      color: MyColors.secundary,
+                      color: MyColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
