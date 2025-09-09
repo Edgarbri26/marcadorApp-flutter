@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
+import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/design/spacing.dart';
+import 'package:marcador/design/type_button.dart';
+import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugadores.dart';
+import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AmistosoPage extends StatefulWidget {
@@ -79,7 +84,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
   Jugador? _player2Seleccionado;
 
   @override
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -91,7 +96,11 @@ class _AmistosoPageState extends State<AmistosoPage> {
           // Nombres de jugadores
           const Text(
             "Selecciona Jugador 1",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: MyColors.lightGray,
+            ),
           ),
           const SizedBox(height: 10),
           JugadorDropdown(
@@ -106,7 +115,11 @@ class _AmistosoPageState extends State<AmistosoPage> {
           const SizedBox(height: 15),
           const Text(
             "Selecciona Jugador 2",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: MyColors.lightGray,
+            ),
           ),
           const SizedBox(height: 10),
           JugadorDropdown(
@@ -118,76 +131,16 @@ class _AmistosoPageState extends State<AmistosoPage> {
               });
             },
           ),
+          const SizedBox(height: Spacing.xl),
 
-          // Selección de puntos
-          const Text(
-            "Cantidad de puntos por set",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          DropdownButtonFormField<int>(
-            value: _selectedPoints,
-            items:
-                pointsOptions.map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text("$value puntos"),
-                  );
-                }).toList(),
-            decoration: const InputDecoration(prefixIcon: Icon(Icons.sports)),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedPoints = newValue!;
-              });
-            },
-          ),
-          const SizedBox(height: 30),
+          SetAndPointsSelet(),
 
-          // Selección de sets
-          const Text(
-            "Cantidad de sets",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          DropdownButtonFormField<int>(
-            value: _selectedSets,
-            items:
-                setsOptions.map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text("$value sets"),
-                  );
-                }).toList(),
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.format_list_numbered),
-            ),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedSets = newValue!;
-              });
-            },
-          ),
-          const SizedBox(height: 40),
-
-          // Botón de guardar
           Center(
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 14,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              icon: const Icon(Icons.save, color: Colors.white),
-              label: const Text(
-                "Guardar ajustes",
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
+            child: ButtonApp(
               onPressed: _saveSettings,
+              title: 'Comenzar juego',
+              icon: Icon(Icons.play_arrow_rounded, color: MyColors.light),
+              typeButton: TypeButton.primary,
             ),
           ),
         ],

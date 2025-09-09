@@ -40,16 +40,13 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
                   child: Text("$value puntos"),
                 );
               }).toList(),
+          style: TextStyle(color: MyColors.light),
+          dropdownColor: MyColors.dark,
           decoration: const InputDecoration(
-            prefixIcon: Icon(Icons.sports),
-            // fillColor: MyColors.light,
-            focusColor: MyColors.primary,
-            fillColor: MyColors.light,
-            iconColor: MyColors.primary,
-            hoverColor: MyColors.strongPrimary,
-
-            // enabledBorder: OutlineInputBorder(
-            //   borderSide: BorderSide(color: MyColors.primary),
+            prefixIcon: Icon(Icons.sports, color: MyColors.light),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: MyColors.primary),
+            ),
           ),
           onChanged: (newValue) {
             setState(() {
@@ -78,13 +75,16 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
                   child: Text("$value sets"),
                 );
               }).toList(),
+          style: TextStyle(color: MyColors.lightGray),
+          dropdownColor: MyColors.dark,
           decoration: InputDecoration(
-            prefixIcon: Icon(Icons.format_list_numbered),
-            // fillColor: MyColors.light,
-            focusColor: MyColors.primary,
-            fillColor: MyColors.light,
-            iconColor: MyColors.primary,
-            hoverColor: MyColors.primary.withOpacity(0.1),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: MyColors.primary),
+            ),
+            prefixIcon: Icon(
+              Icons.format_list_numbered,
+              color: MyColors.lightGray,
+            ),
 
             // enabledBorder: OutlineInputBorder(
             //   borderSide: BorderSide(color: MyColors.primary),
