@@ -3,6 +3,7 @@ import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
+import 'package:marcador/widget/MatchDropdown.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugador.dart';
@@ -132,6 +133,12 @@ class _AmistosoPageState extends State<AmistosoPage> {
             },
           ),
           const SizedBox(height: Spacing.xl),
+          MatchDropdown( 
+            selectedItem: null,
+            onChanged: (match) {
+              // Manejar el cambio de partido seleccionado si es necesario
+            },
+          ),
 
           SetAndPointsSelet(),
 

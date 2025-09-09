@@ -29,7 +29,7 @@ class _MatchDropdownState extends State<MatchDropdown> {
     };
   }
 
-  /*Future<List<Match>> _loadMatches(String? filtro) async {
+  Future<List<Match>> _loadMatches(String? filtro, _) async {
     await _cargarNombresDeJugadores();
     final matches = await ApiService().fetchMatches();
 
@@ -39,22 +39,12 @@ class _MatchDropdownState extends State<MatchDropdown> {
       final texto = '$nombre1 vs $nombre2'.toLowerCase();
       return texto.contains(filtro?.toLowerCase() ?? '');
     }).toList();
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
     return DropdownSearch<Match>(
-      items: (String? filtro, _) async {
-        await _cargarNombresDeJugadores();
-        final matches = await ApiService().fetchMatches();
-
-        return matches.where((match) {
-          final nombre1 = _nombresPorInscriptionId[match.inscription1Id] ?? '';
-          final nombre2 = _nombresPorInscriptionId[match.inscription2Id] ?? '';
-          final texto = '$nombre1 vs $nombre2'.toLowerCase();
-          return texto.contains(filtro?.toLowerCase() ?? '');
-        }).toList();
-      },
+      items: _loadMatches,
       itemAsString: (Match match) {
         final nombre1 = _nombresPorInscriptionId[match.inscription1Id] ?? 'Jugador 1';
         final nombre2 = _nombresPorInscriptionId[match.inscription2Id] ?? 'Jugador 2';
