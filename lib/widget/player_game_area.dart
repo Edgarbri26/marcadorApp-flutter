@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/design/spacing.dart';
+import 'package:marcador/models/take_out.dart';
 
 class PlayerGameArea extends StatefulWidget {
   final int playerScore;
@@ -8,6 +10,7 @@ class PlayerGameArea extends StatefulWidget {
   final Function onIncrement;
   final Function onDecrement;
   final String playerName;
+  final bool takeOut;
   const PlayerGameArea({
     super.key,
     required this.playerScore,
@@ -16,6 +19,7 @@ class PlayerGameArea extends StatefulWidget {
     required this.onDecrement,
     required this.playerNumber,
     required this.playerName,
+    required this.takeOut,
   });
 
   @override
@@ -36,16 +40,30 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              widget.playerName,
-              style: TextStyle(
-                fontFamily: 'Libertinus Keyboard',
-                color: MyColors.lightGray,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: Spacing.sm),
+                  child: Text(
+                    widget.playerName,
+                    style: TextStyle(
+                      fontFamily: 'Libertinus Keyboard',
+                      color: MyColors.lightGray,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                widget.takeOut
+                    ? Icon(
+                      Icons.sports_tennis,
+                      color: MyColors.lightGray,
+                      size: 30,
+                    )
+                    : SizedBox(),
+              ],
             ),
-
             Text(
               widget.playerScore.toString(),
               style: TextStyle(

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
-import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/pages/marcador_vertical_page.dart';
 import 'package:marcador/pages/settings_page.dart';
+import 'package:marcador/services/marker.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  Marker marker = Marker();
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +18,16 @@ class MyApp extends StatelessWidget {
         switch (settings.name) {
           case AppRoutes.settings:
             return MaterialPageRoute(
-              builder: (context) => const SettingsPage(),
+              builder: (context) => SettingsPage(marker: marker),
             );
           case AppRoutes.marcadorVertical:
             return MaterialPageRoute(
-              builder: (context) => const MarcadorVerticalPage(),
+              builder: (context) => MarcadorVerticalPage(marker: marker),
             );
           default:
-            return MaterialPageRoute(builder: (context) => SettingsPage());
+            return MaterialPageRoute(
+              builder: (context) => SettingsPage(marker: marker),
+            );
         }
       },
       // home: GameSettingsPage(),
