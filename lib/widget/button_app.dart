@@ -17,19 +17,38 @@ class ButtonApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor:
-            typeButton == TypeButton.primary ? MyColors.primary : MyColors.dark,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      decoration: BoxDecoration(
+        gradient:
+            typeButton == TypeButton.primary
+                ? LinearGradient(
+                  colors: [MyColors.primary, MyColors.error],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                )
+                : LinearGradient(
+                  colors: [MyColors.darkContraste, MyColors.dark],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+        borderRadius: BorderRadius.circular(12),
       ),
-      icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28),
-      label: Text(
-        "Jugar",
-        style: TextStyle(fontSize: 16, color: MyColors.light),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        icon: icon,
+        label: Text(
+          title,
+          style: TextStyle(fontSize: 16, color: MyColors.light),
+        ),
+        onPressed: onPressed,
       ),
-      onPressed: onPressed,
     );
   }
 }

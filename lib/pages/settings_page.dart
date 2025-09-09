@@ -13,8 +13,16 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   int _selectedIndex = 0;
+  String title = 'Configuracion de partido';
   // Índice inicial en Configuración
   void _onItemTapped(int index) {
+    if (index == 0) {
+      title = 'Partido sin conexion';
+    } else if (index == 1) {
+      title = 'Partido amistoso';
+    } else if (index == 2) {
+      title = 'Configuracion de partido';
+    }
     setState(() {
       _selectedIndex = index;
     });
@@ -26,9 +34,50 @@ class _SettingsPageState extends State<SettingsPage> {
       backgroundColor: MyColors.darkContraste,
 
       appBar: AppBar(
-        title: const Text("Ajustes del Juego"),
+        toolbarHeight: 60,
+        title: Container(
+          margin: const EdgeInsets.only(top: Spacing.xs),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: Spacing.md),
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: MyColors.lightGray,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.account_circle,
+                  color: MyColors.lightGray,
+                  size: 30,
+                ),
+              ),
+            ],
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: MyColors.primary,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(Spacing.sm),
+              bottomRight: Radius.circular(Spacing.sm),
+            ), // PARA EL BORDE REDONDEADO DEL APPBAR
+            gradient: LinearGradient(
+              colors: [MyColors.primary, MyColors.error],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
       ),
 
       body: Padding(

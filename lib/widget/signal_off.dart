@@ -3,7 +3,7 @@ import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/type_button.dart';
 import 'package:marcador/widget/button_app.dart';
-import 'package:marcador/widget/jugador_dropdown.dart';
+import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignalOff extends StatefulWidget {
@@ -97,22 +97,38 @@ class _SignalOffState extends State<SignalOff> {
           // Nombres de jugadores
           const Text(
             "Nombres de los jugadores",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: MyColors.light,
+            ),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: _player1Controller,
+            cursorColor: MyColors.primary,
+            style: TextStyle(color: MyColors.light),
             decoration: const InputDecoration(
               labelText: "Jugador 1",
-              prefixIcon: Icon(Icons.person),
+              labelStyle: TextStyle(color: MyColors.lightGray),
+              prefixIcon: Icon(Icons.person, color: MyColors.lightGray),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: MyColors.primary),
+              ),
             ),
           ),
           const SizedBox(height: 15),
           TextField(
             controller: _player2Controller,
+            cursorColor: MyColors.primary,
+            style: TextStyle(color: MyColors.light),
             decoration: const InputDecoration(
               labelText: "Jugador 2",
-              prefixIcon: Icon(Icons.person_outline),
+              labelStyle: TextStyle(color: MyColors.lightGray),
+              prefixIcon: Icon(Icons.person_outline, color: MyColors.lightGray),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: MyColors.primary),
+              ),
             ),
           ),
           const SizedBox(height: 30),
@@ -168,31 +184,15 @@ class _SignalOffState extends State<SignalOff> {
           const SizedBox(height: 40),
 
           // Botón de guardar
+          SetAndPointsSelet(),
+
+          // Botón de JUgar
           Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ButtonApp(
-                  onPressed: _saveSettings,
-                  title: 'Jugar',
-                  icon: const Icon(
-                    Icons.play_arrow_rounded,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                  typeButton: TypeButton.primary,
-                ),
-                ButtonApp(
-                  onPressed: _saveSettings,
-                  title: 'jugar',
-                  icon: const Icon(
-                    Icons.play_arrow_rounded,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                  typeButton: TypeButton.secundary,
-                ),
-              ],
+            child: ButtonApp(
+              onPressed: _saveSettings,
+              title: 'Comenzar juego',
+              icon: Icon(Icons.play_arrow_rounded, color: MyColors.light),
+              typeButton: TypeButton.primary,
             ),
           ),
         ],
