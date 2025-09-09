@@ -1,0 +1,1 @@
+enum TypeButton { primary, secundary}
