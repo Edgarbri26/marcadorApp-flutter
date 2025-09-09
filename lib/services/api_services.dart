@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:marcador/models/inscription.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
 /*import '../utils/constants.dart';*/
@@ -21,18 +22,31 @@ class ApiService {
   }
 }
 
-  /*Future<List<Match>> fetchMatch() async {
+  Future<List<Match>> fetchMatches() async {
   //final response = await http.get(Uri.parse('$baseUrl/match'));
   final response = await http.get(Uri.parse('$localUrl/match'));
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> jsonBody = json.decode(response.body);
     final List<dynamic> matchesJson = jsonBody['data'];
-    return matchesJson.map((json) => Match.toJson(json)).toList();
+    return matchesJson.map((json) => Match.fromJson(json)).toList();
   } else {
     throw Exception('Error al cargar matches');
   }
-}*/
+}
+
+Future<List<Inscription>> fetchInscriptions() async {
+  //final response = await http.get(Uri.parse('$baseUrl/player'));
+  final response = await http.get(Uri.parse('$localUrl/inscription'));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> jsonBody = json.decode(response.body);
+    final List<dynamic> inscriptionJson = jsonBody['inscriptions'];
+    return inscriptionJson.map((json) => Inscription.fromJson(json)).toList();
+  } else {
+    throw Exception('Error al cargar inscripciones');
+  }
+}
 
 Future<int?> createMatch(Match match) async {
   final url = Uri.parse('$localUrl/match');
