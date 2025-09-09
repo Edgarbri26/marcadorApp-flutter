@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
+import 'package:marcador/services/marcador.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,36 +15,26 @@ class MarcadorVerticalPage extends StatefulWidget {
 
 // hola
 class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
-  int _player1Score = 0;
-  int _player2Score = 0;
-  int _player1Sets = 0;
-  int _player2Sets = 0;
   String _player1Name = 'Jugador 1';
   String _player2Name = 'Jugador 2';
-  int _targetPoints = 11;
-  int _targetSets = 3;
-  final List<int> _scoreHistory = [];
+  Marcador marcador = Marcador();
 
-  _scoreHistoryAdd(int nJugador) {
-    _scoreHistory.add(nJugador);
-  }
+  // _scoreHistoryUndo() {
+  //   if (_scoreHistory.isNotEmpty) {
+  //     int lastScore = _scoreHistory.removeLast();
+  //     if (lastScore == 1 && _player1Score > 0) {
+  //       _player1Score--;
+  //     } else if (lastScore == 2 && _player2Score > 0) {
+  //       _player2Score--;
+  //     }
 
-  _scoreHistoryUndo() {
-    if (_scoreHistory.isNotEmpty) {
-      int lastScore = _scoreHistory.removeLast();
-      if (lastScore == 1 && _player1Score > 0) {
-        _player1Score--;
-      } else if (lastScore == 2 && _player2Score > 0) {
-        _player2Score--;
-      }
-
-      if (lastScore == -1 && _player1Score < _targetPoints) {
-        _player1Score++;
-      } else if (lastScore == -2 && _player2Score < _targetPoints) {
-        _player2Score++;
-      }
-    }
-  }
+  //     if (lastScore == -1 && _player1Score < _targetPoints) {
+  //       _player1Score++;
+  //     } else if (lastScore == -2 && _player2Score < _targetPoints) {
+  //       _player2Score++;
+  //     }
+  //   }
+  // }
 
   @override
   void initState() {
@@ -57,8 +48,8 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     setState(() {
       _player1Name = prefs.getString('player1') ?? '';
       _player2Name = prefs.getString('player2') ?? '';
-      _targetPoints = prefs.getInt('points') ?? 7;
-      _targetSets = prefs.getInt('sets') ?? 1;
+      marcador.targetPoints = prefs.getInt('points') ?? 7;
+      marcador.targetSets = prefs.getInt('sets') ?? 1;
     });
   }
 
@@ -82,59 +73,60 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   //   super.dispose();
   // }
 
-  void incrementScore(int player) {
-    setState(() {
-      if (player == 1) {
-        _player1Score++;
-      } else {
-        _player2Score++;
-      }
-      _scoreHistoryAdd(player);
-      _checkWinCondition();
-    });
-  }
+  // void incrementScore(int player) {
+  //   setState(() {
+  //     if (player == 1) {
+  //       _player1Score++;
+  //     } else {
+  //       _player2Score++;
+  //     }
+  //     _scoreHistoryAdd(player);
+  //     _checkWinCondition();
+  //   });
+  // }
 
   void _checkWinCondition() {
-    if (_player1Score >= _targetPoints && _player1Score >= _player2Score + 2) {
-      _player1Sets++;
+    if (marcador.player1Score >= marcador.targetPoints &&
+        marcador.player1Score >= marcador.player2Score + 2) {
+      marcador.incrementSet(1);
+      marcador.resetScores();
       _showSetWinnerDialog(_player1Name);
-      _resetScores();
-    } else if (_player2Score >= _targetPoints &&
-        _player2Score >= _player1Score + 2) {
-      _player2Sets++;
+    } else if (marcador.player2Score >= marcador.targetPoints &&
+        marcador.player2Score >= marcador.player1Score + 2) {
+      marcador.incrementSet(2);
       _showSetWinnerDialog(_player2Name);
-      _resetScores();
+      marcador.resetScores();
     }
   }
 
-  void decrementScore(int player) {
-    setState(() {
-      if (player == 1 && _player1Score > 0) {
-        _player1Score--;
-      } else if (player == 2 && _player2Score > 0) {
-        _player2Score--;
-      }
-      _scoreHistoryAdd(-player);
-    });
-  }
+  // void decrementScore(int player) {
+  //   setState(() {
+  //     if (player == 1 && _player1Score > 0) {
+  //       _player1Score--;
+  //     } else if (player == 2 && _player2Score > 0) {
+  //       _player2Score--;
+  //     }
+  //     _scoreHistoryAdd(-player);
+  //   });
+  // }
 
-  void _resetScores() {
-    setState(() {
-      _player1Score = 0;
-      _player2Score = 0;
-      _scoreHistory.clear();
-    });
-  }
+  // void _resetScores() {
+  //   setState(() {
+  //     _player1Score = 0;
+  //     _player2Score = 0;
+  //     _scoreHistory.clear();
+  //   });
+  // }
 
-  void _resetAll() {
-    setState(() {
-      _player1Score = 0;
-      _player2Score = 0;
-      _player1Sets = 0;
-      _player2Sets = 0;
-      _scoreHistory.clear();
-    });
-  }
+  // void _resetAll() {
+  //   setState(() {
+  //     _player1Score = 0;
+  //     _player2Score = 0;
+  //     _player1Sets = 0;
+  //     _player2Sets = 0;
+  //     _scoreHistory.clear();
+  //   });
+  // }
 
   void _showSetWinnerDialog(String winner) {
     showDialog(
@@ -143,7 +135,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
         return AlertDialog(
           title: Text('¡Set para $winner!'),
           content: Text(
-            'El set ha terminado, el marcador de sets es: $_player1Sets - $_player2Sets.',
+            'El set ha terminado, el marcador de sets es: ${marcador.player1Sets} - ${marcador.player2Sets}.',
           ),
           actions: <Widget>[
             TextButton(
@@ -161,14 +153,16 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
 
   void _checkMatchWinner() {
     String? matchWinner;
-
-    if (_player1Sets >= _targetSets) {
+    if (marcador.player1Sets == (marcador.targetSets - 1) / 2 + 1) {
       matchWinner = _player1Name;
-    } else if (_player2Sets >= _targetSets) {
+    } else if (marcador.player2Sets == (marcador.targetSets - 1) / 2 + 1) {
       matchWinner = _player2Name;
     }
 
     if (matchWinner != null) {
+      setState(() {
+        marcador.resetAll();
+      });
       _showMatchWinnerDialog(matchWinner);
     }
   }
@@ -184,7 +178,6 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _resetAll();
               },
               child: const Text('Empezar de nuevo'),
             ),
@@ -206,20 +199,38 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                 child: PlayerGameArea(
                   playerName: _player1Name,
                   playerNumber: 1,
-                  playerScore: _player1Score,
+                  playerScore: marcador.player1Score,
                   backgroundColor: MyColors.primary,
-                  onIncrement: incrementScore,
-                  onDecrement: decrementScore,
+                  onIncrement: () {
+                    setState(() {
+                      marcador.incrementScore(1);
+                      _checkWinCondition();
+                    });
+                  },
+                  onDecrement: () {
+                    setState(() {
+                      marcador.decrementScore(1);
+                    });
+                  },
                 ),
               ),
               Expanded(
                 child: PlayerGameArea(
                   playerName: _player2Name,
                   playerNumber: 2,
-                  playerScore: _player2Score,
+                  playerScore: marcador.player2Score,
                   backgroundColor: MyColors.secundary,
-                  onIncrement: incrementScore,
-                  onDecrement: decrementScore,
+                  onIncrement: () {
+                    setState(() {
+                      marcador.incrementScore(2);
+                    });
+                    _checkWinCondition();
+                  },
+                  onDecrement: () {
+                    setState(() {
+                      marcador.decrementScore(2);
+                    });
+                  },
                 ),
               ),
             ],
@@ -227,11 +238,17 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
           Align(
             alignment: Alignment.center,
             child: CenterButtons(
-              onResetScores: _resetScores,
-              onResetAll: _resetAll,
+              onResetScores:
+                  () => setState(() {
+                    marcador.resetScores();
+                  }),
+              onResetAll:
+                  () => setState(() {
+                    marcador.resetAll();
+                  }),
               onUndo: () {
                 setState(() {
-                  _scoreHistoryUndo();
+                  marcador.scoreHistoryUndo();
                 });
               },
             ),
@@ -252,7 +269,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '$_player1Sets',
+                    '${marcador.player1Sets}',
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 32,
@@ -262,7 +279,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   ),
 
                   Text(
-                    '$_player2Sets',
+                    '${marcador.player2Sets}',
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 32,
