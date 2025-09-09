@@ -133,57 +133,6 @@ class _SignalOffState extends State<SignalOff> {
           ),
           const SizedBox(height: 30),
 
-          // Selección de puntos
-          const Text(
-            "Cantidad de puntos por set",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          DropdownButtonFormField<int>(
-            value: _selectedPoints,
-            items:
-                pointsOptions.map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text("$value puntos"),
-                  );
-                }).toList(),
-            decoration: const InputDecoration(prefixIcon: Icon(Icons.sports)),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedPoints = newValue!;
-              });
-            },
-          ),
-          const SizedBox(height: 30),
-
-          // Selección de sets
-          const Text(
-            "Cantidad de sets",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          DropdownButtonFormField<int>(
-            value: _selectedSets,
-            items:
-                setsOptions.map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text("$value sets"),
-                  );
-                }).toList(),
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.format_list_numbered),
-            ),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedSets = newValue!;
-              });
-            },
-          ),
-          const SizedBox(height: 40),
-
-          // Botón de guardar
           SetAndPointsSelet(),
 
           // Botón de JUgar

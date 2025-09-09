@@ -27,7 +27,8 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => widget.onIncrement(),
-      onDoubleTap: () => widget.onDecrement(),
+      // onDoubleTap: () => widget.onDecrement(),
+      onLongPress: () => widget.onDecrement(),
       child: Container(
         width: double.infinity,
         color: widget.backgroundColor,
