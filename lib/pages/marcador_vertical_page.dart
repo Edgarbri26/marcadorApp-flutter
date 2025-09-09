@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
+import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +12,7 @@ class MarcadorVerticalPage extends StatefulWidget {
   State<MarcadorVerticalPage> createState() => _MarcadorVerticalPageState();
 }
 
+// hola
 class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   int _player1Score = 0;
   int _player2Score = 0;
@@ -21,6 +22,28 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   String _player2Name = 'Jugador 2';
   int _targetPoints = 11;
   int _targetSets = 3;
+  final List<int> _scoreHistory = [];
+
+  _scoreHistoryAdd(int nJugador) {
+    _scoreHistory.add(nJugador);
+  }
+
+  _scoreHistoryUndo() {
+    if (_scoreHistory.isNotEmpty) {
+      int lastScore = _scoreHistory.removeLast();
+      if (lastScore == 1 && _player1Score > 0) {
+        _player1Score--;
+      } else if (lastScore == 2 && _player2Score > 0) {
+        _player2Score--;
+      }
+
+      if (lastScore == -1 && _player1Score < _targetPoints) {
+        _player1Score++;
+      } else if (lastScore == -2 && _player2Score < _targetPoints) {
+        _player2Score++;
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -66,6 +89,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       } else {
         _player2Score++;
       }
+      _scoreHistoryAdd(player);
       _checkWinCondition();
     });
   }
@@ -90,6 +114,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       } else if (player == 2 && _player2Score > 0) {
         _player2Score--;
       }
+      _scoreHistoryAdd(-player);
     });
   }
 
@@ -97,6 +122,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     setState(() {
       _player1Score = 0;
       _player2Score = 0;
+      _scoreHistory.clear();
     });
   }
 
@@ -106,6 +132,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       _player2Score = 0;
       _player1Sets = 0;
       _player2Sets = 0;
+      _scoreHistory.clear();
     });
   }
 
@@ -202,6 +229,11 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
             child: CenterButtons(
               onResetScores: _resetScores,
               onResetAll: _resetAll,
+              onUndo: () {
+                setState(() {
+                  _scoreHistoryUndo();
+                });
+              },
             ),
           ),
           Align(
@@ -241,64 +273,6 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CenterButtons extends StatelessWidget {
-  final VoidCallback? onResetScores;
-  final VoidCallback? onResetAll;
-  const CenterButtons({super.key, this.onResetScores, this.onResetAll});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: MyColors.darkContraste,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed:
-                () => showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Confirmación'),
-                      content: Text(
-                        '¿Estás seguro de jugar una nueva partida?',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text('Cancelar'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          child: Text('Aceptar'),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-            icon: Icon(Icons.add_box_outlined, color: MyColors.lightGray),
-          ),
-          IconButton(
-            onPressed: onResetScores,
-            icon: Icon(Icons.refresh, color: MyColors.lightGray),
-          ),
-          IconButton(
-            onPressed: onResetAll,
-            icon: Icon(Icons.restart_alt, color: MyColors.lightGray),
           ),
         ],
       ),
