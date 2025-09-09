@@ -124,7 +124,7 @@ class _SignalOffState extends State<SignalOff> {
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<int>(
-            initialValue: _selectedPoints,
+            value: _selectedPoints,
             items:
                 pointsOptions.map((int value) {
                   return DropdownMenuItem<int>(
@@ -148,7 +148,7 @@ class _SignalOffState extends State<SignalOff> {
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<int>(
-            initialValue: _selectedSets,
+            value: _selectedSets,
             items:
                 setsOptions.map((int value) {
                   return DropdownMenuItem<int>(

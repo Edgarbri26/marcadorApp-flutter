@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
-import 'package:marcador/models/jugadores.dart';
+import 'package:marcador/models/jugador.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AmistosoPage extends StatefulWidget {

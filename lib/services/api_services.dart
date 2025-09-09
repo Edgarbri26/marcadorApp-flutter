@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:marcador/models/Jugadores.dart';
-import 'package:marcador/models/jugadores.dart';
+import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
 /*import '../utils/constants.dart';*/
 
@@ -22,7 +21,7 @@ class ApiService {
   }
 }
 
-  Future<List<Match>> fetchMatch() async {
+  /*Future<List<Match>> fetchMatch() async {
   //final response = await http.get(Uri.parse('$baseUrl/match'));
   final response = await http.get(Uri.parse('$localUrl/match'));
 
@@ -33,7 +32,7 @@ class ApiService {
   } else {
     throw Exception('Error al cargar matches');
   }
-}
+}*/
 
 Future<int?> createMatch(Match match) async {
   final url = Uri.parse('$localUrl/match');
