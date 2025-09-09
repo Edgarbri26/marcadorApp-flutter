@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
+import 'package:marcador/models/jugadores.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GameSettingsPage extends StatefulWidget {
@@ -81,6 +82,9 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
     Navigator.pushNamed(context, AppRoutes.marcadorVertical);
   }
 
+  Jugador? _player1Seleccionado;
+  Jugador? _player2Seleccionado;
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -100,27 +104,35 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
           children: [
             // Nombres de jugadores
             const Text(
-              "Nombres de los jugadores",
+              "Selecciona Jugador 1",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            TextField(
-              controller: _player1Controller,
-              decoration: const InputDecoration(
-                labelText: "Jugador 1",
-                prefixIcon: Icon(Icons.person),
-              ),
+            JugadorDropdown(
+              selectedItem: _player1Seleccionado,
+              onChanged: (jugador) {
+                setState(() {
+                  _player1Seleccionado = jugador;
+                  _player1Controller.text = jugador?.nombreCompleto ?? '';
+                });
+              },
             ),
             const SizedBox(height: 15),
-            TextField(
-              controller: _player2Controller,
-              decoration: const InputDecoration(
-                labelText: "Jugador 2",
-                prefixIcon: Icon(Icons.person_outline),
-              ),
+            const Text(
+              "Selecciona Jugador 2",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 30),
-
+            const SizedBox(height: 10),
+            JugadorDropdown(
+              selectedItem: _player2Seleccionado,
+              onChanged: (jugador) {
+                setState(() {
+                  _player2Seleccionado = jugador;
+                  _player2Controller.text = jugador?.nombreCompleto ?? '';
+                });
+              },
+            ),
+           
             // Selección de puntos
             const Text(
               "Cantidad de puntos por set",
@@ -143,14 +155,6 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
                 });
               },
             ),
-            const SizedBox(height: 30),
-
-            const Text(
-              "Selecciona el jugador",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            JugadorDropdown(),
             const SizedBox(height: 30),
 
             // Selección de sets

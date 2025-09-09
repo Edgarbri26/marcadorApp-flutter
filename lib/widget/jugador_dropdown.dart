@@ -4,7 +4,10 @@ import 'package:marcador/models/jugadores.dart';
 import 'package:marcador/services/api_services.dart';
 
 class JugadorDropdown extends StatefulWidget {
-  const JugadorDropdown({super.key});
+  final Jugador? selectedItem;
+  final ValueChanged<Jugador?> onChanged;
+
+  const JugadorDropdown({super.key, this.selectedItem, required this.onChanged});
 
   @override
   State<JugadorDropdown> createState() => _JugadorDropdownState();
@@ -19,9 +22,11 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
       items: (String? filtro, _) async {
         final todos = await ApiService().fetchJugadores();
         return todos
-            .where((j) => j.nombreCompleto
-                .toLowerCase()
-                .contains(filtro?.toLowerCase() ?? ''))
+            .where(
+              (j) => j.nombreCompleto.toLowerCase().contains(
+                filtro?.toLowerCase() ?? '',
+              ),
+            )
             .toList();
       },
       itemAsString: (Jugador j) => j.nombreCompleto,
@@ -31,6 +36,7 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
         setState(() {
           _jugadorSeleccionado = nuevo;
         });
+        widget.onChanged(nuevo);
       },
       popupProps: PopupProps.menu(
         showSearchBox: true,
@@ -42,11 +48,12 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
             border: OutlineInputBorder(),
           ),
         ),
-        itemBuilder: (context, jugador, isSelected, isDisabled) => ListTile(
-        title: Text(jugador.nombreCompleto),
-        leading: const Icon(Icons.person),
-        enabled: !isDisabled,
-      ),
+        itemBuilder:
+            (context, jugador, isSelected, isDisabled) => ListTile(
+              title: Text(jugador.nombreCompleto),
+              leading: const Icon(Icons.person),
+              enabled: !isDisabled,
+            ),
       ),
       decoratorProps: const DropDownDecoratorProps(
         decoration: InputDecoration(
