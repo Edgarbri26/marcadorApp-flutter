@@ -4,6 +4,7 @@ import 'package:marcador/design/spacing.dart';
 import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/signal_off.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   final Marker marker;
@@ -14,8 +15,11 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  // final Marker marker = Marker();
+
   int _selectedIndex = 0;
   String title = 'Configuracion de partido';
+
   // Índice inicial en Configuración
   void _onItemTapped(int index) {
     if (index == 0) {
@@ -27,6 +31,21 @@ class _SettingsPageState extends State<SettingsPage> {
     }
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings(); // Cargar datos guardados
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      widget.marker.targetPoints = prefs.getInt('points') ?? 5;
+      widget.marker.targetSets = prefs.getInt('sets') ?? 3;
     });
   }
 
@@ -90,7 +109,7 @@ class _SettingsPageState extends State<SettingsPage> {
           child: IndexedStack(
             index: _selectedIndex,
             children: [
-              const SignalOff(),
+              SignalOff(marker: widget.marker),
               AmistosoPage(),
               const SettingsScreen(),
             ],

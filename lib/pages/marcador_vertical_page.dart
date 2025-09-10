@@ -50,10 +50,22 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       _showSetWinnerDialog(_player2Name);
       widget.marker.resetScores();
     }
-    if (widget.marker.player1Score >= widget.marker.targetPoints ||
-        widget.marker.player2Score >= widget.marker.targetPoints) {
-      takeOut.difference = true;
+
+    if (widget.marker.player1Score >= (widget.marker.targetPoints - 1) &&
+        widget.marker.player2Score >= (widget.marker.targetPoints - 1)) {
+      setState(() {
+        takeOut.difference = true;
+      });
+      print('hola');
     }
+  }
+
+  void _undoTakeoOut() {
+    if (widget.marker.player1Score <= widget.marker.targetPoints ||
+        widget.marker.player2Score <= widget.marker.targetPoints) {
+      takeOut.difference = false;
+    }
+    takeOut.decremen();
   }
 
   void _showSetWinnerDialog(String winner) {
@@ -70,6 +82,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
               onPressed: () {
                 Navigator.of(context).pop();
                 _checkMatchWinner();
+                takeOut.reset();
               },
               child: const Text('Continuar'),
             ),
@@ -134,7 +147,9 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   backgroundColor: MyColors.secundary,
                   onIncrement: () {
                     setState(() {
-                      widget.marker.incrementScore(1);
+                      !takeOut.player1 && !takeOut.player2
+                          ? () {}
+                          : widget.marker.incrementScore(1);
                       takeOut.incremen(1);
                       _checkWinCondition();
                     });
@@ -142,7 +157,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   onDecrement: () {
                     setState(() {
                       widget.marker.decrementScore(1);
-                      takeOut.decremen();
+                      _undoTakeoOut();
                     });
                   },
                 ),
@@ -156,7 +171,9 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   backgroundColor: MyColors.primary,
                   onIncrement: () {
                     setState(() {
-                      widget.marker.incrementScore(2);
+                      !takeOut.player1 && !takeOut.player2
+                          ? () {}
+                          : widget.marker.incrementScore(2);
                       takeOut.incremen(2);
                     });
                     _checkWinCondition();
@@ -164,7 +181,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   onDecrement: () {
                     setState(() {
                       widget.marker.decrementScore(2);
-                      takeOut.decremen();
+                      _undoTakeoOut();
                     });
                   },
                 ),
@@ -187,6 +204,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
               onUndo: () {
                 setState(() {
                   widget.marker.scoreHistoryUndo();
+                  _undoTakeoOut();
                 });
               },
             ),

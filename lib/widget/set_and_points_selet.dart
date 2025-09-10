@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/services/marker.dart';
 
 class SetAndPointsSelet extends StatefulWidget {
-  const SetAndPointsSelet({super.key});
+  final Marker marker;
+  const SetAndPointsSelet({super.key, required this.marker});
 
   @override
   State<SetAndPointsSelet> createState() => _SetAndPointsSeletState();
 }
 
 class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
-  int selectedPoints = 7;
-  int selectedSets = 3;
   // Opciones disponibles
   final List<int> pointsOptions = [5, 7, 11, 15, 21];
   final List<int> setsOptions = [1, 3, 5, 7];
@@ -32,7 +32,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<int>(
-          value: selectedPoints,
+          value: widget.marker.targetPoints,
           items:
               pointsOptions.map((int value) {
                 return DropdownMenuItem<int>(
@@ -50,7 +50,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
           ),
           onChanged: (newValue) {
             setState(() {
-              selectedPoints = newValue!;
+              widget.marker.targetPoints = newValue!;
             });
           },
         ),
@@ -67,7 +67,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<int>(
-          value: selectedSets,
+          value: widget.marker.targetSets,
           items:
               setsOptions.map((int value) {
                 return DropdownMenuItem<int>(
@@ -91,7 +91,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
           ),
           onChanged: (newValue) {
             setState(() {
-              selectedSets = newValue!;
+              widget.marker.targetSets = newValue!;
             });
           },
         ),

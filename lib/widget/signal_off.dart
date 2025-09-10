@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/type_button.dart';
+import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignalOff extends StatefulWidget {
-  const SignalOff({super.key});
+  final Marker marker;
+  const SignalOff({super.key, required this.marker});
 
   @override
   State<SignalOff> createState() => _SignalOffState();
@@ -17,14 +19,6 @@ class _SignalOffState extends State<SignalOff> {
   // Controladores para nombres
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
-
-  // Valores iniciales para puntos y sets
-  int _selectedPoints = 11;
-  int _selectedSets = 3;
-
-  // Opciones disponibles
-  final List<int> pointsOptions = [5, 7, 11, 15, 21];
-  final List<int> setsOptions = [1, 3, 5, 7];
 
   bool _isLoading = true;
 
@@ -41,8 +35,6 @@ class _SignalOffState extends State<SignalOff> {
     setState(() {
       _player1Controller.text = prefs.getString('player1') ?? '';
       _player2Controller.text = prefs.getString('player2') ?? '';
-      _selectedPoints = prefs.getInt('points') ?? 11;
-      _selectedSets = prefs.getInt('sets') ?? 3;
       _isLoading = false;
     });
   }
@@ -63,24 +55,17 @@ class _SignalOffState extends State<SignalOff> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('player1', _player1Controller.text);
     await prefs.setString('player2', _player2Controller.text);
-    await prefs.setInt('points', _selectedPoints);
-    await prefs.setInt('sets', _selectedSets);
+    await prefs.setInt('points', widget.marker.targetPoints);
+    await prefs.setInt('sets', widget.marker.targetSets);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           'Guardado: ${_player1Controller.text} vs ${_player2Controller.text} | '
-          'Puntos: $_selectedPoints | Sets: $_selectedSets',
+          'Puntos: ${widget.marker.targetPoints} | Sets: ${widget.marker.targetSets}',
         ),
       ),
     );
-
-    // Navigator.pop(context, {
-    //   'player1': _player1Controller.text,
-    //   'player2': _player2Controller.text,
-    //   'points': _selectedPoints,
-    //   'sets': _selectedSets,
-    // });
     Navigator.pushNamed(context, AppRoutes.marcadorVertical);
   }
 
@@ -133,7 +118,7 @@ class _SignalOffState extends State<SignalOff> {
           ),
           const SizedBox(height: 30),
 
-          SetAndPointsSelet(),
+          SetAndPointsSelet(marker: widget.marker),
 
           // Botón de JUgar
           Center(

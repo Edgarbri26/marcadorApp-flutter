@@ -3,6 +3,7 @@ import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
+import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/MatchDropdown.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
@@ -23,7 +24,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
   final TextEditingController _player2Controller = TextEditingController();
 
   // Valores iniciales para puntos y sets
-  int _selectedPoints = 11;
+  int _selectedPoints = 5;
   int _selectedSets = 3;
 
   // Opciones disponibles
@@ -45,7 +46,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
     setState(() {
       _player1Controller.text = prefs.getString('player1') ?? '';
       _player2Controller.text = prefs.getString('player2') ?? '';
-      _selectedPoints = prefs.getInt('points') ?? 11;
+      _selectedPoints = prefs.getInt('points') ?? 5;
       _selectedSets = prefs.getInt('sets') ?? 3;
       _isLoading = false;
     });
@@ -133,14 +134,14 @@ class _AmistosoPageState extends State<AmistosoPage> {
             },
           ),
           const SizedBox(height: Spacing.xl),
-          MatchDropdown( 
+          MatchDropdown(
             selectedItem: null,
             onChanged: (match) {
               // Manejar el cambio de partido seleccionado si es necesario
             },
           ),
 
-          SetAndPointsSelet(),
+          // SetAndPointsSelet(marker: Marker(),),
 
           Center(
             child: ButtonApp(

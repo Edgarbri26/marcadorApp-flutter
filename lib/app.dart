@@ -17,17 +17,13 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case AppRoutes.settings:
-            return MaterialPageRoute(
-              builder: (context) => SettingsPage(marker: marker),
-            );
+            return MaterialPageRoute(builder: (context) => SettingsPage(marker: marker));
           case AppRoutes.marcadorVertical:
             return MaterialPageRoute(
               builder: (context) => MarcadorVerticalPage(marker: marker),
             );
           default:
-            return MaterialPageRoute(
-              builder: (context) => SettingsPage(marker: marker),
-            );
+            return MaterialPageRoute(builder: (context) => SettingsPage(marker: marker));
         }
       },
       // home: GameSettingsPage(),
