@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
-import 'package:marcador/models/take_out.dart';
+import 'package:marcador/services/take_out.dart';
 import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
@@ -24,7 +25,28 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   @override
   void initState() {
     super.initState();
-    _loadSettings(); // Cargar datos guardados
+    // 🔹 Bloquea orientación vertical
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
+    // la deja libre pero ya esta en horizontal
+    Future.delayed(const Duration(milliseconds: 500), () {
+      SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    });
+
+    //pantalla completa
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    // Cargar datos guardados
+    _loadSettings();
+  }
+
+  @override
+  void dispose() {
+    // 🔹 Restaurar orientación libre al salir
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    super.dispose();
   }
 
   Future<void> _loadSettings() async {
@@ -134,121 +156,269 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          return Stack(
             children: [
-              Expanded(
-                child: PlayerGameArea(
-                  takeOut: takeOut.player1,
-                  playerName: _player1Name,
-                  playerNumber: 1,
-                  playerScore: widget.marker.player1Score,
-                  backgroundColor: MyColors.secundary,
-                  onIncrement: () {
-                    setState(() {
-                      !takeOut.player1 && !takeOut.player2
-                          ? () {}
-                          : widget.marker.incrementScore(1);
-                      takeOut.incremen(1);
-                      _checkWinCondition();
-                    });
-                  },
-                  onDecrement: () {
-                    setState(() {
-                      widget.marker.decrementScore(1);
-                      _undoTakeoOut();
-                    });
-                  },
-                ),
-              ),
-              Expanded(
-                child: PlayerGameArea(
-                  takeOut: takeOut.player2,
-                  playerName: _player2Name,
-                  playerNumber: 2,
-                  playerScore: widget.marker.player2Score,
-                  backgroundColor: MyColors.primary,
-                  onIncrement: () {
-                    setState(() {
-                      !takeOut.player1 && !takeOut.player2
-                          ? () {}
-                          : widget.marker.incrementScore(2);
-                      takeOut.incremen(2);
-                    });
-                    _checkWinCondition();
-                  },
-                  onDecrement: () {
-                    setState(() {
-                      widget.marker.decrementScore(2);
-                      _undoTakeoOut();
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: CenterButtons(
-              onResetScores:
-                  () => setState(() {
-                    widget.marker.resetScores();
-                    takeOut.reset();
-                  }),
-              onResetAll:
-                  () => setState(() {
-                    widget.marker.resetAll();
-                    takeOut.reset();
-                  }),
-              onUndo: () {
-                setState(() {
-                  _undoTakeoOut();
-                  widget.marker.scoreHistoryUndo();
-                });
-              },
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Spacing.lg,
-                vertical: Spacing.md,
-              ),
-              margin: const EdgeInsets.only(right: 8.0),
-              decoration: BoxDecoration(
-                color: MyColors.darkContraste,
-                borderRadius: BorderRadius.circular(Spacing.lg),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              Flex(
+                direction:
+                    orientation == Orientation.portrait
+                        ? Axis.vertical
+                        : Axis.horizontal,
+
                 children: [
-                  Text(
-                    '${widget.marker.player1Sets}',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 32,
-                      color: MyColors.secundary,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: PlayerGameArea(
+                      takeOut: takeOut.player1,
+                      playerName: _player1Name,
+                      playerNumber: 1,
+                      playerScore: widget.marker.player1Score,
+                      backgroundColor: MyColors.secundary,
+                      onIncrement: () {
+                        setState(() {
+                          !takeOut.player1 && !takeOut.player2
+                              ? () {}
+                              : widget.marker.incrementScore(1);
+                          takeOut.incremen(1);
+                          _checkWinCondition();
+                        });
+                      },
+                      onDecrement: () {
+                        setState(() {
+                          widget.marker.decrementScore(1);
+                          _undoTakeoOut();
+                        });
+                      },
                     ),
                   ),
-
-                  Text(
-                    '${widget.marker.player2Sets}',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 32,
-                      color: MyColors.primary,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: PlayerGameArea(
+                      takeOut: takeOut.player2,
+                      playerName: _player2Name,
+                      playerNumber: 2,
+                      playerScore: widget.marker.player2Score,
+                      backgroundColor: MyColors.primary,
+                      onIncrement: () {
+                        setState(() {
+                          !takeOut.player1 && !takeOut.player2
+                              ? () {}
+                              : widget.marker.incrementScore(2);
+                          takeOut.incremen(2);
+                        });
+                        _checkWinCondition();
+                      },
+                      onDecrement: () {
+                        setState(() {
+                          widget.marker.decrementScore(2);
+                          _undoTakeoOut();
+                        });
+                      },
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
+
+              Flex(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                direction:
+                    orientation == Orientation.portrait
+                        ? Axis.horizontal
+                        : Axis.vertical,
+
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Align(
+                      alignment:
+                          orientation == Orientation.portrait
+                              // vertical
+                              ? Alignment.centerRight
+                              : //horizontal
+                              Alignment.topCenter,
+                      child: Container(
+                        padding:
+                            orientation == Orientation.portrait
+                                // vertical
+                                ? const EdgeInsets.symmetric(
+                                  horizontal: Spacing.lg,
+                                  vertical: Spacing.md,
+                                )
+                                : const EdgeInsets.symmetric(
+                                  //horizontal
+                                  horizontal: Spacing.lg,
+                                  vertical: Spacing.xs,
+                                ),
+                        margin: const EdgeInsets.only(right: 8.0),
+                        decoration: BoxDecoration(
+                          color: MyColors.darkContraste,
+                          borderRadius: BorderRadius.circular(Spacing.lg),
+                        ),
+                        child: Flex(
+                          direction:
+                              orientation == Orientation.portrait
+                                  ? Axis.vertical
+                                  : Axis.horizontal,
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 10,
+                          children: [
+                            Text(
+                              '${widget.marker.player1Sets}',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 32,
+                                color: MyColors.secundary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            Text(
+                              '${widget.marker.player2Sets}',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 32,
+                                color: MyColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  CenterButtons(
+                    onResetScores:
+                        () => setState(() {
+                          widget.marker.resetScores();
+                        }),
+                    onResetAll:
+                        () => setState(() {
+                          widget.marker.resetAll();
+                          takeOut.reset();
+                        }),
+                    onUndo: () {
+                      setState(() {
+                        _undoTakeoOut();
+                        widget.marker.scoreHistoryUndo();
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       ),
     );
+  }
+}
+
+class TakeOut {
+  bool player1 = false;
+  bool player2 = false;
+  bool difference = false;
+  bool remove = false;
+  int playerTurn = 0;
+  int counter = 0;
+  List<int> historyTakeOut = [];
+
+  void init(int numPlayer) {
+    if (numPlayer == 1) {
+      player1 = true;
+      // playerTurn = 1;
+    } else {
+      player2 = true;
+      // playerTurn = 2;
+    }
+  }
+
+  void _addHistory() {
+    historyTakeOut.add(playerTurn);
+  }
+
+  void undoHistory() {
+    int lastScore = 0;
+
+    if (historyTakeOut.isNotEmpty) {
+      !remove ? historyTakeOut.removeLast() : null;
+      lastScore = historyTakeOut.removeLast();
+      remove = true;
+    }
+    if (historyTakeOut.isEmpty) {
+      reset();
+      return;
+    }
+
+    if (lastScore == 2) {
+      player1 = false;
+      player2 = true;
+      playerTurn = 2;
+    } else if (lastScore == 1) {
+      player1 = true;
+      player2 = false;
+      playerTurn = 1;
+    }
+
+    // print('player 1 $player1 y player 2 $player2 turno $playerTurn');
+  }
+
+  void incremen(int numPlayer) {
+    if (counter == 0 && !player1 && !player2) {
+      playerTurn = numPlayer;
+      _addHistory();
+      init(numPlayer);
+      return;
+    }
+
+    if (player1 || player2) {
+      counter++;
+      remove = false;
+      _verifyChange();
+    }
+  }
+
+  void decremen() {
+    if (counter == 0) {
+      counter = 2;
+    }
+    undoHistory();
+    counter--;
+    // print('count $counter');
+  }
+
+  void _verifyChange() {
+    if (counter == 2 && !difference) {
+      counter = 0;
+      if (player1) {
+        player1 = false;
+        player2 = true;
+        playerTurn = 2;
+      } else {
+        player1 = true;
+        player2 = false;
+        playerTurn = 1;
+      }
+    } else if (counter >= 0 && difference) {
+      if (player1) {
+        player1 = false;
+        player2 = true;
+        playerTurn = 2;
+      } else {
+        player1 = true;
+        player2 = false;
+        playerTurn = 1;
+      }
+    }
+    _addHistory();
+  }
+
+  void reset() {
+    player1 = false;
+    player2 = false;
+    remove = false;
+    difference = false;
+    playerTurn = 0;
+    counter = 0;
+    historyTakeOut.clear();
   }
 }

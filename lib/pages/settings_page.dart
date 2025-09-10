@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/pages/amistoso_page.dart';
@@ -17,6 +18,26 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   // final Marker marker = Marker();
 
+    @override
+  void initState() {
+    super.initState();
+    // 🔹 Bloquea orientación vertical
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    _loadSettings(); // Cargar datos guardados
+
+  }
+
+
+  @override
+  void dispose() {
+    // 🔹 Restaurar orientación libre al salir
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    super.dispose();
+  }
+
   int _selectedIndex = 0;
   String title = 'Configuracion de partido';
 
@@ -34,11 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings(); // Cargar datos guardados
-  }
+ 
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();

@@ -17,8 +17,8 @@ class TakeOut {
     }
   }
 
-  void _addHistory(int turno) {
-    historyTakeOut.add(turno);
+  void _addHistory() {
+    historyTakeOut.add(playerTurn);
   }
 
   void undoHistory() {
@@ -50,7 +50,7 @@ class TakeOut {
   void incremen(int numPlayer) {
     if (counter == 0 && !player1 && !player2) {
       playerTurn = numPlayer;
-      _addHistory(playerTurn);
+      _addHistory();
       init(numPlayer);
       return;
     }
@@ -66,8 +66,7 @@ class TakeOut {
     if (counter == 0) {
       counter = 2;
     }
-
-    _addHistory(playerTurn * -1);
+    undoHistory();
     counter--;
     // print('count $counter');
   }
@@ -95,7 +94,7 @@ class TakeOut {
         playerTurn = 1;
       }
     }
-    _addHistory(playerTurn);
+    _addHistory();
   }
 
   void reset() {

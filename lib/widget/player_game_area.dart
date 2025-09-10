@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
-import 'package:marcador/models/take_out.dart';
+import 'package:marcador/services/take_out.dart';
 
 class PlayerGameArea extends StatefulWidget {
   final int playerScore;
