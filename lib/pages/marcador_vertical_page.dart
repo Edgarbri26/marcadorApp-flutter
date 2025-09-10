@@ -53,10 +53,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
 
     if (widget.marker.player1Score >= (widget.marker.targetPoints - 1) &&
         widget.marker.player2Score >= (widget.marker.targetPoints - 1)) {
-      setState(() {
-        takeOut.difference = true;
-      });
-      print('hola');
+      takeOut.difference = true;
     }
   }
 
@@ -65,7 +62,9 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
         widget.marker.player2Score <= widget.marker.targetPoints) {
       takeOut.difference = false;
     }
-    takeOut.decremen();
+    setState(() {
+      takeOut.decremen();
+    });
   }
 
   void _showSetWinnerDialog(String winner) {
@@ -82,7 +81,9 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
               onPressed: () {
                 Navigator.of(context).pop();
                 _checkMatchWinner();
-                takeOut.reset();
+                setState(() {
+                  takeOut.reset();
+                });
               },
               child: const Text('Continuar'),
             ),
@@ -130,7 +131,6 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     );
   }
 
-  // hola
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,8 +203,8 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   }),
               onUndo: () {
                 setState(() {
-                  widget.marker.scoreHistoryUndo();
                   _undoTakeoOut();
+                  widget.marker.scoreHistoryUndo();
                 });
               },
             ),
