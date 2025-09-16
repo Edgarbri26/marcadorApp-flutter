@@ -9,18 +9,24 @@ class ApiService {
   String baseUrl = 'https://lpp-backend.onrender.com/api';
   String localUrl = 'http://localhost:3000/api';
 
-  Future<List<Jugador>> fetchJugadores() async {
-  //final response = await http.get(Uri.parse('$baseUrl/player'));
-  final response = await http.get(Uri.parse('$localUrl/player'));
 
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> jsonBody = json.decode(response.body);
-    final List<dynamic> jugadoresJson = jsonBody['data'];
-    return jugadoresJson.map((json) => Jugador.fromJson(json)).toList();
-  } else {
-    throw Exception('Error al cargar Playeres');
+  Future<List<Jugador>> fetchJugadores() async {
+    final response = await http.get(Uri.parse('$localUrl/player'));
+    if (response.statusCode != 200) {
+      throw Exception('Error al cargar jugadores');
+    }
+
+    final decoded = json.decode(response.body);
+    // Si la API devuelve { data: [...] }
+    final list = (decoded is Map)
+      ? decoded['data'] as List<dynamic>? ?? []
+      : decoded as List<dynamic>;
+
+    return list
+      .map((jsonMap) =>
+        Jugador.fromJson(jsonMap as Map<String, dynamic>))
+      .toList();
   }
-}
 
    Future<List<Match>> fetchMatches() async {
     final response = await http.get(Uri.parse('$localUrl/match'));
