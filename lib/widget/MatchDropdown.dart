@@ -3,6 +3,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/models/match.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MatchDropdown extends StatefulWidget {
   final Match? selectedItem;
@@ -52,11 +53,17 @@ class _MatchDropdownState extends State<MatchDropdown> {
       },
       selectedItem: _matchSeleccionado,
       compareFn: (a, b) => a.matchId == b.matchId,
-      onChanged: (Match? nuevo) {
-        setState(() {
-          _matchSeleccionado = nuevo;
-        });
-        widget.onChanged(nuevo);
+      onChanged: (Match? nuevo) async {
+        if (nuevo == null) return;
+          setState(() => _matchSeleccionado = nuevo);
+          widget.onChanged(nuevo);
+
+          // Guardar en SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setInt('matchId', nuevo.matchId);
+          await prefs.setInt('inscription1Id', nuevo.inscription1Id);
+          await prefs.setInt('inscription2Id', nuevo.inscription2Id);
+
       },
       popupProps: PopupProps.menu(
         showSearchBox: true,

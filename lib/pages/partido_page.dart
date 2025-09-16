@@ -6,19 +6,18 @@ import 'package:marcador/design/type_button.dart';
 import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/MatchDropdown.dart';
 import 'package:marcador/widget/button_app.dart';
-import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AmistosoPage extends StatefulWidget {
-  const AmistosoPage({super.key});
+class PartidoPage extends StatefulWidget {
+  const PartidoPage({super.key});
 
   @override
-  State<AmistosoPage> createState() => _AmistosoPageState();
+  State<PartidoPage> createState() => _PartidoPageState();
 }
 
-class _AmistosoPageState extends State<AmistosoPage> {
+class _PartidoPageState extends State<PartidoPage> {
   // Controladores para nombres
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
@@ -97,47 +96,24 @@ class _AmistosoPageState extends State<AmistosoPage> {
         children: [
           // Nombres de jugadores
           const Text(
-            "Selecciona Jugador 1",
+            "Selecciona un partido",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: MyColors.lightGray,
             ),
           ),
-          const SizedBox(height: 10),
-          JugadorDropdown(
-            selectedItem: _player1Seleccionado,
-            onChanged: (jugador) {
-              setState(() {
-                _player1Seleccionado = jugador;
-                _player1Controller.text = jugador?.nombreCompleto ?? '';
-              });
-            },
-          ),
-          const SizedBox(height: 15),
-          const Text(
-            "Selecciona Jugador 2",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: MyColors.lightGray,
-            ),
-          ),
-          const SizedBox(height: 10),
-          JugadorDropdown(
-            selectedItem: _player2Seleccionado,
-            onChanged: (jugador) {
-              setState(() {
-                _player2Seleccionado = jugador;
-                _player2Controller.text = jugador?.nombreCompleto ?? '';
-              });
+          const SizedBox(height: Spacing.xl),
+          MatchDropdown(
+            selectedItem: null,
+            onChanged: (match) {
+              // Manejar el cambio de partido seleccionado si es necesario
             },
           ),
           const SizedBox(height: Spacing.xl),
-
           //SetAndPointsSelet(marker: Marker(),),
-
           const SizedBox(height: Spacing.xl),
+
           Center(
             child: ButtonApp(
               onPressed: _saveSettings,
@@ -148,17 +124,6 @@ class _AmistosoPageState extends State<AmistosoPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Pantalla de Inicio', style: TextStyle(fontSize: 30)),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:marcador/models/inscription.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
+import 'package:marcador/models/setResult.dart';
 /*import '../utils/constants.dart';*/
 
 class ApiService {
@@ -62,7 +63,7 @@ Future<List<Inscription>> fetchInscriptions() async {
     }
   }
 
-Future<int?> createMatch(Match match) async {
+Future<int?> postMatch(Match match) async {
   final url = Uri.parse('$localUrl/match');
 
   final response = await http.post(
@@ -79,5 +80,24 @@ Future<int?> createMatch(Match match) async {
     return null;
   }
 }
+
+  Future<int?> postSet(SetResult setResult) async {
+    final url = Uri.parse('$localUrl/set');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(setResult.toJson()),
+    );
+
+    if (response.statusCode == 201) {
+      final jsonBody = json.decode(response.body);
+      // Según Swagger, POST /set devuelve el set creado bajo la clave "set"
+      return jsonBody['set']['set_id'] as int?;
+    } else {
+      print('Error al crear el set: ${response.body}');
+      return null;
+    }
+  }
+
 
 }

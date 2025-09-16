@@ -1,12 +1,10 @@
 class SetResult {
-  final int setId;
   final int matchId;
   final int setNumber;
   final int scoreParticipant1;
   final int scoreParticipant2;
 
   SetResult({
-    required this.setId,
     required this.matchId,
     required this.setNumber,
     required this.scoreParticipant1,
@@ -22,9 +20,8 @@ class SetResult {
 
   factory SetResult.fromJson(Map<String, dynamic> json) {
     return SetResult(
-      setId: json['set_id'],
-      matchId: json['match_id'],
-      setNumber: json['match_id'],
+      matchId: json['match_id'] as int,
+      setNumber: json['set_number'] as int,
       scoreParticipant1: json['score_participant1'],
       scoreParticipant2: json['score_participant2'],
     );
