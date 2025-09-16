@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // ... otras dependencias
+        // Sintaxis de Kotlin para Gradle
+        classpath("com.google.firebase:firebase-appdistribution-gradle:4.0.0")
+    }
+}
+
 allprojects {
     repositories {
         google()
