@@ -5,6 +5,7 @@ import 'package:marcador/design/spacing.dart';
 import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/pages/partido_page.dart';
 import 'package:marcador/services/marker.dart';
+import 'package:marcador/services/VersionChecker.dart';
 import 'package:marcador/widget/signal_off.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,6 +30,9 @@ class _SettingsPageState extends State<SettingsPage> {
     ]);
     _loadSettings(); // Cargar datos guardados
 
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+      VersionChecker(apiUrl: 'https://version-api-4pcl.onrender.com/version').checkForUpdate(context);
+    });
   }
 
 
