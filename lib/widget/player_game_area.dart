@@ -8,7 +8,7 @@ class PlayerGameArea extends StatefulWidget {
   final int playerNumber;
   final Color backgroundColor;
   final Function onIncrement;
-  final Function onDecrement;
+
   final String playerName;
   final bool takeOut;
   const PlayerGameArea({
@@ -16,7 +16,7 @@ class PlayerGameArea extends StatefulWidget {
     required this.playerScore,
     required this.backgroundColor,
     required this.onIncrement,
-    required this.onDecrement,
+
     required this.playerNumber,
     required this.playerName,
     required this.takeOut,
@@ -32,7 +32,7 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
     return InkWell(
       onTap: () => widget.onIncrement(),
       // onDoubleTap: () => widget.onDecrement(),
-      onLongPress: () => widget.onDecrement(),
+      // onLongPress: () => widget.onDecrement(),
       child: Container(
         width: double.infinity,
         color: widget.backgroundColor,

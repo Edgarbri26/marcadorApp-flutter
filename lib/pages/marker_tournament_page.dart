@@ -1,0 +1,134 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/services/marker.dart';
+import 'package:marcador/widget/center_buttons.dart';
+import 'package:marcador/widget/player_game_area.dart';
+import 'package:marcador/widget/sets_points.dart';
+
+class MarkerTournamentPage extends StatefulWidget {
+  final Match match;
+  const MarkerTournamentPage({super.key, required this.match,});
+
+  @override
+  State<MarkerTournamentPage> createState() => _MarkerTournamentPageState();
+}
+
+class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
+  Marker marker = Marker();
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
+    
+  }
+
+  void _checkWinCondition() {
+    int jugarWin = marker.checkMatchWinner();
+    if (jugarWin != 0) {
+      jugarWin == 1
+          ? _showMatchWinnerDialog(_player1Name)
+          : _showMatchWinnerDialog(_player2Name);
+    }
+  }
+
+  void _showMatchWinnerDialog(String winner) async {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('¡Ganador del partido: $winner!'),
+          content: Text('¡Felicidades, $winner ha ganado el partido!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Empezar de nuevo'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: null,
+      body: Stack(
+        children: [
+          Flex(
+            direction: Axis.horizontal,
+            children: [
+              Expanded(
+                child: PlayerGameArea(
+                  takeOut: marker.playerTurn == 1,
+                  playerName: _player1Name,
+                  playerNumber: 1,
+                  playerScore: marker.player1Score,
+                  backgroundColor: MyColors.secundary,
+                  onIncrement: () {
+                    setState(() {
+                      marker.incrementScore(1);
+                      _checkWinCondition();
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                child: PlayerGameArea(
+                  takeOut: marker.playerTurn == 2,
+                  playerName: _player2Name,
+                  playerNumber: 2,
+                  playerScore: marker.player2Score,
+                  backgroundColor: MyColors.primary,
+                  onIncrement: () {
+                    setState(() {
+                      marker.incrementScore(2);
+                    });
+                    _checkWinCondition();
+                  },
+                ),
+              ),
+            ],
+          ),
+
+          Flex(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            direction: Axis.vertical,
+
+            children: [
+              SetsPoints(
+                player1Sets: marker.player1Sets,
+                player2Sets: marker.player2Sets,
+              ),
+              CenterButtons(
+                onResetScores:
+                    () => setState(() {
+                      marker.resetScores();
+                    }),
+                onResetAll:
+                    () => setState(() {
+                      marker.resetAll();
+                    }),
+                onUndo: () {
+                  setState(() {
+                    marker.scoreHistoryUndo();
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

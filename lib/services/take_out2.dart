@@ -36,12 +36,10 @@ class TakeOut2 {
     if (playerTurn == 0) {
       // Primer punto define quién tiene el saque
       _init(scoringPlayer);
-      _addHistory(playerTurn);
+      // _addHistory(playerTurn);
 
       return;
     }
-    print('aumento');
-
     totalPoints++;
     _updateTurn();
   }

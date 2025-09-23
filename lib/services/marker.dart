@@ -8,44 +8,60 @@ class Marker {
   List<int> scoreHistory = [];
 
   int playerTurn = 0; // 0 = sin iniciar, 1 = jugador 1, 2 = jugador 2
-  int counter = 0; // cuenta puntos dentro del turno
   bool difference = false; // indica si se juega con diferencia
-  List<int> historyTakeOut = [];
+  int totalPoints = 0; // Puntos totales jugados
+  int totalSetsPlayed = 0;
+  int changeEvery = 2;
+  int firstServer = 0;
+
+  // List<int> historyTakeOut = [];
 
   Marker();
 
+  // marcador
+
   scoreHistoryAdd(int nJugador) {
     scoreHistory.add(nJugador);
-    print(scoreHistory);
   }
 
   scoreHistoryUndo() {
     if (scoreHistory.isNotEmpty) {
-      print(scoreHistory);
-
       int lastScore = scoreHistory.removeLast();
-      print(scoreHistory);
+
       if (lastScore == 1 && player1Score > 0) {
         player1Score--;
       } else if (lastScore == 2 && player2Score > 0) {
         player2Score--;
       }
 
-      if (lastScore == -1 && player1Score < targetPoints) {
-        player1Score++;
-      } else if (lastScore == -2 && player2Score < targetPoints) {
-        player2Score++;
+      if (totalPoints > 0) {
+        totalPoints--;
+        _updateTurn();
+      } else if (totalPoints == 0) {
+        resetScores();
       }
+
+      // if (lastScore == -1 && player1Score < targetPoints) {
+      //   player1Score++;
+      // } else if (lastScore == -2 && player2Score < targetPoints) {
+      //   player2Score++;
+      // }
     }
   }
 
   void incrementScore(int player) {
+    if (playerTurn == 0) {
+      _init(player);
+      return;
+    }
+    totalPoints++;
     if (player == 1) {
       player1Score++;
     } else {
       player2Score++;
     }
     scoreHistoryAdd(player);
+    checkDifference();
   }
 
   void incrementSet(int player) {
@@ -54,6 +70,7 @@ class Marker {
     } else {
       player2Sets++;
     }
+    totalSetsPlayed++;
     scoreHistoryAdd(player);
   }
 
@@ -64,129 +81,103 @@ class Marker {
       player2Score--;
     }
     scoreHistoryAdd(-player);
+    checkDifference();
   }
 
   void resetScores() {
     player1Score = 0;
     player2Score = 0;
+    playerTurn = 0;
+    totalPoints = 0;
     scoreHistory.clear();
   }
 
   void resetAll() {
+    playerTurn = 0;
+    totalPoints = 0;
+    totalSetsPlayed = 0;
     player1Score = 0;
     player2Score = 0;
     player1Sets = 0;
     player2Sets = 0;
     scoreHistory.clear();
   }
-}
 
-class TakeOut {
-  bool player1 = false;
-  bool player2 = false;
-  bool difference = false;
-  bool remove = false;
-  int playerTurn = 0;
-  int counter = 0;
-  List<int> historyTakeOut = [];
+  // saque
+  /// Inicializa el jugador que tiene el saque al inicio
+  void _init(int startingPlayer) {
+    playerTurn = startingPlayer;
+    // historyTakeOut.clear();
+    firstServer = startingPlayer;
+    // counter = 0;
+  }
 
-  void init(int numPlayer) {
-    if (numPlayer == 1) {
-      player1 = true;
-      // playerTurn = 1;
+  // void increment(int scoringPlayer) {
+  //   // Primer punto define quién tiene el saque
+  //   if (playerTurn == 0) {
+  //     _init(scoringPlayer);
+  //     return;
+  //   }
+  //   totalPoints++;
+  // }
+
+  /// Retroceder un punto
+  void decrement() {
+    if (totalPoints > 0) {
+      totalPoints--;
+      _updateTurn();
+    } else if (totalPoints == 0) {
+      resetScores();
+    }
+  }
+
+  /// Recalcula el jugador con el saque
+  void _updateTurn() {
+    playerTurn =
+        ((totalPoints ~/ changeEvery) % 2 == 0)
+            ? firstServer
+            : (firstServer == 1 ? 2 : 1);
+  }
+
+  void checkDifference() {
+    if (player1Score >= (targetPoints - 1) &&
+        player2Score >= (targetPoints - 1)) {
+      difference = true;
+    }
+
+    if (player1Score <= targetPoints || player2Score <= targetPoints) {
+      difference = false;
+    }
+  }
+
+  bool _checkWinCondition() {
+    if (player1Score >= targetPoints && player1Score >= player2Score + 2) {
+      incrementSet(1);
+      resetScores();
+    } else if (player2Score >= targetPoints &&
+        player2Score >= player1Score + 2) {
+      incrementSet(2);
+      resetScores();
     } else {
-      player2 = true;
-      // playerTurn = 2;
+      return false;
     }
+    return true;
   }
 
-  void _addHistory() {
-    historyTakeOut.add(playerTurn);
-  }
-
-  void undoHistory() {
-    int lastScore = 0;
-
-    if (historyTakeOut.isNotEmpty) {
-      !remove ? historyTakeOut.removeLast() : null;
-      lastScore = historyTakeOut.removeLast();
-      remove = true;
-    }
-    if (historyTakeOut.isEmpty) {
-      reset();
-      return;
-    }
-
-    if (lastScore == 2) {
-      player1 = false;
-      player2 = true;
-      playerTurn = 2;
-    } else if (lastScore == 1) {
-      player1 = true;
-      player2 = false;
-      playerTurn = 1;
-    }
-
-    // print('player 1 $player1 y player 2 $player2 turno $playerTurn');
-  }
-
-  void incremen(int numPlayer) {
-    if (counter == 0 && !player1 && !player2) {
-      playerTurn = numPlayer;
-      _addHistory();
-      init(numPlayer);
-      return;
-    }
-
-    if (player1 || player2) {
-      counter++;
-      remove = false;
-      _verifyChange();
-    }
-  }
-
-  void decremen() {
-    if (counter == 0) {
-      counter = 2;
-    }
-    undoHistory();
-    counter--;
-    // print('count $counter');
-  }
-
-  void _verifyChange() {
-    if (counter == 2 && !difference) {
-      counter = 0;
-      if (player1) {
-        player1 = false;
-        player2 = true;
-        playerTurn = 2;
-      } else {
-        player1 = true;
-        player2 = false;
-        playerTurn = 1;
-      }
-    } else if (counter >= 0 && difference) {
-      if (player1) {
-        player1 = false;
-        player2 = true;
-        playerTurn = 2;
-      } else {
-        player1 = true;
-        player2 = false;
-        playerTurn = 1;
+  int checkMatchWinner() {
+    int matchWinner = 0;
+    if (_checkWinCondition()) {
+      if (player1Sets == (targetSets - 1) / 2 + 1) {
+        matchWinner = 1;
+      } else if (player2Sets == (targetSets - 1) / 2 + 1) {
+        matchWinner = 2;
       }
     }
-    _addHistory();
-  }
 
-  void reset() {
-    player1 = false;
-    player2 = false;
-    remove = false;
-    difference = false;
-    playerTurn = 0;
-    counter = 0;
-    historyTakeOut.clear();
+    return matchWinner;
+
+    // if (matchWinner != null) {
+    //   _showMatchWinnerDialog(matchWinner);
+    // }
   }
 }
