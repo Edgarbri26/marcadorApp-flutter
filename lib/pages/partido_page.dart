@@ -7,6 +7,7 @@ import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/match_dropdown.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/models/jugador.dart';
+import 'package:marcador/models/match.dart';
 import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -60,7 +61,7 @@ class _PartidoPageState extends State<PartidoPage> {
           backgroundColor: MyColors.secundary,
         ),
       );
-      // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+      Navigator.pushNamed(context, AppRoutes.marcadorVertical);
       return;
     }
 
@@ -81,8 +82,7 @@ class _PartidoPageState extends State<PartidoPage> {
     Navigator.pushNamed(context, AppRoutes.marcadorVertical);
   }
 
-  Jugador? _player1Seleccionado;
-  Jugador? _player2Seleccionado;
+  Match? _matchSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +105,13 @@ class _PartidoPageState extends State<PartidoPage> {
           ),
           const SizedBox(height: Spacing.xl),
           MatchDropdown(
-            selectedItem: null,
+            selectedItem: _matchSelect,
             onChanged: (match) {
-              // Manejar el cambio de partido seleccionado si es necesario
+              setState(() {
+                _matchSelect = match;
+                _player1Controller.text = match?.nombre1?? '';
+                _player2Controller.text = match?.nombre2?? '';
+              });
             },
           ),
           const SizedBox(height: Spacing.xl),

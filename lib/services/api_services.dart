@@ -8,8 +8,8 @@ import 'package:marcador/models/setResult.dart';
 
 class ApiService {
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
-  //String localUrl = 'http://localhost:3000/api';
-  String localUrl = 'https://lpp-backend.onrender.com/api';
+  String localUrl = 'http://localhost:3000/api';
+  //String localUrl = 'https://lpp-backend.onrender.com/api';
 
   Future<List<Jugador>> fetchJugadores() async {
     final response = await http.get(Uri.parse('$localUrl/player'));
@@ -118,6 +118,24 @@ class ApiService {
     return null;
   }
 }
+
+  Future<bool> putMatch(Match match) async {
+    final url = Uri.parse('$localUrl/match/${match.matchId}');
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(match.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      return true; // Actualización exitosa
+    } else {
+      // print('Error al actualizar el partido: ${response.body}');
+      return false;
+    }
+  }
+
 
 
 }

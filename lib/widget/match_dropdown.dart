@@ -55,13 +55,17 @@ class _MatchDropdownState extends State<MatchDropdown> {
       onChanged: (Match? nuevo) async {
         if (nuevo == null) return;
         setState(() => _matchSeleccionado = nuevo);
-        widget.onChanged(nuevo);
+          final name1 = _nombresPorInscriptionId[nuevo.inscription1Id] ?? 'Jugador 1';
+          final nombre2 = _nombresPorInscriptionId[nuevo.inscription2Id] ?? 'Jugador 2';
+          nuevo.nombre1 = name1;
+          nuevo.nombre2 = nombre2;
+          widget.onChanged(nuevo);
 
         // Guardar en SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
+        /*final prefs = await SharedPreferences.getInstance();
         await prefs.setInt('matchId', nuevo.matchId);
         await prefs.setInt('inscription1Id', nuevo.inscription1Id);
-        await prefs.setInt('inscription2Id', nuevo.inscription2Id);
+        await prefs.setInt('inscription2Id', nuevo.inscription2Id);*/
       },
       popupProps: PopupProps.menu(
         showSearchBox: true,
