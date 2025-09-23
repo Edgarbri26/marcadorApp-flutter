@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
+import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/pages/marcador_vertical_page.dart';
 import 'package:marcador/pages/settings_page.dart';
 import 'package:marcador/pages/update_page.dart';
@@ -74,7 +75,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Marcador de Puntos',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Inter'),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: MyColors.secundary,
+          brightness: Brightness.dark, // Si tu app es oscura
+        ),
+        fontFamily: 'Inter',
+      ),
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case AppRoutes.settings:

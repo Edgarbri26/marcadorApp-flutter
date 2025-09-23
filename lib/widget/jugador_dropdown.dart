@@ -60,6 +60,8 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
         menuProps: MenuProps(backgroundColor: MyColors.dark),
         itemBuilder:
             (context, jugador, isSelected, isDisabled) => ListTile(
+              textColor: MyColors.lightGray,
+              // tileColor: MyColors.lightGray,
               title: Text(
                 jugador.nombreCompleto,
                 style: TextStyle(color: MyColors.lightGray),
@@ -72,6 +74,8 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
         decoration: InputDecoration(
           labelText: 'Buscar jugador',
           labelStyle: TextStyle(color: MyColors.lightGray),
+          floatingLabelStyle: TextStyle(color: MyColors.secundary),
+          // helperStyle: TextStyle(color: MyColors.secundary),
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(

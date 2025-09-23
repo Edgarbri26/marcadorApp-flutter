@@ -24,7 +24,10 @@ class TakeOut {
   void undoHistory() {
     int lastScore = 0;
 
-    if (historyTakeOut.isNotEmpty) {
+    if (historyTakeOut.length == 1) {
+      reset();
+      return;
+    }else if (historyTakeOut.isNotEmpty) {
       !remove ? historyTakeOut.removeLast() : null;
       lastScore = historyTakeOut.removeLast();
       remove = true;
@@ -33,6 +36,7 @@ class TakeOut {
       reset();
       return;
     }
+    
 
     if (lastScore == 2) {
       player1 = false;
@@ -68,7 +72,7 @@ class TakeOut {
     }
     undoHistory();
     counter--;
-    // print('count $counter');
+    print('count $counter');
   }
 
   void _verifyChange() {
