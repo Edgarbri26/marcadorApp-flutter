@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/models/match.dart';
 import 'package:marcador/services/marker.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/center_buttons.dart';
@@ -9,7 +10,7 @@ import 'package:marcador/widget/sets_points.dart';
 
 class MarkerTournamentPage extends StatefulWidget {
   final Match match;
-  const MarkerTournamentPage({super.key, required this.match,});
+  const MarkerTournamentPage({super.key, required this.match});
 
   @override
   State<MarkerTournamentPage> createState() => _MarkerTournamentPageState();
@@ -17,6 +18,8 @@ class MarkerTournamentPage extends StatefulWidget {
 
 class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   Marker marker = Marker();
+  String _player1Name = '';
+  String _player2Name = '';
 
   @override
   void initState() {
@@ -25,17 +28,10 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-
-    
-  }
-
-  void _checkWinCondition() {
-    int jugarWin = marker.checkMatchWinner();
-    if (jugarWin != 0) {
-      jugarWin == 1
-          ? _showMatchWinnerDialog(_player1Name)
-          : _showMatchWinnerDialog(_player2Name);
-    }
+    _player1Name = widget.match.nombre1 ?? 'Jugador 1';
+    _player2Name = widget.match.nombre2 ?? 'Jugador 1';
+    marker.targetSets = widget.match.numSets!;
+    marker.targetPoints = 11;
   }
 
   void _showMatchWinnerDialog(String winner) async {
@@ -83,6 +79,19 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     );
   }
 
+  void _checkWinCondition() {
+    int jugarWin = marker.checkMatchWinner();
+    if (jugarWin != 0) {
+      jugarWin == 1
+          ? _showMatchWinnerDialog(_player1Name)
+          : _showMatchWinnerDialog(_player2Name);
+    }
+
+    if (marker.checkWinSetCondition()) {
+      // aqui para guardar el set
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +133,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
               ),
             ],
           ),
-
           Flex(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

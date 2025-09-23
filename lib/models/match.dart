@@ -6,6 +6,7 @@ class Match {
   final String status;
   String? nombre1;
   String? nombre2;
+  int? numSets;
 
   Match({
     required this.matchId,
@@ -15,13 +16,14 @@ class Match {
     required this.status,
     this.nombre1,
     this.nombre2,
+    this.numSets,
   });
 
   Map<String, dynamic> toJson() => {
     'match_id': matchId,
     'winner_inscription_id': winnerInscriptionId,
-    'status': status
-    };
+    'status': status,
+  };
 
   factory Match.fromJson(Map<String, dynamic> json) {
     return Match(

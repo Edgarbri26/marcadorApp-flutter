@@ -117,6 +117,11 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
           ? _showMatchWinnerDialog(_player1Name)
           : _showMatchWinnerDialog(_player2Name);
     }
+
+    if (widget.marker.checkWinSetCondition()) {
+      // aqui para guardar el set
+    }
+    
   }
 
   // void _undoTakeoOut() {

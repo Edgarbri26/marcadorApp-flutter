@@ -150,7 +150,7 @@ class Marker {
     }
   }
 
-  bool _checkWinCondition() {
+  bool checkWinSetCondition() {
     if (player1Score >= targetPoints && player1Score >= player2Score + 2) {
       incrementSet(1);
       resetScores();
@@ -166,7 +166,7 @@ class Marker {
 
   int checkMatchWinner() {
     int matchWinner = 0;
-    if (_checkWinCondition()) {
+    if (checkWinSetCondition()) {
       if (player1Sets == (targetSets - 1) / 2 + 1) {
         matchWinner = 1;
       } else if (player2Sets == (targetSets - 1) / 2 + 1) {

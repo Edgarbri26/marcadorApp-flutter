@@ -109,8 +109,8 @@ class _PartidoPageState extends State<PartidoPage> {
             onChanged: (match) {
               setState(() {
                 _matchSelect = match;
-                _player1Controller.text = match?.nombre1?? '';
-                _player2Controller.text = match?.nombre2?? '';
+                _player1Controller.text = match?.nombre1 ?? '';
+                _player2Controller.text = match?.nombre2 ?? '';
               });
             },
           ),
