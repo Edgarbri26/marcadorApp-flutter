@@ -57,7 +57,7 @@ class _PartidoPageState extends State<PartidoPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor ingresa el nombre de ambos jugadores'),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: MyColors.secundary,
         ),
       );
       // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
@@ -119,7 +119,7 @@ class _PartidoPageState extends State<PartidoPage> {
               onPressed: _saveSettings,
               title: 'Comenzar juego',
               icon: Icon(Icons.play_arrow_rounded, color: MyColors.light),
-              typeButton: TypeButton.primary,
+              typeButton: TypeButton.secundary,
             ),
           ),
         ],

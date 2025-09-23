@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/pages/partido_page.dart';
 import 'package:marcador/services/marker.dart';
-import 'package:marcador/services/VersionChecker.dart';
+
 import 'package:marcador/widget/signal_off.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +21,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   // final Marker marker = Marker();
 
-    @override
+  @override
   void initState() {
     super.initState();
     // 🔹 Bloquea orientación vertical
@@ -29,12 +30,7 @@ class _SettingsPageState extends State<SettingsPage> {
       DeviceOrientation.portraitDown,
     ]);
     _loadSettings(); // Cargar datos guardados
-
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-      VersionChecker(apiUrl: 'https://version-api-4pcl.onrender.com/version').checkForUpdate(context);
-    });
   }
-
 
   @override
   void dispose() {
@@ -60,8 +56,6 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
- 
-
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -76,7 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.darkContraste,
+      backgroundColor: MyColors.dark,
 
       appBar: AppBar(
         toolbarHeight: 60,
@@ -98,9 +92,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.update);
+                },
                 icon: Icon(
-                  Icons.account_circle,
+                  // Icons.account_circle,
+                  Icons.update,
                   color: MyColors.lightGray,
                   size: 30,
                 ),
@@ -117,9 +114,9 @@ class _SettingsPageState extends State<SettingsPage> {
               bottomRight: Radius.circular(Spacing.sm),
             ), // PARA EL BORDE REDONDEADO DEL APPBAR
             gradient: LinearGradient(
-              colors: [MyColors.primary, MyColors.error],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+              colors: [MyColors.secundary, MyColors.secundaryContraste],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
             ),
           ),
         ),
@@ -142,7 +139,7 @@ class _SettingsPageState extends State<SettingsPage> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: MyColors.dark,
         unselectedItemColor: Colors.white70,
-        selectedItemColor: MyColors.primary,
+        selectedItemColor: MyColors.secundary,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.wifi_off_outlined),

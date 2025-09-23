@@ -7,9 +7,9 @@ import 'package:marcador/models/setResult.dart';
 /*import '../utils/constants.dart';*/
 
 class ApiService {
-  String baseUrl = 'https://lpp-backend.onrender.com/api';
-  String localUrl = 'http://localhost:3000/api';
-
+  // String baseUrl = 'https://lpp-backend.onrender.com/api';
+  // String localUrl = 'http://localhost:3000/api';
+  String localUrl = 'https://lpp-backend.onrender.com/api';
 
   Future<List<Jugador>> fetchJugadores() async {
     final response = await http.get(Uri.parse('$localUrl/player'));
@@ -19,22 +19,22 @@ class ApiService {
 
     final decoded = json.decode(response.body);
     // Si la API devuelve { data: [...] }
-    final list = (decoded is Map)
-      ? decoded['data'] as List<dynamic>? ?? []
-      : decoded as List<dynamic>;
+    final list =
+        (decoded is Map)
+            ? decoded['data'] as List<dynamic>? ?? []
+            : decoded as List<dynamic>;
 
     return list
-      .map((jsonMap) =>
-        Jugador.fromJson(jsonMap as Map<String, dynamic>))
-      .toList();
+        .map((jsonMap) => Jugador.fromJson(jsonMap as Map<String, dynamic>))
+        .toList();
   }
 
-   Future<List<Match>> fetchMatches() async {
+  Future<List<Match>> fetchMatches() async {
     final response = await http.get(Uri.parse('$localUrl/match'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonBody = json.decode(response.body);
-      print(jsonBody);
+      // print(jsonBody);
       final matchesJson = jsonBody['data'];
       if (matchesJson is List) {
         return matchesJson.map((json) => Match.fromJson(json)).toList();
@@ -46,15 +46,17 @@ class ApiService {
     }
   }
 
-Future<List<Inscription>> fetchInscriptions() async {
+  Future<List<Inscription>> fetchInscriptions() async {
     final response = await http.get(Uri.parse('$localUrl/inscription'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonBody = json.decode(response.body);
-      print(jsonBody);
+      // print(jsonBody);
       final inscriptionJson = jsonBody['data'];
       if (inscriptionJson is List) {
-        return inscriptionJson.map((json) => Inscription.fromJson(json)).toList();
+        return inscriptionJson
+            .map((json) => Inscription.fromJson(json))
+            .toList();
       } else {
         throw Exception('Formato inesperado en la respuesta de /inscription');
       }
@@ -63,23 +65,23 @@ Future<List<Inscription>> fetchInscriptions() async {
     }
   }
 
-Future<int?> postMatch(Match match) async {
-  final url = Uri.parse('$localUrl/match');
+  Future<int?> postMatch(Match match) async {
+    final url = Uri.parse('$localUrl/match');
 
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode(match.toJson()),
-  );
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(match.toJson()),
+    );
 
-  if (response.statusCode == 201 || response.statusCode == 200) {
-    final jsonBody = json.decode(response.body);
-    return jsonBody['data']['match_id']; // Devuelve el ID del partido creado
-  } else {
-    print('Error al crear el partido: ${response.body}');
-    return null;
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      final jsonBody = json.decode(response.body);
+      return jsonBody['data']['match_id']; // Devuelve el ID del partido creado
+    } else {
+      // print('Error al crear el partido: ${response.body}');
+      return null;
+    }
   }
-}
 
   Future<int?> postSet(SetResult setResult) async {
     final url = Uri.parse('$localUrl/set');
@@ -94,10 +96,8 @@ Future<int?> postMatch(Match match) async {
       // Según Swagger, POST /set devuelve el set creado bajo la clave "set"
       return jsonBody['set']['set_id'] as int?;
     } else {
-      print('Error al crear el set: ${response.body}');
+      // print('Error al crear el set: ${response.body}');
       return null;
     }
   }
-
-
 }

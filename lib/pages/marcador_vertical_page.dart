@@ -27,7 +27,6 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   int? _matchId;
   int? _Inscrip1Id;
   int? _Inscrip2Id;
-  
 
   @override
   void initState() {
@@ -43,34 +42,34 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     });
 
-  _loadMatchId().then((id) {
-    if (id != null) {
-      setState(() {
-        _matchId = id;
-      });
-      // úsalo para fetch, rutas, lógica, etc.
-      print('Match ID recuperado: $id');
-    }
-  });
-  _loadInscrip1Id().then((id1) {
-    if (id1 != null) {
-      setState(() {
-        _Inscrip1Id = id1;
-      });
-      // úsalo para fetch, rutas, lógica, etc.
-      print('Inscription 1 ID recuperado: $id1');
-    }
-  });
+    _loadMatchId().then((id) {
+      if (id != null) {
+        setState(() {
+          _matchId = id;
+        });
+        // úsalo para fetch, rutas, lógica, etc.
+        print('Match ID recuperado: $id');
+      }
+    });
+    _loadInscrip1Id().then((id1) {
+      if (id1 != null) {
+        setState(() {
+          _Inscrip1Id = id1;
+        });
+        // úsalo para fetch, rutas, lógica, etc.
+        print('Inscription 1 ID recuperado: $id1');
+      }
+    });
 
-  _loadInscrip2Id().then((id2) {
-    if (id2 != null) {
-      setState(() {
-        _Inscrip2Id = id2;
-      });
-      // úsalo para fetch, rutas, lógica, etc.
-      print('Incription 2 ID recuperado: $id2');
-    }
-  });
+    _loadInscrip2Id().then((id2) {
+      if (id2 != null) {
+        setState(() {
+          _Inscrip2Id = id2;
+        });
+        // úsalo para fetch, rutas, lógica, etc.
+        print('Incription 2 ID recuperado: $id2');
+      }
+    });
 
     //pantalla completa
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -89,10 +88,12 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('matchId');
   }
+
   Future<int?> _loadInscrip1Id() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('inscription1Id');
   }
+
   Future<int?> _loadInscrip2Id() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('inscription2Id');
@@ -138,17 +139,18 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     });
   }
 
-  
   List<SetResult> _sets = [];
 
   void _showSetWinnerDialog(String winner) {
-
-    _sets.add(SetResult( // o el que corresponda
-      matchId: _matchId ?? 0, // necesitas tener el matchId, usa 0 si es null
-      setNumber: widget.marker.player1Sets + widget.marker.player2Sets,
-      scoreParticipant1: widget.marker.player1Score,
-      scoreParticipant2: widget.marker.player2Score,
-    ));
+    _sets.add(
+      SetResult(
+        // o el que corresponda
+        matchId: _matchId ?? 0, // necesitas tener el matchId, usa 0 si es null
+        setNumber: widget.marker.player1Sets + widget.marker.player2Sets,
+        scoreParticipant1: widget.marker.player1Score,
+        scoreParticipant2: widget.marker.player2Score,
+      ),
+    );
 
     showDialog(
       context: context,
@@ -195,18 +197,18 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
 
   void _showMatchWinnerDialog(String winner) async {
     // Crea el objeto Match
-  final match = Match(
-    matchId: _matchId ?? 0,
-    inscription1Id:_Inscrip1Id ?? 0,
-    inscription2Id: _Inscrip2Id ?? 0,
-    status: 'finalizado',
-  );
+    final match = Match(
+      matchId: _matchId ?? 0,
+      inscription1Id: _Inscrip1Id ?? 0,
+      inscription2Id: _Inscrip2Id ?? 0,
+      status: 'finalizado',
+    );
 
-  // POST del match y sets
-  await ApiService().postMatch(match);
-  for (final set in _sets) {
-    await ApiService().postSet(set);
-  }
+    // POST del match y sets
+    await ApiService().postMatch(match);
+    for (final set in _sets) {
+      await ApiService().postSet(set);
+    }
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -324,7 +326,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                                 ),
                         margin: const EdgeInsets.only(right: 8.0),
                         decoration: BoxDecoration(
-                          color: MyColors.darkContraste,
+                          color: MyColors.darkGray,
                           borderRadius: BorderRadius.circular(Spacing.lg),
                         ),
                         child: Flex(

@@ -45,7 +45,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
           decoration: const InputDecoration(
             prefixIcon: Icon(Icons.sports, color: MyColors.light),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: MyColors.primary),
+              borderSide: BorderSide(color: MyColors.secundary),
             ),
           ),
           onChanged: (newValue) {
@@ -79,7 +79,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
           dropdownColor: MyColors.dark,
           decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: MyColors.primary),
+              borderSide: BorderSide(color: MyColors.secundary),
             ),
             prefixIcon: Icon(
               Icons.format_list_numbered,

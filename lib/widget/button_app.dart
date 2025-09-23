@@ -27,7 +27,7 @@ class ButtonApp extends StatelessWidget {
                   end: Alignment.bottomCenter,
                 )
                 : LinearGradient(
-                  colors: [MyColors.darkContraste, MyColors.dark],
+                  colors: [MyColors.secundary, MyColors.secundaryContraste],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/pages/marcador_vertical_page.dart';
 import 'package:marcador/pages/settings_page.dart';
+import 'package:marcador/pages/update_page.dart';
 import 'package:marcador/services/marker.dart';
 // import 'package:firebase_app_distribution/firebase_app_distribution.dart';
 
@@ -9,7 +10,7 @@ import 'package:marcador/services/marker.dart';
 // Llama a esta función al inicio de tu app, por ejemplo, en initState()
 // Future<void> checkForUpdates() async {
 //   // Ahora usas el .instance para acceder a la funcionalidad
-//   final appDistribution = FirebaseAppDistribution.instance; 
+//   final appDistribution = FirebaseAppDistribution.instance;
 
 //   // Llama a la función de Firebase para buscar actualizaciones
 //   final release = await appDistribution.checkForUpdate();
@@ -77,13 +78,19 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case AppRoutes.settings:
-            return MaterialPageRoute(builder: (context) => SettingsPage(marker: marker));
+            return MaterialPageRoute(
+              builder: (context) => SettingsPage(marker: marker),
+            );
           case AppRoutes.marcadorVertical:
             return MaterialPageRoute(
               builder: (context) => MarcadorVerticalPage(marker: marker),
             );
+          case AppRoutes.update:
+            return MaterialPageRoute(builder: (context) => UpdatePage());
           default:
-            return MaterialPageRoute(builder: (context) => SettingsPage(marker: marker));
+            return MaterialPageRoute(
+              builder: (context) => SettingsPage(marker: marker),
+            );
         }
       },
       // home: GameSettingsPage(),
