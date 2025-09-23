@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/models/setResult.dart';
-import 'package:marcador/models/match.dart';
-import 'package:marcador/services/api_services.dart';
 import 'package:marcador/services/take_out.dart';
 import 'package:marcador/services/marker.dart';
+import 'package:marcador/services/take_out2.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
+import 'package:marcador/widget/sets_points.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MarcadorVerticalPage extends StatefulWidget {
@@ -23,7 +23,7 @@ class MarcadorVerticalPage extends StatefulWidget {
 class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   String _player1Name = 'Jugador 1';
   String _player2Name = 'Jugador 2';
-  TakeOut takeOut = TakeOut();
+  TakeOut2 takeOut = TakeOut2();
   int? _matchId;
   int? _Inscrip1Id;
   int? _Inscrip2Id;
@@ -37,10 +37,10 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       DeviceOrientation.landscapeRight,
     ]);
 
-    // la deja libre pero ya esta en horizontal
-    Future.delayed(const Duration(milliseconds: 500), () {
-      SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    });
+    // // la deja libre pero ya esta en horizontal
+    // Future.delayed(const Duration(milliseconds: 500), () {
+    //   SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    // });
 
     _loadMatchId().then((id) {
       if (id != null) {
@@ -72,7 +72,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     });
 
     //pantalla completa
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     // Cargar datos guardados
     _loadSettings();
   }
@@ -135,7 +135,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       takeOut.difference = false;
     }
     setState(() {
-      takeOut.decremen();
+      takeOut.decrement();
     });
   }
 
@@ -152,29 +152,34 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
       ),
     );
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('¡Set para $winner!'),
-          content: Text(
-            'El set ha terminado, el marcador de sets es: ${widget.marker.player1Sets} - ${widget.marker.player2Sets}.',
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _checkMatchWinner();
-                setState(() {
-                  takeOut.reset();
-                });
-              },
-              child: const Text('Continuar'),
-            ),
-          ],
-        );
-      },
-    );
+    _checkMatchWinner();
+    setState(() {
+      takeOut.reset();
+    });
+
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       title: Text('¡Set para $winner!'),
+    //       content: Text(
+    //         'El set ha terminado, el marcador de sets es: ${widget.marker.player1Sets} - ${widget.marker.player2Sets}.',
+    //       ),
+    //       actions: <Widget>[
+    //         TextButton(
+    //           onPressed: () {
+    //             Navigator.of(context).pop();
+    //             _checkMatchWinner();
+    //             setState(() {
+    //               takeOut.reset();
+    //             });
+    //           },
+    //           child: const Text('Continuar'),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 
   void _checkMatchWinner() {
@@ -197,19 +202,15 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
 
   void _showMatchWinnerDialog(String winner) async {
     // Crea el objeto Match
-    final match = Match(
-      matchId: _matchId ?? 0,
-      inscription1Id: _Inscrip1Id ?? 0,
-      inscription2Id: _Inscrip2Id ?? 0,
-      status: 'finalizado',
-    );
+    // final match = Match(
+    //   matchId: _matchId ?? 0,
+    //   inscription1Id: _Inscrip1Id ?? 0,
+    //   inscription2Id: _Inscrip2Id ?? 0,
+    //   status: 'finalizado',
+    // );
 
-    // POST del match y sets
-    await ApiService().postMatch(match);
-    for (final set in _sets) {
-      await ApiService().postSet(set);
-    }
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -226,11 +227,18 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
         );
       },
     );
+
+    // POST del match y sets
+    // await ApiService().postMatch(match);
+    // for (final set in _sets) {
+    //   await ApiService().postSet(set);
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyColors.error,
       body: OrientationBuilder(
         builder: (context, orientation) {
           return Stack(
@@ -244,17 +252,17 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                 children: [
                   Expanded(
                     child: PlayerGameArea(
-                      takeOut: takeOut.player1,
+                      takeOut: takeOut.playerTurn == 1,
                       playerName: _player1Name,
                       playerNumber: 1,
                       playerScore: widget.marker.player1Score,
                       backgroundColor: MyColors.secundary,
                       onIncrement: () {
                         setState(() {
-                          !takeOut.player1 && !takeOut.player2
+                          takeOut.playerTurn == 0
                               ? () {}
                               : widget.marker.incrementScore(1);
-                          takeOut.incremen(1);
+                          takeOut.increment(1);
                           _checkWinCondition();
                         });
                       },
@@ -268,17 +276,17 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   ),
                   Expanded(
                     child: PlayerGameArea(
-                      takeOut: takeOut.player2,
+                      takeOut: takeOut.playerTurn == 2,
                       playerName: _player2Name,
                       playerNumber: 2,
                       playerScore: widget.marker.player2Score,
                       backgroundColor: MyColors.primary,
                       onIncrement: () {
                         setState(() {
-                          !takeOut.player1 && !takeOut.player2
+                          takeOut.playerTurn == 0
                               ? () {}
                               : widget.marker.incrementScore(2);
-                          takeOut.incremen(2);
+                          takeOut.increment(2);
                         });
                         _checkWinCondition();
                       },
@@ -302,65 +310,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                         : Axis.vertical,
 
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Align(
-                      alignment:
-                          orientation == Orientation.portrait
-                              // vertical
-                              ? Alignment.centerRight
-                              : //horizontal
-                              Alignment.topCenter,
-                      child: Container(
-                        padding:
-                            orientation == Orientation.portrait
-                                // vertical
-                                ? const EdgeInsets.symmetric(
-                                  horizontal: Spacing.lg,
-                                  vertical: Spacing.md,
-                                )
-                                : const EdgeInsets.symmetric(
-                                  //horizontal
-                                  horizontal: Spacing.lg,
-                                  vertical: Spacing.xs,
-                                ),
-                        margin: const EdgeInsets.only(right: 8.0),
-                        decoration: BoxDecoration(
-                          color: MyColors.darkGray,
-                          borderRadius: BorderRadius.circular(Spacing.lg),
-                        ),
-                        child: Flex(
-                          direction:
-                              orientation == Orientation.portrait
-                                  ? Axis.vertical
-                                  : Axis.horizontal,
-                          mainAxisSize: MainAxisSize.min,
-                          spacing: 10,
-                          children: [
-                            Text(
-                              '${widget.marker.player1Sets}',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 32,
-                                color: MyColors.secundary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
-                            Text(
-                              '${widget.marker.player2Sets}',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 32,
-                                color: MyColors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  SetsPoints(player1Sets: widget.marker.player1Sets, player2Sets: widget.marker.player2Sets,),
                   CenterButtons(
                     onResetScores:
                         () => setState(() {
@@ -388,112 +338,112 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   }
 }
 
-class TakeOut {
-  bool player1 = false;
-  bool player2 = false;
-  bool difference = false;
-  bool remove = false;
-  int playerTurn = 0;
-  int counter = 0;
-  List<int> historyTakeOut = [];
+// class TakeOut {
+//   bool player1 = false;
+//   bool player2 = false;
+//   bool difference = false;
+//   bool remove = false;
+//   int playerTurn = 0;
+//   int counter = 0;
+//   List<int> historyTakeOut = [];
 
-  void init(int numPlayer) {
-    if (numPlayer == 1) {
-      player1 = true;
-      // playerTurn = 1;
-    } else {
-      player2 = true;
-      // playerTurn = 2;
-    }
-  }
+//   void init(int numPlayer) {
+//     if (numPlayer == 1) {
+//       player1 = true;
+//       // playerTurn = 1;
+//     } else {
+//       player2 = true;
+//       // playerTurn = 2;
+//     }
+//   }
 
-  void _addHistory() {
-    historyTakeOut.add(playerTurn);
-  }
+//   void _addHistory() {
+//     historyTakeOut.add(playerTurn);
+//   }
 
-  void undoHistory() {
-    int lastScore = 0;
+//   void undoHistory() {
+//     int lastScore = 0;
 
-    if (historyTakeOut.isNotEmpty) {
-      !remove ? historyTakeOut.removeLast() : null;
-      lastScore = historyTakeOut.removeLast();
-      remove = true;
-    }
-    if (historyTakeOut.isEmpty) {
-      reset();
-      return;
-    }
+//     if (historyTakeOut.isNotEmpty) {
+//       !remove ? historyTakeOut.removeLast() : null;
+//       lastScore = historyTakeOut.removeLast();
+//       remove = true;
+//     }
+//     if (historyTakeOut.isEmpty) {
+//       reset();
+//       return;
+//     }
 
-    if (lastScore == 2) {
-      player1 = false;
-      player2 = true;
-      playerTurn = 2;
-    } else if (lastScore == 1) {
-      player1 = true;
-      player2 = false;
-      playerTurn = 1;
-    }
+//     if (lastScore == 2) {
+//       player1 = false;
+//       player2 = true;
+//       playerTurn = 2;
+//     } else if (lastScore == 1) {
+//       player1 = true;
+//       player2 = false;
+//       playerTurn = 1;
+//     }
 
-    // print('player 1 $player1 y player 2 $player2 turno $playerTurn');
-  }
+//     // print('player 1 $player1 y player 2 $player2 turno $playerTurn');
+//   }
 
-  void incremen(int numPlayer) {
-    if (counter == 0 && !player1 && !player2) {
-      playerTurn = numPlayer;
-      _addHistory();
-      init(numPlayer);
-      return;
-    }
+//   void incremen(int numPlayer) {
+//     if (counter == 0 && !player1 && !player2) {
+//       playerTurn = numPlayer;
+//       _addHistory();
+//       init(numPlayer);
+//       return;
+//     }
 
-    if (player1 || player2) {
-      counter++;
-      remove = false;
-      _verifyChange();
-    }
-  }
+//     if (player1 || player2) {
+//       counter++;
+//       remove = false;
+//       _verifyChange();
+//     }
+//   }
 
-  void decremen() {
-    if (counter == 0) {
-      counter = 2;
-    }
-    undoHistory();
-    counter--;
-    // print('count $counter');
-  }
+//   void decremen() {
+//     if (counter == 0) {
+//       counter = 2;
+//     }
+//     undoHistory();
+//     counter--;
+//     // print('count $counter');
+//   }
 
-  void _verifyChange() {
-    if (counter == 2 && !difference) {
-      counter = 0;
-      if (player1) {
-        player1 = false;
-        player2 = true;
-        playerTurn = 2;
-      } else {
-        player1 = true;
-        player2 = false;
-        playerTurn = 1;
-      }
-    } else if (counter >= 0 && difference) {
-      if (player1) {
-        player1 = false;
-        player2 = true;
-        playerTurn = 2;
-      } else {
-        player1 = true;
-        player2 = false;
-        playerTurn = 1;
-      }
-    }
-    _addHistory();
-  }
+//   void _verifyChange() {
+//     if (counter == 2 && !difference) {
+//       counter = 0;
+//       if (player1) {
+//         player1 = false;
+//         player2 = true;
+//         playerTurn = 2;
+//       } else {
+//         player1 = true;
+//         player2 = false;
+//         playerTurn = 1;
+//       }
+//     } else if (counter >= 0 && difference) {
+//       if (player1) {
+//         player1 = false;
+//         player2 = true;
+//         playerTurn = 2;
+//       } else {
+//         player1 = true;
+//         player2 = false;
+//         playerTurn = 1;
+//       }
+//     }
+//     _addHistory();
+//   }
 
-  void reset() {
-    player1 = false;
-    player2 = false;
-    remove = false;
-    difference = false;
-    playerTurn = 0;
-    counter = 0;
-    historyTakeOut.clear();
-  }
-}
+//   void reset() {
+//     player1 = false;
+//     player2 = false;
+//     remove = false;
+//     difference = false;
+//     playerTurn = 0;
+//     counter = 0;
+//     historyTakeOut.clear();
+//   }
+// }

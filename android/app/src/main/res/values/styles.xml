@@ -14,5 +14,13 @@
          This Theme is only used starting with V2 of Flutter's Android embedding. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- Permitir dibujar debajo de las barras del sistema -->
+        <!-- <item name="android:windowLayoutInScreenEdgeToEdge">true</item> -->
+        <item name="android:windowFullscreen">true</item>
+
+        <!-- Barras transparentes -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+
 </resources>

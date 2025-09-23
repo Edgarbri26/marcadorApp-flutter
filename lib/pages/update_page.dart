@@ -1,3 +1,4 @@
+// update_page.dart
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
@@ -13,16 +14,23 @@ class UpdatePage extends StatefulWidget {
 class _UpdatePageState extends State<UpdatePage> {
   final UpdateService updateService = UpdateService();
 
+  @override
+  void initState() {
+    super.initState();
+    _checkForUpdate();
+  }
+
   bool _checking = false;
   bool _hasUpdate = false;
   bool _downloading = false;
   double _downloadProgress = 0.0;
   String _statusMessage = "Presiona el botón para buscar actualizaciones";
+  bool _isError = false; // Nueva variable de estado para errores
 
-  /// 🔹 Método para verificar si hay actualización
   Future<void> _checkForUpdate() async {
     setState(() {
       _checking = true;
+      _isError = false;
       _statusMessage = "Buscando actualizaciones...";
     });
 
@@ -32,33 +40,36 @@ class _UpdatePageState extends State<UpdatePage> {
       _checking = false;
       _hasUpdate = hasUpdate;
       _statusMessage =
-          hasUpdate
-              ? "🚀 Hay una nueva versión disponible"
-              : "✔ La aplicación está actualizada";
+          hasUpdate ? "🚀 Hay una nueva versión disponible" : "✔ La aplicación está actualizada";
     });
   }
 
-  /// 🔹 Método para descargar el APK
   Future<void> _downloadUpdate() async {
     setState(() {
       _downloading = true;
+      _isError = false;
       _downloadProgress = 0.0;
       _statusMessage = "Descargando actualización...";
     });
 
-    await updateService.downloadAndInstallApkWithProgress(
+    final error = await updateService.downloadAndInstallApkWithProgress(
       onProgress: (progress) {
         setState(() {
           _downloadProgress = progress;
-          _statusMessage =
-              "Descargando: ${(progress * 100).toStringAsFixed(0)}%";
+          _statusMessage = "Descargando: ${(progress * 100).toStringAsFixed(0)}%";
         });
       },
     );
 
     setState(() {
       _downloading = false;
-      _statusMessage = "Descarga completada. Iniciando instalación...";
+      if (error != null) {
+        _isError = true;
+        _statusMessage = error; // Muestra el mensaje de error del servicio
+      } else {
+        _isError = false;
+        _statusMessage = "Descarga completada. Iniciando instalación...";
+      }
     });
   }
 
@@ -80,12 +91,10 @@ class _UpdatePageState extends State<UpdatePage> {
               bottomLeft: Radius.circular(Spacing.sm),
               bottomRight: Radius.circular(Spacing.sm),
             ),
-            //// PARA EL BORDE REDONDEADO DEL APPBAR
             gradient: LinearGradient(
               colors: [
                 MyColors.secundary,
                 MyColors.secundaryContraste,
-                // MyColors.dark,
               ],
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
@@ -102,12 +111,13 @@ class _UpdatePageState extends State<UpdatePage> {
               child: Text(
                 _statusMessage,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18, color: MyColors.light),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: _isError ? Colors.red : MyColors.light, // Cambia el color si hay error
+                ),
               ),
             ),
             const SizedBox(height: 20),
-
-            // Barra de progreso durante descarga
             if (_downloading)
               Column(
                 children: [
@@ -116,29 +126,8 @@ class _UpdatePageState extends State<UpdatePage> {
                   Text("${(_downloadProgress * 100).toStringAsFixed(0)}%"),
                 ],
               ),
-
             const SizedBox(height: 30),
-
-            // Botón para buscar actualizaciones
-            ElevatedButton.icon(
-              onPressed: _checking ? null : _checkForUpdate,
-              icon: const Icon(Icons.search),
-              label:
-                  _checking
-                      ? const Text(
-                        "Buscando...",
-                        style: TextStyle(color: MyColors.light),
-                      )
-                      : const Text(
-                        "Buscar actualización",
-                        style: TextStyle(color: MyColors.darkGray),
-                      ),
-            ),
-
-            const SizedBox(height: 15),
-
-            // Botón para descargar si hay actualización
-            if (_hasUpdate)
+            if (_hasUpdate && !_isError) // No mostrar el botón si hay un error
               ElevatedButton.icon(
                 onPressed: _downloading ? null : _downloadUpdate,
                 icon: const Icon(Icons.download),

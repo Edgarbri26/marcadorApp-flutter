@@ -9,6 +9,7 @@ import 'package:marcador/services/marker.dart';
 
 import 'package:marcador/widget/signal_off.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   final Marker marker;
@@ -21,15 +22,23 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   // final Marker marker = Marker();
 
+  Future<void> debugVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    print(
+      "📱 Versión instalada: ${packageInfo.version}+${packageInfo.buildNumber}",
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    // 🔹 Bloquea orientación vertical
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // // 🔹 Bloquea orientación vertical
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);
     _loadSettings(); // Cargar datos guardados
+    debugVersion();
   }
 
   @override
@@ -40,7 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   int _selectedIndex = 0;
-  String title = 'Configuracion de partido';
+  String title = 'Amistoso';
 
   // Índice inicial en Configuración
   void _onItemTapped(int index) {
@@ -137,7 +146,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
 
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: MyColors.dark,
+        backgroundColor: MyColors.darkUltra,
         unselectedItemColor: Colors.white70,
         selectedItemColor: MyColors.secundary,
         items: const <BottomNavigationBarItem>[

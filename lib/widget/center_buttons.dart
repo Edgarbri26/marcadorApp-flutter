@@ -17,7 +17,7 @@ class CenterButtons extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: MyColors.darkGray,
+        color: MyColors.dark,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(

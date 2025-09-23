@@ -16,11 +16,15 @@ class Marker {
 
   scoreHistoryAdd(int nJugador) {
     scoreHistory.add(nJugador);
+    print(scoreHistory);
   }
 
   scoreHistoryUndo() {
     if (scoreHistory.isNotEmpty) {
+      print(scoreHistory);
+
       int lastScore = scoreHistory.removeLast();
+      print(scoreHistory);
       if (lastScore == 1 && player1Score > 0) {
         player1Score--;
       } else if (lastScore == 2 && player2Score > 0) {

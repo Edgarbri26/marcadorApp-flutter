@@ -9,11 +9,7 @@ class MatchDropdown extends StatefulWidget {
   final Match? selectedItem;
   final ValueChanged<Match?> onChanged;
 
-  const MatchDropdown({
-    super.key,
-    this.selectedItem,
-    required this.onChanged,
-  });
+  const MatchDropdown({super.key, this.selectedItem, required this.onChanged});
 
   @override
   State<MatchDropdown> createState() => _MatchDropdownState();
@@ -26,7 +22,8 @@ class _MatchDropdownState extends State<MatchDropdown> {
   Future<void> _cargarNombresDeJugadores() async {
     final inscriptions = await ApiService().fetchInscriptions();
     _nombresPorInscriptionId = {
-      for (var ins in inscriptions) ins.inscriptionId: ins.jugador.nombreCompleto,
+      for (var ins in inscriptions)
+        ins.inscriptionId: ins.jugador.nombreCompleto,
     };
   }
 
@@ -47,23 +44,24 @@ class _MatchDropdownState extends State<MatchDropdown> {
     return DropdownSearch<Match>(
       items: _loadMatches,
       itemAsString: (Match match) {
-        final nombre1 = _nombresPorInscriptionId[match.inscription1Id] ?? 'Jugador 1';
-        final nombre2 = _nombresPorInscriptionId[match.inscription2Id] ?? 'Jugador 2';
+        final nombre1 =
+            _nombresPorInscriptionId[match.inscription1Id] ?? 'Jugador 1';
+        final nombre2 =
+            _nombresPorInscriptionId[match.inscription2Id] ?? 'Jugador 2';
         return '$nombre1 vs $nombre2';
       },
       selectedItem: _matchSeleccionado,
       compareFn: (a, b) => a.matchId == b.matchId,
       onChanged: (Match? nuevo) async {
         if (nuevo == null) return;
-          setState(() => _matchSeleccionado = nuevo);
-          widget.onChanged(nuevo);
+        setState(() => _matchSeleccionado = nuevo);
+        widget.onChanged(nuevo);
 
-          // Guardar en SharedPreferences
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setInt('matchId', nuevo.matchId);
-          await prefs.setInt('inscription1Id', nuevo.inscription1Id);
-          await prefs.setInt('inscription2Id', nuevo.inscription2Id);
-
+        // Guardar en SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('matchId', nuevo.matchId);
+        await prefs.setInt('inscription1Id', nuevo.inscription1Id);
+        await prefs.setInt('inscription2Id', nuevo.inscription2Id);
       },
       popupProps: PopupProps.menu(
         showSearchBox: true,
@@ -81,8 +79,10 @@ class _MatchDropdownState extends State<MatchDropdown> {
         ),
         menuProps: MenuProps(backgroundColor: MyColors.dark),
         itemBuilder: (context, match, isSelected, isDisabled) {
-          final nombre1 = _nombresPorInscriptionId[match.inscription1Id] ?? 'Jugador 1';
-          final nombre2 = _nombresPorInscriptionId[match.inscription2Id] ?? 'Jugador 2';
+          final nombre1 =
+              _nombresPorInscriptionId[match.inscription1Id] ?? 'Jugador 1';
+          final nombre2 =
+              _nombresPorInscriptionId[match.inscription2Id] ?? 'Jugador 2';
           return ListTile(
             title: Text(
               '$nombre1 vs $nombre2',
