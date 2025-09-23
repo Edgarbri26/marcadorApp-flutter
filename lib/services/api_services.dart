@@ -99,5 +99,23 @@ Future<int?> postMatch(Match match) async {
     }
   }
 
+  Future<int?> createMatch(Match match) async {
+  final url = Uri.parse('$localUrl/match');
+
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode(match.toJson()),
+  );
+
+  if (response.statusCode == 201 || response.statusCode == 200) {
+    final jsonBody = json.decode(response.body);
+    return jsonBody['data']['match_id']; // Devuelve el ID del partido creado
+  } else {
+    print('Error al crear el partido: ${response.body}');
+    return null;
+  }
+}
+
 
 }
