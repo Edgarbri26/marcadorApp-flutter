@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/services/marker.dart';
+import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:marcador/widget/sets_points.dart';
@@ -48,9 +49,33 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
+                showDialog(context: context, builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Confirmar finalización del partido'),
+                    content: const Text('¿Estás seguro de que quieres finalizar el partido?'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Cerrar el diálogo de confirmación
+                        },
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          
+                          Navigator.of(context).pop(); // Cerrar el diálogo de confirmación
+                          Navigator.of(context).pop(); // Cerrar el diálogo del ganador
+                          Navigator.of(context).pop(); // Volver a la pantalla anterior
+                        },
+                        child: const Text('Confirmar'),
+                      ),
+                    ],
+                  );
+                });
                 Navigator.of(context).pop();
+
               },
-              child: const Text('Empezar de nuevo'),
+              child: const Text('Cargar partido'),
             ),
           ],
         );
