@@ -45,7 +45,7 @@ class _SignalOffState extends State<SignalOff> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor ingresa el nombre de ambos jugadores'),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: MyColors.secundary,
         ),
       );
       // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
@@ -91,28 +91,28 @@ class _SignalOffState extends State<SignalOff> {
           const SizedBox(height: 10),
           TextField(
             controller: _player1Controller,
-            cursorColor: MyColors.primary,
+            cursorColor: MyColors.secundary,
             style: TextStyle(color: MyColors.light),
             decoration: const InputDecoration(
               labelText: "Jugador 1",
               labelStyle: TextStyle(color: MyColors.lightGray),
               prefixIcon: Icon(Icons.person, color: MyColors.lightGray),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: MyColors.primary),
+                borderSide: BorderSide(color: MyColors.secundary),
               ),
             ),
           ),
           const SizedBox(height: 15),
           TextField(
             controller: _player2Controller,
-            cursorColor: MyColors.primary,
+            cursorColor: MyColors.secundary,
             style: TextStyle(color: MyColors.light),
             decoration: const InputDecoration(
               labelText: "Jugador 2",
               labelStyle: TextStyle(color: MyColors.lightGray),
               prefixIcon: Icon(Icons.person_outline, color: MyColors.lightGray),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: MyColors.primary),
+                borderSide: BorderSide(color: MyColors.secundary),
               ),
             ),
           ),
@@ -126,7 +126,7 @@ class _SignalOffState extends State<SignalOff> {
               onPressed: _saveSettings,
               title: 'Comenzar juego',
               icon: Icon(Icons.play_arrow_rounded, color: MyColors.light),
-              typeButton: TypeButton.primary,
+              typeButton: TypeButton.secundary,
             ),
           ),
         ],

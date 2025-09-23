@@ -58,7 +58,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor ingresa el nombre de ambos jugadores'),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: MyColors.secundary,
         ),
       );
       // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
@@ -136,14 +136,13 @@ class _AmistosoPageState extends State<AmistosoPage> {
           const SizedBox(height: Spacing.xl),
 
           //SetAndPointsSelet(marker: Marker(),),
-
           const SizedBox(height: Spacing.xl),
           Center(
             child: ButtonApp(
               onPressed: _saveSettings,
               title: 'Comenzar juego',
               icon: Icon(Icons.play_arrow_rounded, color: MyColors.light),
-              typeButton: TypeButton.primary,
+              typeButton: TypeButton.secundary,
             ),
           ),
         ],

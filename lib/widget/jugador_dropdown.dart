@@ -48,12 +48,12 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
         fit: FlexFit.loose,
         constraints: const BoxConstraints(maxHeight: 300),
         searchFieldProps: const TextFieldProps(
-          cursorColor: MyColors.primary,
+          cursorColor: MyColors.secundary,
           decoration: InputDecoration(
             hintText: 'Escribe el nombre...',
             border: UnderlineInputBorder(),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: MyColors.primary),
+              borderSide: BorderSide(color: MyColors.secundary),
             ),
           ),
         ),
@@ -75,7 +75,7 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: MyColors.primary),
+            borderSide: BorderSide(color: MyColors.secundary),
           ),
         ),
       ),

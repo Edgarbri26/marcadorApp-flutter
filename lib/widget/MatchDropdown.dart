@@ -70,12 +70,12 @@ class _MatchDropdownState extends State<MatchDropdown> {
         fit: FlexFit.loose,
         constraints: const BoxConstraints(maxHeight: 300),
         searchFieldProps: const TextFieldProps(
-          cursorColor: MyColors.primary,
+          cursorColor: MyColors.secundary,
           decoration: InputDecoration(
             hintText: 'Buscar partido...',
             border: UnderlineInputBorder(),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: MyColors.primary),
+              borderSide: BorderSide(color: MyColors.secundary),
             ),
           ),
         ),
@@ -100,7 +100,7 @@ class _MatchDropdownState extends State<MatchDropdown> {
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: MyColors.primary),
+            borderSide: BorderSide(color: MyColors.secundary),
           ),
         ),
       ),
