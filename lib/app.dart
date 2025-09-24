@@ -8,12 +8,14 @@ import 'package:marcador/pages/update_page.dart';
 import 'package:marcador/services/marker.dart';
 import 'package:marcador/models/match.dart';
 
-// Asegúrate de tener una GlobalKey en tu MaterialApp para acceder al contexto
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-class MyApp extends StatelessWidget {
+class  MyApp extends StatelessWidget {
   MyApp({super.key});
   Marker marker = Marker();
+
+  
 
   @override
   Widget build(BuildContext context) {

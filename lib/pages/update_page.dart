@@ -1,4 +1,3 @@
-// update_page.dart
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
@@ -14,63 +13,131 @@ class UpdatePage extends StatefulWidget {
 class _UpdatePageState extends State<UpdatePage> {
   final UpdateService updateService = UpdateService();
 
-  @override
-  void initState() {
-    super.initState();
-    _checkForUpdate();
-  }
-
   bool _checking = false;
   bool _hasUpdate = false;
   bool _downloading = false;
   double _downloadProgress = 0.0;
-  String _statusMessage = "Presiona el botón para buscar actualizaciones";
-  bool _isError = false; // Nueva variable de estado para errores
+  String _statusMessage = "Press the button to check for updates";
+  bool _isError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForUpdate();
+    });
+  }
 
   Future<void> _checkForUpdate() async {
     setState(() {
       _checking = true;
       _isError = false;
-      _statusMessage = "Buscando actualizaciones...";
+      _statusMessage = "🔍 Checking for updates...";
     });
 
     final hasUpdate = await updateService.checkForUpdate();
+
+    if (!mounted) return;
 
     setState(() {
       _checking = false;
       _hasUpdate = hasUpdate;
       _statusMessage =
-          hasUpdate ? "🚀 Hay una nueva versión disponible" : "✔ La aplicación está actualizada";
+          hasUpdate ? "🚀 New version available. Update now!" : "✔ App is up to date";
     });
   }
 
   Future<void> _downloadUpdate() async {
+    updateService.deleteDownloadedApk();
     setState(() {
       _downloading = true;
       _isError = false;
       _downloadProgress = 0.0;
-      _statusMessage = "Descargando actualización...";
+      _statusMessage = "⬇️ Downloading update...";
     });
 
     final error = await updateService.downloadAndInstallApkWithProgress(
       onProgress: (progress) {
+        if (!mounted) return;
         setState(() {
           _downloadProgress = progress;
-          _statusMessage = "Descargando: ${(progress * 100).toStringAsFixed(0)}%";
+          _statusMessage = "⬇️ Downloading: ${(progress * 100).toStringAsFixed(0)}%";
         });
       },
     );
+
+    if (!mounted) return;
 
     setState(() {
       _downloading = false;
       if (error != null) {
         _isError = true;
-        _statusMessage = error; // Muestra el mensaje de error del servicio
+        _statusMessage = error;
       } else {
         _isError = false;
-        _statusMessage = "Descarga completada. Iniciando instalación...";
+        _statusMessage = "✅ Download complete. The installer has been launched.";
       }
     });
+  }
+
+  Widget _buildProgressIndicator() {
+    return Column(
+      children: [
+        LinearProgressIndicator(
+          value: _downloadProgress,
+          backgroundColor: Colors.grey.shade800,
+          color: MyColors.secundary,
+          minHeight: 8,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          "${(_downloadProgress * 100).toStringAsFixed(0)}%",
+          style: const TextStyle(color: Colors.white70),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton() {
+    if (_checking) {
+      return const CircularProgressIndicator(color: MyColors.secundary);
+    }
+
+    if (_downloading) {
+      return _buildProgressIndicator();
+    }
+
+    if (_hasUpdate && !_isError) {
+      return ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        ),
+        icon: const Icon(Icons.download, color: Colors.white),
+        label: const Text(
+          "Download and install",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        onPressed: _downloadUpdate,
+      );
+    }
+
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: MyColors.secundary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      ),
+      icon: const Icon(Icons.refresh, color: Colors.white),
+      label: const Text(
+        "Check for update",
+        style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      onPressed: _checkForUpdate,
+    );
   }
 
   @override
@@ -79,25 +146,22 @@ class _UpdatePageState extends State<UpdatePage> {
       backgroundColor: MyColors.dark,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        toolbarHeight: 60,
-        foregroundColor: MyColors.light,
+        elevation: 0,
         title: const Text(
-          "Actualizar aplicación",
+          "Update application",
           style: TextStyle(color: MyColors.light),
         ),
+        centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [MyColors.secundary, MyColors.secundaryContraste],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(Spacing.sm),
               bottomRight: Radius.circular(Spacing.sm),
-            ),
-            gradient: LinearGradient(
-              colors: [
-                MyColors.secundary,
-                MyColors.secundaryContraste,
-              ],
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
             ),
           ),
         ),
@@ -105,38 +169,56 @@ class _UpdatePageState extends State<UpdatePage> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            Center(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                _statusMessage,
+                'Do not leave the window while the update is downloading',
+                style: TextStyle(color: MyColors.lightGray, fontSize: 20),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: _isError ? Colors.red : MyColors.light, // Cambia el color si hay error
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Card(
+                  color: Colors.grey.shade900,
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.system_update,
+                          size: 80,
+                          color: MyColors.secundary,
+                        ),
+                        const SizedBox(height: 20),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: Text(
+                            _statusMessage,
+                            key: ValueKey<String>(_statusMessage),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              color:
+                                  _isError ? Colors.redAccent : MyColors.light,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        _buildActionButton(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            if (_downloading)
-              Column(
-                children: [
-                  LinearProgressIndicator(value: _downloadProgress),
-                  const SizedBox(height: 10),
-                  Text("${(_downloadProgress * 100).toStringAsFixed(0)}%"),
-                ],
-              ),
-            const SizedBox(height: 30),
-            if (_hasUpdate && !_isError) // No mostrar el botón si hay un error
-              ElevatedButton.icon(
-                onPressed: _downloading ? null : _downloadUpdate,
-                icon: const Icon(Icons.download),
-                label: const Text(
-                  "Descargar e instalar",
-                  style: TextStyle(color: MyColors.light),
-                ),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              ),
           ],
         ),
       ),
