@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
-import 'package:marcador/models/setResult.dart';
+import 'package:marcador/models/set_result.dart';
 import 'package:marcador/services/take_out.dart';
 import 'package:marcador/services/marker.dart';
 import 'package:marcador/services/take_out2.dart';

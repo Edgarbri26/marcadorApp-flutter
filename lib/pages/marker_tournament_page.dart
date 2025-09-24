@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/models/match.dart';
+import 'package:marcador/models/set_result.dart';
 import 'package:marcador/services/marker.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/center_buttons.dart';
@@ -18,6 +19,7 @@ class MarkerTournamentPage extends StatefulWidget {
 
 class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   Marker marker = Marker();
+  final List<SetResult> _sets = [];
   String _player1Name = '';
   String _player2Name = '';
 
@@ -30,7 +32,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     ]);
     _player1Name = widget.match.nombre1 ?? 'Jugador 1';
     _player2Name = widget.match.nombre2 ?? 'Jugador 1';
-    marker.targetSets = widget.match.numSets!;
+    marker.targetSets = 3;
     marker.targetPoints = 11;
   }
 
@@ -45,31 +47,47 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                showDialog(context: context, builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Confirmar finalización del partido'),
-                    content: const Text('¿Estás seguro de que quieres finalizar el partido?'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Cerrar el diálogo de confirmación
-                        },
-                        child: const Text('Cancelar'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          
-                          Navigator.of(context).pop(); // Cerrar el diálogo de confirmación
-                          Navigator.of(context).pop(); // Cerrar el diálogo del ganador
-                          Navigator.of(context).pop(); // Volver a la pantalla anterior
-                        },
-                        child: const Text('Confirmar'),
-                      ),
-                    ],
-                  );
-                });
-                Navigator.of(context).pop();
+                print("si funciono");
+                Navigator.of(context).pop(); // Cerrar el diálogo de ganador
+                print('Sets guardados: $_sets');
 
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Confirmar finalización del partido'),
+                      content: const Text(
+                        '¿Estás seguro de que quieres finalizar el partido?',
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(
+                              context,
+                            ).pop(); // Cerrar el diálogo de confirmación
+                          },
+                          child: const Text('Cancelar'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            //await ApiService().putMatch(widget.match);
+                            for (final set in _sets) {
+                              await ApiService().postSet(set);
+                            }
+                            // Cerrar el diálogo de confirmación
+                            Navigator.of(
+                              context,
+                            ).pop(); // Cerrar el diálogo de confirmación
+                            Navigator.of(
+                              context,
+                            ).pop(); // Cerrar el diálogo de confirmación
+                          },
+                          child: const Text('Confirmar'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               child: const Text('Cargar partido'),
             ),
@@ -80,15 +98,32 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   }
 
   void _checkWinCondition() {
+
+    if (marker.checkWinSetCondition()) {
+      // aqui para guardar el set
+      final p1Score = marker.player1Score;
+      final p2Score = marker.player2Score;
+      
+      final setResult = SetResult(
+        matchId: widget.match.matchId,
+        setNumber: marker.totalSetsPlayed,
+        scoreParticipant1: p1Score,
+        scoreParticipant2: p2Score,
+      );
+      _sets.add(setResult);
+
+      print("marker.player1Score ${marker.player1Score}");
+      print("marker.player2Score ${marker.player2Score}");
+      print('Set guardado: ${_sets[0].scoreParticipant1} y ${_sets[0].scoreParticipant2}');
+      marker.resetScores();
+    }
+
     int jugarWin = marker.checkMatchWinner();
     if (jugarWin != 0) {
       jugarWin == 1
           ? _showMatchWinnerDialog(_player1Name)
           : _showMatchWinnerDialog(_player2Name);
-    }
-
-    if (marker.checkWinSetCondition()) {
-      // aqui para guardar el set
+        marker.resetAll();
     }
   }
 

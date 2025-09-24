@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:marcador/models/inscription.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
-import 'package:marcador/models/setResult.dart';
+import 'package:marcador/models/set_result.dart';
 /*import '../utils/constants.dart';*/
 
 class ApiService {
@@ -84,22 +84,32 @@ class ApiService {
   }
 
   Future<int?> postSet(SetResult setResult) async {
-    final url = Uri.parse('$localUrl/set');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(setResult.toJson()),
-    );
+  final url = Uri.parse('$localUrl/set');
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode(setResult.toJson()),
+  );
 
-    if (response.statusCode == 201) {
-      final jsonBody = json.decode(response.body);
-      // Según Swagger, POST /set devuelve el set creado bajo la clave "set"
-      return jsonBody['set']['set_id'] as int?;
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    print('Set creado exitosamente: ${response.body}');
+    final jsonBody = json.decode(response.body);
+
+    // Intenta acceder a 'set', si no existe, usa 'data'
+    final setData = jsonBody['set'] ?? jsonBody['data'];
+
+    if (setData != null && setData['set_id'] != null) {
+      return setData['set_id'] as int?;
     } else {
-      // print('Error al crear el set: ${response.body}');
+      print('Formato inesperado en la respuesta: ${response.body}');
       return null;
     }
+  } else {
+    print('Error al crear el set: ${response.body}');
+    return null;
   }
+}
+
 
   Future<int?> createMatch(Match match) async {
     final url = Uri.parse('$localUrl/match');

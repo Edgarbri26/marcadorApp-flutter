@@ -5,5 +5,6 @@ class AppRoutes {
   static const String settings = 'Settings';
   static const String marcadorVertical = 'MarcadorVertical';
   static const String update = 'UpdatePage';
+  static const String tournament = 'TournamentPage';
   
 }

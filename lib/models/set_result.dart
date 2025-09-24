@@ -26,5 +26,4 @@ class SetResult {
       scoreParticipant2: json['score_participant2'],
     );
   }
-  
 }

@@ -12,6 +12,7 @@ import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PartidoPage extends StatefulWidget {
+
   const PartidoPage({super.key});
 
   @override
@@ -22,6 +23,7 @@ class _PartidoPageState extends State<PartidoPage> {
   // Controladores para nombres
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
+  Match? _matchSelect;
 
   // Valores iniciales para puntos y sets
   int _selectedPoints = 5;
@@ -79,10 +81,10 @@ class _PartidoPageState extends State<PartidoPage> {
         ),
       ),
     );
-    Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+    Navigator.of(context).pushNamed(AppRoutes.tournament, arguments: _matchSelect);
   }
 
-  Match? _matchSelect;
+  
 
   @override
   Widget build(BuildContext context) {
