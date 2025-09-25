@@ -33,7 +33,7 @@ class _MatchDropdownState extends State<MatchDropdown> {
 
     return matches.where((match) {
       if (match.status == 'Finalizado') return false;
-      
+
       final nombre1 = _nombresPorInscriptionId[match.inscription1Id] ?? '';
       final nombre2 = _nombresPorInscriptionId[match.inscription2Id] ?? '';
       final texto = '$nombre1 vs $nombre2'.toLowerCase();
@@ -64,12 +64,6 @@ class _MatchDropdownState extends State<MatchDropdown> {
         nuevo.nombre1 = name1;
         nuevo.nombre2 = nombre2;
         widget.onChanged(nuevo);
-
-        // Guardar en SharedPreferences
-        /*final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('matchId', nuevo.matchId);
-        await prefs.setInt('inscription1Id', nuevo.inscription1Id);
-        await prefs.setInt('inscription2Id', nuevo.inscription2Id);*/
       },
       popupProps: PopupProps.menu(
         showSearchBox: true,

@@ -4,13 +4,6 @@ class Jugador {
 
   Jugador({required this.ci, required this.nombreCompleto});
 
-  /*factory Jugador.fromJson(Map<String, dynamic> json) {
-    return Jugador(
-      ci: json['CI'],
-      nombreCompleto: '${json['first_name']} ${json['last_name']}',
-    );
-  }*/
-
   factory Jugador.fromJson(Map<String, dynamic> json) {
   // Toma CI de mayúscula o minúscula; si fuera int, conviértelo a String
   final rawCi = json['CI'] ?? json['ci'];

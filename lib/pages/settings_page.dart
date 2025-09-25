@@ -4,7 +4,7 @@ import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/pages/amistoso_page.dart';
-import 'package:marcador/pages/partido_page.dart';
+import 'package:marcador/pages/tournament_page.dart';
 import 'package:marcador/services/marker.dart';
 
 import 'package:marcador/widget/signal_off.dart';

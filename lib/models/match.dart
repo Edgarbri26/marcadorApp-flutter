@@ -1,5 +1,5 @@
 class Match {
-  final int matchId;
+  int? matchId;
   final int tournamentId;
   final int inscription1Id;
   final int inscription2Id;
@@ -12,7 +12,7 @@ class Match {
   int? numSets;
 
   Match({
-    required this.matchId,
+    this.matchId,
     required this.tournamentId,
     required this.inscription1Id,
     required this.inscription2Id,

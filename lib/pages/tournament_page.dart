@@ -81,7 +81,7 @@ class _PartidoPageState extends State<PartidoPage> {
         ),
       ),
     );
-    Navigator.of(context).pushNamed(AppRoutes.tournament, arguments: _matchSelect);
+    Navigator.of(context).pushNamed(AppRoutes.markerTournament, arguments: _matchSelect);
   }
 
   

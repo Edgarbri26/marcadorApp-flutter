@@ -84,32 +84,31 @@ class ApiService {
   }
 
   Future<int?> postSet(SetResult setResult) async {
-  final url = Uri.parse('$localUrl/set');
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode(setResult.toJson()),
-  );
+    final url = Uri.parse('$localUrl/set');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(setResult.toJson()),
+    );
 
-  if (response.statusCode == 200 || response.statusCode == 201) {
-    print('Set creado exitosamente: ${response.body}');
-    final jsonBody = json.decode(response.body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Set creado exitosamente: ${response.body}');
+      final jsonBody = json.decode(response.body);
 
-    // Intenta acceder a 'set', si no existe, usa 'data'
-    final setData = jsonBody['set'] ?? jsonBody['data'];
+      // Intenta acceder a 'set', si no existe, usa 'data'
+      final setData = jsonBody['set'] ?? jsonBody['data'];
 
-    if (setData != null && setData['set_id'] != null) {
-      return setData['set_id'] as int?;
+      if (setData != null && setData['set_id'] != null) {
+        return setData['set_id'] as int?;
+      } else {
+        print('Formato inesperado en la respuesta: ${response.body}');
+        return null;
+      }
     } else {
-      print('Formato inesperado en la respuesta: ${response.body}');
+      print('Error al crear el set: ${response.body}');
       return null;
     }
-  } else {
-    print('Error al crear el set: ${response.body}');
-    return null;
   }
-}
-
 
   Future<int?> createMatch(Match match) async {
     final url = Uri.parse('$localUrl/match');
@@ -139,11 +138,31 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-       print('Partido actualizado exitosamente: ${response.body}');
+      print('Partido actualizado exitosamente: ${response.body}');
       return true; // Actualización exitosa
     } else {
-       print('Error al actualizar el partido: ${response.body}');
+      print('Error al actualizar el partido: ${response.body}');
       return false;
     }
+  }
+
+  Future<int?> obtenerInscriptionIdPorCI(Jugador player) async {
+    final response = await http.get(
+      Uri.parse('http://localhost:3000/api/inscription/player/${player.ci}'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      if (data['data'] != null && data['data'] is List) {
+        final inscriptions = data['data'] as List;
+        if (inscriptions.isNotEmpty) {
+          return inscriptions.first['inscription_id'];
+        }
+      }
+    }
+
+    return null;
   }
 }

@@ -109,7 +109,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
       final p2Score = marker.player2Score;
 
       final setResult = SetResult(
-        matchId: widget.match.matchId,
+        matchId: widget.match.matchId ?? 0,
         setNumber: marker.totalSetsPlayed,
         scoreParticipant1: p1Score,
         scoreParticipant2: p2Score,
@@ -129,7 +129,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     if (jugarWin != 0) {
 
       widget.match.status = 'Finalizado';
-      
+
       final fechaLocal = DateTime.now();
       final fechaAjustada = fechaLocal.subtract(Duration(hours: 4));
       final fechaIso = fechaAjustada.toIso8601String();

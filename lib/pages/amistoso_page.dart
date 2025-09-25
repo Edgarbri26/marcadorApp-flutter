@@ -3,12 +3,11 @@ import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
-import 'package:marcador/services/marker.dart';
-import 'package:marcador/widget/match_dropdown.dart';
+import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugador.dart';
-import 'package:marcador/widget/set_and_points_selet.dart';
+import 'package:marcador/models/match.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AmistosoPage extends StatefulWidget {
@@ -22,6 +21,9 @@ class _AmistosoPageState extends State<AmistosoPage> {
   // Controladores para nombres
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
+
+  Jugador? _player1Seleccionado;
+  Jugador? _player2Seleccionado;
 
   // Valores iniciales para puntos y sets
   int _selectedPoints = 5;
@@ -61,7 +63,8 @@ class _AmistosoPageState extends State<AmistosoPage> {
           backgroundColor: MyColors.secundary,
         ),
       );
-      // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+      //Navigator.of(context).pushNamed(AppRoutes.markerTournament, arguments: match);
+
       return;
     }
 
@@ -79,11 +82,40 @@ class _AmistosoPageState extends State<AmistosoPage> {
         ),
       ),
     );
-    Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+
+    final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(_player1Seleccionado!);
+    final inscrip2 = await ApiService().obtenerInscriptionIdPorCI(_player2Seleccionado!);
+
+    if (inscrip1 == null || inscrip2 == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo obtener la inscripción de uno o ambos jugadores'),
+          backgroundColor: MyColors.secundary,
+        ),
+      );
+      return;
+    }
+      Match match = Match(
+        matchId: null,
+        tournamentId: 4, // ID fijo para amistoso
+        inscription1Id: inscrip1,
+        inscription2Id: inscrip2,
+        round: 'Amistoso',
+        status: 'En Juego',
+        date: DateTime.now().toIso8601String(),
+        nombre1: _player1Controller.text,
+        nombre2: _player2Controller.text,
+      );
+
+      final nuevoMatchId = await ApiService().createMatch(match);
+      if (nuevoMatchId != null) {
+        match.matchId = nuevoMatchId;
+      }
+
+    Navigator.of(context).pushNamed(AppRoutes.markerTournament, arguments: match);
   }
 
-  Jugador? _player1Seleccionado;
-  Jugador? _player2Seleccionado;
+  
 
   @override
   Widget build(BuildContext context) {
