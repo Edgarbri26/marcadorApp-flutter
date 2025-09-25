@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/pages/tournament_page.dart';
 import 'package:marcador/services/marker.dart';
+import 'package:marcador/services/update_service.dart';
+import 'package:marcador/services/update_service.dart';
 
 import 'package:marcador/widget/signal_off.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,14 +23,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  // final Marker marker = Marker();
-
-  Future<void> debugVersion() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    print(
-      "📱 Versión instalada: ${packageInfo.version}+${packageInfo.buildNumber}",
-    );
-  }
+  final UpdateService updateService = UpdateService();
 
   @override
   void initState() {
@@ -39,13 +35,84 @@ class _SettingsPageState extends State<SettingsPage> {
     // ]);
     _loadSettings(); // Cargar datos guardados
     debugVersion();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForUpdate(showDialogOnUpdate: true);
+    });
   }
 
-  @override
-  void dispose() {
-    // 🔹 Restaurar orientación libre al salir
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    super.dispose();
+  Future<void> _checkForUpdate({bool showDialogOnUpdate = false}) async {
+    final hasUpdate = await updateService.checkForUpdate();
+
+    if (!mounted) return;
+
+    // Si hay una actualización, mostrar el dialog
+    if (hasUpdate && showDialogOnUpdate) {
+      _showUpdateDialog();
+    }
+  }
+
+  /// 🔹 Mostrar un diálogo cuando hay nueva versión
+  void _showUpdateDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // No cerrar al tocar fuera
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey.shade900,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            "Nueva versión disponible",
+            style: TextStyle(
+              color: MyColors.light,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const Text(
+            "Se ha detectado una nueva versión de la aplicación. "
+            "¿Deseas descargarla e instalarla ahora?",
+            style: TextStyle(color: MyColors.light),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el diálogo
+              },
+              child: const Text(
+                "Más tarde",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el diálogo
+                Navigator.of(context).pushNamed(AppRoutes.update);
+              },
+              icon: const Icon(Icons.download, color: Colors.white),
+              label: const Text(
+                "Actualizar",
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: MyColors.secundary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  /////////////////////////////////////////////////////////////////////////////////////
+
+  Future<void> debugVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    print(
+      "📱 Versión instalada: ${packageInfo.version}+${packageInfo.buildNumber}",
+    );
   }
 
   int _selectedIndex = 0;

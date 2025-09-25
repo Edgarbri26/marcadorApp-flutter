@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Permite acceder a la carpeta de archivos externos de la app -->
+    <external-path name="external_files" path="." />
+
+    <!-- Si quieres acceso a la carpeta de cache externa -->
+    <external-cache-path name="external_cache" path="." />
+
+    <!-- Si usas internal storage también -->
+    <files-path name="internal_files" path="." />
+
+    <cache-path name="internal_cache" path="." />
+</paths>
