@@ -5,11 +5,13 @@ class CenterButtons extends StatelessWidget {
   final VoidCallback? onResetScores;
   final VoidCallback? onResetAll;
   final VoidCallback? onUndo;
+  final VoidCallback? onSwap;
   const CenterButtons({
     super.key,
     this.onResetScores,
     this.onResetAll,
-    this.onUndo,
+    this.onUndo, 
+    this.onSwap,
   });
 
   @override
@@ -108,6 +110,11 @@ class CenterButtons extends StatelessWidget {
           IconButton(
             onPressed: onUndo,
             icon: Icon(Icons.undo, color: MyColors.lightGray),
+          ),
+          // flip
+          IconButton(
+            onPressed: onSwap,
+            icon: Icon(Icons.swap_horiz_rounded, color: MyColors.lightGray),
           ),
         ],
       ),
