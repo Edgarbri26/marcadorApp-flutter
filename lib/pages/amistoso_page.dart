@@ -67,21 +67,59 @@ class _AmistosoPageState extends State<AmistosoPage> {
       return;
     }
 
-    // final prefs = await SharedPreferences.getInstance();
-    // await prefs.setString('player1', _player1Controller.text);
-    // await prefs.setString('player2', _player2Controller.text);
-    // await prefs.setInt('points', _selectedPoints);
-    // await prefs.setInt('sets', _selectedSets);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('player1', _player1Controller.text);
+    await prefs.setString('player2', _player2Controller.text);
+    await prefs.setInt('points', _selectedPoints);
+    await prefs.setInt('sets', _selectedSets);
 
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: Text(
-    //       'Guardado: ${_player1Controller.text} vs ${_player2Controller.text} | '
-    //       'Puntos: $_selectedPoints | Sets: $_selectedSets',
-    //     ),
-    //   ),
-    // );
-    // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Guardado: ${_player1Controller.text} vs ${_player2Controller.text} | '
+          'Puntos: $_selectedPoints | Sets: $_selectedSets',
+        ),
+      ),
+    );
+
+    final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(
+      _player1Seleccionado!,
+    );
+    final inscrip2 = await ApiService().obtenerInscriptionIdPorCI(
+      _player2Seleccionado!,
+    );
+
+    if (inscrip1 == null || inscrip2 == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'No se pudo obtener la inscripción de uno o ambos jugadores',
+          ),
+          backgroundColor: MyColors.secundary,
+        ),
+      );
+      return;
+    }
+    Match match = Match(
+      matchId: null,
+      tournamentId: 4, // ID fijo para amistoso
+      inscription1Id: inscrip1,
+      inscription2Id: inscrip2,
+      round: 'Amistoso',
+      status: 'En Juego',
+      date: DateTime.now().toIso8601String(),
+      nombre1: _player1Controller.text,
+      nombre2: _player2Controller.text,
+    );
+
+    final nuevoMatchId = await ApiService().createMatch(match);
+    if (nuevoMatchId != null) {
+      match.matchId = nuevoMatchId;
+    }
+
+    Navigator.of(
+      context,
+    ).pushNamed(AppRoutes.markerTournament, arguments: match);
   }
 
   // Jugador? _player1Seleccionado;

@@ -16,11 +16,61 @@ class MarkerOffLinePage extends StatefulWidget {
 
 class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
   Marker marker = Marker();
+  final TextEditingController _controller = TextEditingController();
   String player1Name = 'Player1';
   String player2Name = 'Player2';
   bool swap = true;
 
   get prefs => null;
+
+  Future<void> mostrarDialogoCambiarNombre({
+    required BuildContext context,
+    required String nombreActual,
+    required void Function(String nuevoNombre) onGuardar, // El callback
+  }) async {
+    final TextEditingController controller = TextEditingController(
+      text: nombreActual,
+    );
+
+    final String? nuevoNombre = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Cambiar Nombre'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: "Introduce el nuevo nombre",
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              // Retorna el texto del campo SÓLO si es diferente del actual y no está vacío
+              onPressed: () {
+                final texto = controller.text.trim();
+                if (texto.isNotEmpty && texto != nombreActual) {
+                  Navigator.pop(context, texto);
+                } else {
+                  Navigator.pop(context, null); // Cierra sin cambios
+                }
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    // 2. Ejecutar la función 'onGuardar' si el usuario ingresó un nombre válido
+    if (nuevoNombre != null) {
+      onGuardar(nuevoNombre);
+    }
+  }
 
   @override
   void initState() {
@@ -31,7 +81,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     marker.targetPoints = 7;
-    marker.targetSets = 1;
+    marker.targetSets = 3;
     // setState(() {
     //   player1Name = prefs.getString('player1') ?? 'Player1';
     //   player2Name = prefs.getString('player2') ?? 'Player2';
@@ -70,7 +120,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
       marker.resetScores();
     }
 
-    if (marker.checkWinSetCondition() || jugarWin == 0) {
+    if (marker.checkWinSetCondition() && jugarWin != 0) {
       setState(() {
         swap = !swap;
       });
@@ -106,6 +156,15 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
                 Expanded(
                   child: PlayerGameArea(
                     isTournament: false,
+                    onEdit: () {
+                      mostrarDialogoCambiarNombre(
+                        nombreActual: player1Name,
+                        context: context,
+                        onGuardar: (nuevoNombre) {
+                          player1Name = nuevoNombre;
+                        },
+                      );
+                    },
                     takeOut: marker.playerTurn == 1,
                     playerName: player1Name,
                     playerNumber: 1,
@@ -121,6 +180,15 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
                 ),
                 Expanded(
                   child: PlayerGameArea(
+                    onEdit: () {
+                      mostrarDialogoCambiarNombre(
+                        nombreActual: player1Name,
+                        context: context,
+                        onGuardar: (nuevoNombre) {
+                          player2Name = nuevoNombre;
+                        },
+                      );
+                    },
                     isTournament: false,
                     takeOut: marker.playerTurn == 2,
                     playerName: player2Name,

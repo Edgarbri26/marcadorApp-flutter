@@ -121,7 +121,6 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
     if (widget.marker.checkWinSetCondition()) {
       // aqui para guardar el set
     }
-    
   }
 
   // void _undoTakeoOut() {
@@ -239,6 +238,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                 children: [
                   Expanded(
                     child: PlayerGameArea(
+                      isTournament: false,
                       takeOut: widget.marker.playerTurn == 1,
                       playerName: _player1Name,
                       playerNumber: 1,
@@ -254,6 +254,7 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
                   ),
                   Expanded(
                     child: PlayerGameArea(
+                      isTournament: false,
                       takeOut: widget.marker.playerTurn == 2,
                       playerName: _player2Name,
                       playerNumber: 2,

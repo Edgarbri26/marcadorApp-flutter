@@ -20,8 +20,8 @@ class PlayerGameArea extends StatefulWidget {
 
     required this.playerNumber,
     required this.playerName,
-    required this.takeOut, 
-    this.onEdit, 
+    required this.takeOut,
+    this.onEdit,
     required this.isTournament,
   });
 
@@ -46,6 +46,16 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                !widget.isTournament
+                    ? IconButton(
+                      onPressed: widget.onEdit,
+                      icon: Icon(
+                        Icons.edit,
+                        size: 30,
+                        color: MyColors.lightGray,
+                      ),
+                    )
+                    : SizedBox(),
                 // IconButton(onPressed: widget.onEdit, icon: Icons.edit),
                 Padding(
                   padding: const EdgeInsets.only(right: Spacing.sm),

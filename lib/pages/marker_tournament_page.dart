@@ -158,6 +158,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
             children: [
               Expanded(
                 child: PlayerGameArea(
+                  isTournament: true,
                   takeOut: marker.playerTurn == 1,
                   playerName: _player1Name,
                   playerNumber: 1,
@@ -173,6 +174,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
               ),
               Expanded(
                 child: PlayerGameArea(
+                  isTournament: true,
                   takeOut: marker.playerTurn == 2,
                   playerName: _player2Name,
                   playerNumber: 2,
