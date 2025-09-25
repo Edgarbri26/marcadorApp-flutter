@@ -32,6 +32,8 @@ class _MatchDropdownState extends State<MatchDropdown> {
     final matches = await ApiService().fetchMatches();
 
     return matches.where((match) {
+      if (match.status == 'Finalizado') return false;
+      
       final nombre1 = _nombresPorInscriptionId[match.inscription1Id] ?? '';
       final nombre2 = _nombresPorInscriptionId[match.inscription2Id] ?? '';
       final texto = '$nombre1 vs $nombre2'.toLowerCase();
