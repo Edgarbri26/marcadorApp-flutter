@@ -3,12 +3,9 @@ import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
-import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/match_dropdown.dart';
 import 'package:marcador/widget/button_app.dart';
-import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
-import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PartidoPage extends StatefulWidget {

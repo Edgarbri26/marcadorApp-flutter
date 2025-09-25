@@ -148,7 +148,7 @@ class ApiService {
 
   Future<int?> obtenerInscriptionIdPorCI(Jugador player) async {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/inscription/player/${player.ci}'),
+      Uri.parse('$localUrl/inscription/player/${player.ci}'),
       headers: {'Content-Type': 'application/json'},
     );
 

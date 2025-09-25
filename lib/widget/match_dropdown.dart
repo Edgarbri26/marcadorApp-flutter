@@ -3,7 +3,6 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/models/match.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MatchDropdown extends StatefulWidget {
   final Match? selectedItem;

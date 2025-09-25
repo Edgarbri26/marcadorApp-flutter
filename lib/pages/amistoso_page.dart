@@ -63,7 +63,6 @@ class _AmistosoPageState extends State<AmistosoPage> {
           backgroundColor: MyColors.secundary,
         ),
       );
-      //Navigator.of(context).pushNamed(AppRoutes.markerTournament, arguments: match);
 
       return;
     }

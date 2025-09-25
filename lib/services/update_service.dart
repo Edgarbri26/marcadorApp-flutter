@@ -1,13 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'dart:isolate';
 
 // @pragma('vm:entry-point')
 // void downloadCallback(dynamic id, dynamic status, dynamic progress) {
