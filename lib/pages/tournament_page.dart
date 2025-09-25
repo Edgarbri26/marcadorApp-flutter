@@ -60,7 +60,7 @@ class _PartidoPageState extends State<PartidoPage> {
           backgroundColor: MyColors.secundary,
         ),
       );
-      Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+      // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
       return;
     }
 

@@ -46,6 +46,7 @@ class Marker {
       // } else if (lastScore == -2 && player2Score < targetPoints) {
       //   player2Score++;
       // }
+      _updateTurn();
     }
   }
 
@@ -61,6 +62,7 @@ class Marker {
       player2Score++;
     }
     scoreHistoryAdd(player);
+    _updateTurn();
     checkDifference();
   }
 
@@ -82,6 +84,7 @@ class Marker {
     }
     scoreHistoryAdd(-player);
     checkDifference();
+    _updateTurn();
   }
 
   void resetScores() {
@@ -153,7 +156,8 @@ class Marker {
   bool checkWinSetCondition() {
     if (player1Score >= targetPoints && player1Score >= player2Score + 2) {
       incrementSet(1);
-    } else if (player2Score >= targetPoints && player2Score >= player1Score + 2) {
+    } else if (player2Score >= targetPoints &&
+        player2Score >= player1Score + 2) {
       incrementSet(2);
     } else {
       return false;
@@ -163,7 +167,7 @@ class Marker {
 
   int checkMatchWinner() {
     int matchWinner = 0;
-    
+
     if (player1Sets == (targetSets - 1) / 2 + 1) {
       matchWinner = 1;
     } else if (player2Sets == (targetSets - 1) / 2 + 1) {

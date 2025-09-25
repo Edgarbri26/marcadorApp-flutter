@@ -66,7 +66,7 @@ class _SignalOffState extends State<SignalOff> {
         ),
       ),
     );
-    Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+    Navigator.pushNamed(context, AppRoutes.markerOffLine);
   }
 
   @override
