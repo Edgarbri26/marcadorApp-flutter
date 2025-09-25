@@ -24,16 +24,23 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    // // 🔹 Bloquea orientación vertical
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
+    // 🔹 Bloquea orientación vertical
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     _loadSettings(); // Cargar datos guardados
     debugVersion();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForUpdate(showDialogOnUpdate: true);
     });
+  }
+
+  @override
+  void dispose() {
+    // 🔹 Restaurar orientación libre al salir
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    super.dispose();
   }
 
   Future<void> _checkForUpdate({bool showDialogOnUpdate = false}) async {

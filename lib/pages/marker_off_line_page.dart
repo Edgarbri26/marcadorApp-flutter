@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/center_buttons.dart';
@@ -104,6 +105,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
               children: [
                 Expanded(
                   child: PlayerGameArea(
+                    isTournament: false,
                     takeOut: marker.playerTurn == 1,
                     playerName: player1Name,
                     playerNumber: 1,
@@ -119,6 +121,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
                 ),
                 Expanded(
                   child: PlayerGameArea(
+                    isTournament: false,
                     takeOut: marker.playerTurn == 2,
                     playerName: player2Name,
                     playerNumber: 2,
@@ -161,6 +164,11 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
                     setState(() {
                       swap = !swap;
                     });
+                  },
+                  onEvent: () {
+                    Navigator.of(
+                      context,
+                    ).pushReplacementNamed(AppRoutes.settings);
                   },
                 ),
               ],

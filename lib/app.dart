@@ -38,13 +38,13 @@ class MyApp extends StatelessWidget {
           case AppRoutes.update:
             return MaterialPageRoute(builder: (context) => UpdatePage());
           case AppRoutes.markerTournament:
-            return MaterialPageRoute(builder: (context) => MarkerTournamentPage(match: settings.arguments as Match));
-          default:
             return MaterialPageRoute(
               builder:
                   (context) =>
                       MarkerTournamentPage(match: settings.arguments as Match),
             );
+          default:
+            return MaterialPageRoute(builder: (context) => MarkerOffLinePage());
         }
       },
       // home: GameSettingsPage(),

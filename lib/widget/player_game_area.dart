@@ -7,6 +7,8 @@ class PlayerGameArea extends StatefulWidget {
   final int playerNumber;
   final Color backgroundColor;
   final Function onIncrement;
+  final VoidCallback? onEdit;
+  final bool isTournament;
 
   final String playerName;
   final bool takeOut;
@@ -18,7 +20,9 @@ class PlayerGameArea extends StatefulWidget {
 
     required this.playerNumber,
     required this.playerName,
-    required this.takeOut,
+    required this.takeOut, 
+    this.onEdit, 
+    required this.isTournament,
   });
 
   @override
@@ -42,6 +46,7 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // IconButton(onPressed: widget.onEdit, icon: Icons.edit),
                 Padding(
                   padding: const EdgeInsets.only(right: Spacing.sm),
                   child: Text(
