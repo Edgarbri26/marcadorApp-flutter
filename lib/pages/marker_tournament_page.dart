@@ -50,7 +50,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                 print("si funciono");
                 Navigator.of(context).pop(); // Cerrar el diálogo de ganador
                 print('Sets guardados: $_sets');
-
+                print('Match guardado: ${widget.match.matchId}');
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -70,10 +70,15 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            //await ApiService().putMatch(widget.match);
+                            //actualiza el macth
+
+                            await ApiService().putMatch(widget.match);
+
+                            // guarda los sets
                             for (final set in _sets) {
                               await ApiService().postSet(set);
                             }
+
                             // Cerrar el diálogo de confirmación
                             Navigator.of(
                               context,
@@ -98,12 +103,11 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   }
 
   void _checkWinCondition() {
-
     if (marker.checkWinSetCondition()) {
       // aqui para guardar el set
       final p1Score = marker.player1Score;
       final p2Score = marker.player2Score;
-      
+
       final setResult = SetResult(
         matchId: widget.match.matchId,
         setNumber: marker.totalSetsPlayed,
@@ -114,16 +118,32 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
 
       print("marker.player1Score ${marker.player1Score}");
       print("marker.player2Score ${marker.player2Score}");
-      print('Set guardado: ${_sets[0].scoreParticipant1} y ${_sets[0].scoreParticipant2}');
+      print(
+        'Set guardado: ${_sets[0].scoreParticipant1} y ${_sets[0].scoreParticipant2}',
+      );
       marker.resetScores();
     }
 
     int jugarWin = marker.checkMatchWinner();
+
     if (jugarWin != 0) {
-      jugarWin == 1
-          ? _showMatchWinnerDialog(_player1Name)
-          : _showMatchWinnerDialog(_player2Name);
-        marker.resetAll();
+
+      widget.match.status = 'Finalizado';
+      
+      final fechaLocal = DateTime.now();
+      final fechaAjustada = fechaLocal.subtract(Duration(hours: 4));
+      final fechaIso = fechaAjustada.toIso8601String();
+      widget.match.date = fechaIso;
+
+      if (jugarWin == 1) {
+        _showMatchWinnerDialog(_player1Name);
+        widget.match.winnerInscriptionId = widget.match.inscription1Id;
+      } else {
+        _showMatchWinnerDialog(_player2Name);
+        widget.match.winnerInscriptionId = widget.match.inscription2Id;
+      }
+
+      marker.resetAll();
     }
   }
 

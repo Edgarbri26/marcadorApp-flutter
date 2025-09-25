@@ -139,9 +139,10 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
+       print('Partido actualizado exitosamente: ${response.body}');
       return true; // Actualización exitosa
     } else {
-      // print('Error al actualizar el partido: ${response.body}');
+       print('Error al actualizar el partido: ${response.body}');
       return false;
     }
   }

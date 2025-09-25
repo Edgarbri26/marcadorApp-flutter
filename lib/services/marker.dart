@@ -153,11 +153,8 @@ class Marker {
   bool checkWinSetCondition() {
     if (player1Score >= targetPoints && player1Score >= player2Score + 2) {
       incrementSet(1);
-      resetScores();
-    } else if (player2Score >= targetPoints &&
-        player2Score >= player1Score + 2) {
+    } else if (player2Score >= targetPoints && player2Score >= player1Score + 2) {
       incrementSet(2);
-      //resetScores();
     } else {
       return false;
     }
