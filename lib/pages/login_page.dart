@@ -15,10 +15,15 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   final _formLoginKey = GlobalKey<FormState>();
 
+  final userFieldKey = GlobalKey<FormFieldState>();
+  final pswFieldKey = GlobalKey<FormFieldState>();
+
   var checkBoxState = false;
   bool showPassword = false;
   var userInputController = TextEditingController();
   var pswInputController = TextEditingController();
+
+  bool isLoading = false;
 
   double expectedTitlesize = 55;
   late BoxDecoration userContainerDecoration;
@@ -55,13 +60,12 @@ class _LogInPageState extends State<LogInPage> {
     final isLogged = prefs.getString('ci');
 
     if (isLogged != null) {
-      print("Sì hay sesión activa: $isLogged");
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacementNamed(AppRoutes.settings);
-    } else {
-      print("No hay sesión activa: $isLogged");
     }
   }
 
+  // ignore: strict_top_level_inference
   String? validateInput(value) {
     if (value == null || value.isEmpty) {
       return "Ingresa una cédula de usuario";
@@ -107,11 +111,12 @@ class _LogInPageState extends State<LogInPage> {
                         padding: const EdgeInsets.only(left: 24, bottom: 4),
                         decoration: userContainerDecoration,
                         child: TextFormField(
-                          key: const Key('input-name'),
+                          key: userFieldKey,
                           controller: userInputController,
                           style: Theme.of(context).textTheme.bodyLarge,
                           validator: (value) => validateInput(value),
                           onTap: () {
+                            userFieldKey.currentState?.reset();
                             setState(() {
                               userContainerDecoration =
                                   activeContainerInputDecoration;
@@ -145,16 +150,17 @@ class _LogInPageState extends State<LogInPage> {
                         margin: const EdgeInsets.symmetric(vertical: 24),
                         decoration: pswContainerDecoration,
                         child: TextFormField(
-                          key: const Key('input-psw'),
+                          key: pswFieldKey,
                           controller: pswInputController,
                           style: Theme.of(context).textTheme.bodyLarge,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Ingrese su contraseña";
+                              return 'Ingrese una contraseña';
                             }
                             return null;
                           },
                           onTap: () {
+                            pswFieldKey.currentState?.reset();
                             setState(() {
                               pswContainerDecoration =
                                   activeContainerInputDecoration;
@@ -220,39 +226,133 @@ class _LogInPageState extends State<LogInPage> {
                         width: 394,
                         height: 64,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formLoginKey.currentState!.validate()) {
-                              final ci = userInputController.text;
-                              final psw = pswInputController.text;
+                          onPressed:
+                              isLoading
+                                  ? null
+                                  : () async {
+                                    if (_formLoginKey.currentState!
+                                        .validate()) {
+                                      final ci = userInputController.text;
+                                      final psw = pswInputController.text;
 
-                              try {
-                                final accessAllowed = await ApiService()
-                                    .authenticateAndVereficateAdmin(ci, psw);
+                                      setState(() => isLoading = true);
 
-                                if (accessAllowed) {
-                                  if (checkBoxState) {
-                                    final prefs =
-                                        await SharedPreferences.getInstance();
-                                    await prefs.setString('ci', ci);
-                                  }
-                                  Navigator.of(
-                                    // ignore: use_build_context_synchronously
-                                    context,
-                                  ).pushReplacementNamed(AppRoutes.settings);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("Contraseña incorrecta"),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(e.toString())),
-                                );
-                              }
-                            }
-                          },
+                                      try {
+                                        final accessAllowed = await ApiService().authenticateAndVereficateAdmin(ci, psw);
+
+                                        if (accessAllowed) {
+                                          if (checkBoxState) {
+                                            final prefs = await SharedPreferences.getInstance();
+                                            await prefs.setString('ci', ci);
+                                          }
+
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context).clearSnackBars(); // Limpia anteriores
+                                            await ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      "Inicio de sesión exitoso",
+                                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                            color: MyColors.light,
+                                                            fontWeight:FontWeight.w500,
+                                                          ),
+                                                    ),
+                                                    backgroundColor: MyColors.secundary,
+                                                    behavior:
+                                                        SnackBarBehavior
+                                                            .floating,
+                                                    duration: const Duration(
+                                                      seconds: 2,
+                                                    ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ).closed;
+                                          }
+
+                                          Navigator.of(
+                                            // ignore: use_build_context_synchronously
+                                            context, ).pushReplacementNamed(AppRoutes.settings,);
+
+                                        } else {
+                                          if (mounted) {
+                                            setState(() => isLoading = false);
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).clearSnackBars(); // Limpia anteriores
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  "Contraseña incorrecta",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                ),
+                                                backgroundColor:
+                                                    Colors.redAccent,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                duration: const Duration(
+                                                  seconds: 3,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      } catch (e) {
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).clearSnackBars(); // Limpia anteriores
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                e.toString(),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                              ),
+                                              backgroundColor: Colors.redAccent,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              duration: const Duration(
+                                                seconds: 3,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      } finally {
+                                        if (mounted)
+                                          setState(() => isLoading = false);
+                                      }
+                                    }
+                                  },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: MyColors.secundary,
                             shape: const RoundedRectangleBorder(
@@ -261,18 +361,29 @@ class _LogInPageState extends State<LogInPage> {
                               ),
                             ),
                           ),
-                          child: Text(
-                            "Iniciar sesión",
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium?.copyWith(
-                              color: MyColors.light,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child:
+                              isLoading
+                                  ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                  : Text(
+                                    "Iniciar sesión",
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium?.copyWith(
+                                      color: MyColors.light,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                         ),
                       ),
-                      // const DividerWithText(title: ""),
                     ],
                   ),
                 ),
