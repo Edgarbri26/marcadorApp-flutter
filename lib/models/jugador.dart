@@ -5,17 +5,20 @@ class Jugador {
   Jugador({required this.ci, required this.nombreCompleto});
 
   factory Jugador.fromJson(Map<String, dynamic> json) {
-  // Toma CI de mayúscula o minúscula; si fuera int, conviértelo a String
-  final rawCi = json['CI'] ?? json['ci'];
-  final cedula = rawCi?.toString() ?? '';
+    // Toma CI de mayúscula o minúscula; si fuera int, conviértelo a String
+    final rawCi = json['CI'] ?? json['ci'];
+    final cedula = rawCi?.toString() ?? '';
 
-  // Igual con nombres: revisa si vienen como first_name o firstName
-  final fn = json['first_name'] ?? json['firstName'] ?? '';
-  final ln = json['last_name']  ?? json['lastName']  ?? '';
+    // Extrae solo el primer nombre y primer apellido
+    final rawFirstName = json['first_name'] ?? json['firstName'] ?? '';
+    final rawLastName = json['last_name'] ?? json['lastName'] ?? '';
 
-  return Jugador(
-    ci: cedula,
-    nombreCompleto: '$fn $ln'.trim(),
-  );
-}
+    final primerNombre = rawFirstName.split(' ').first;
+    final primerApellido = rawLastName.split(' ').first;
+
+    return Jugador(
+      ci: cedula,
+      nombreCompleto: '$primerNombre $primerApellido',
+    );
+  }
 }

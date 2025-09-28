@@ -6,5 +6,6 @@ class AppRoutes {
   static const String markerOffLine = 'MarkerOffLine';
   static const String update = 'UpdatePage';
   static const String markerTournament = 'TournamentPage';
+  static const String logIn = 'LogInPage';
   
 }

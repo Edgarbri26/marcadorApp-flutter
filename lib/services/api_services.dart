@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:marcador/models/inscription.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
 import 'package:marcador/models/set_result.dart';
-/*import '../utils/constants.dart';*/
 
 class ApiService {
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
@@ -164,5 +164,74 @@ class ApiService {
     }
 
     return null;
+  }
+
+  Future<void> crearInscripcion({
+    required int tournamentId,
+    required String playerCi,
+    int? teamId,
+    int? seed,
+  }) async {
+    final url = Uri.parse('https://lpp-backend.onrender.com/api/inscription');
+
+    final payload = {
+      'tournament_id': tournamentId,
+      'player_ci': playerCi,
+      'team_id': teamId,
+      'seed': seed,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(payload),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 201 && data['ok'] == true) {
+        print('✅ Inscripción creada: ${data['inscription']}');
+      } else {
+        print('❌ Error en la inscripción: ${data['error']}');
+      }
+    } catch (e) {
+      print('🔥 Error de red o servidor: $e');
+    }
+  }
+
+  Future<List<String>> loadAuthorizedCI() async {
+    final content = await rootBundle.loadString('assets/config/admin.json');
+    final data = jsonDecode(content);
+    return List<String>.from(data["ci"]);
+  }
+
+  Future<bool> authenticateAndVereficateAdmin(
+    String ci,
+    String password,
+  ) async {
+    final ciAutorized = await loadAuthorizedCI();
+
+    if (!ciAutorized.contains(ci)) {
+      throw Exception('Cédula no autorizada');
+    }
+
+    final response = await http.post(
+      Uri.parse("$localUrl/credential/authenticate"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({'player_ci': ci, 'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['message'] == 'Autenticación exitosa';
+    }
+    return false;
   }
 }

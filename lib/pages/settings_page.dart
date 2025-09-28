@@ -172,6 +172,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('ci');
+                  Navigator.of(context).pushReplacementNamed(AppRoutes.logIn);
+                },
+              ),
+              IconButton(
                 onPressed: () {
                   Navigator.pushNamed(context, AppRoutes.update);
                 },

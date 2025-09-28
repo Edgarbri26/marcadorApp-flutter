@@ -26,6 +26,15 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
     return DropdownSearch<Jugador>(
       items: (String? filtro, _) async {
         final todos = await ApiService().fetchJugadores();
+        /*for (var j in todos) {
+          await ApiService().crearInscripcion(
+            tournamentId: 1,
+            playerCi: j.ci,
+            teamId: null,
+            seed: null,
+          );
+          print('Jugador: ${j.nombreCompleto}');
+        }*/
         return todos
             .where(
               (j) => j.nombreCompleto.toLowerCase().contains(

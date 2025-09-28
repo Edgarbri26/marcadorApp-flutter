@@ -40,6 +40,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
     super.initState();
     _loadSettings(); // Cargar datos guardados
   }
+  
 
   /// Cargar ajustes desde SharedPreferences
   Future<void> _loadSettings() async {
@@ -82,9 +83,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
       ),
     );
 
-    final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(
-      _player1Seleccionado!,
-    );
+    final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(_player1Seleccionado!);
     final inscrip2 = await ApiService().obtenerInscriptionIdPorCI(
       _player2Seleccionado!,
     );
@@ -102,7 +101,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
     }
     Match match = Match(
       matchId: null,
-      tournamentId: 4, // ID fijo para amistoso
+      tournamentId: 1, // ID fijo para amistoso
       inscription1Id: inscrip1,
       inscription2Id: inscrip2,
       round: 'Amistoso',

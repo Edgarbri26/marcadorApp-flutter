@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/design/spacing.dart';
-import 'package:marcador/models/set_result.dart';
-import 'package:marcador/services/take_out.dart';
 import 'package:marcador/services/marker.dart';
-import 'package:marcador/services/take_out2.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:marcador/widget/sets_points.dart';
@@ -24,8 +20,11 @@ class _MarcadorVerticalPageState extends State<MarcadorVerticalPage> {
   String _player1Name = 'Jugador 1';
   String _player2Name = 'Jugador 2';
   // TakeOut2 takeOut = TakeOut2();
+  // ignore: unused_field
   int? _matchId;
+  // ignore: unused_field, non_constant_identifier_names
   int? _Inscrip1Id;
+  // ignore: unused_field, non_constant_identifier_names
   int? _Inscrip2Id;
 
   @override
