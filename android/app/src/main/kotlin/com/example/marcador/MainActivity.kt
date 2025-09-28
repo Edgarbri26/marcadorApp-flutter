@@ -1,4 +1,4 @@
-package com.example.Marcador
+package com.example.marcador
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Marcador/design/my_colors.dart';
+import 'package:marcador/design/my_colors.dart';
 
 class DividerWithText extends StatelessWidget {
   final String title;

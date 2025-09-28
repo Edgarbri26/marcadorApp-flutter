@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Marcador/design/my_colors.dart';
-import 'package:Marcador/services/marker.dart';
+import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/services/marker.dart';
 
 class SetAndPointsSelet extends StatefulWidget {
   final Marker marker;

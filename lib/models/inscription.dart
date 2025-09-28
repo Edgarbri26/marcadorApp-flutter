@@ -1,4 +1,4 @@
-import 'package:Marcador/models/jugador.dart';
+import 'package:marcador/models/jugador.dart';
 
 class Inscription {
   final int inscriptionId;

@@ -1,15 +1,15 @@
 {
   "project_info": {
     "project_number": "640056780733",
-    "project_id": "Marcador-pingpong-flutter",
-    "storage_bucket": "Marcador-pingpong-flutter.firebasestorage.app"
+    "project_id": "marcador-pingpong-flutter",
+    "storage_bucket": "marcador-pingpong-flutter.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:640056780733:android:33cb5524f7a03315df94d4",
         "android_client_info": {
-          "package_name": "com.example.Marcador"
+          "package_name": "com.example.marcador"
         }
       },
       "oauth_client": [],

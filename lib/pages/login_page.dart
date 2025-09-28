@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:Marcador/config/app_routes.dart';
-import 'package:Marcador/design/my_colors.dart';
-import 'package:Marcador/design/radius.dart';
-import 'package:Marcador/services/api_services.dart';
+import 'package:marcador/config/app_routes.dart';
+import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/design/radius.dart';
+import 'package:marcador/services/api_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInPage extends StatefulWidget {
@@ -83,7 +83,7 @@ class _LogInPageState extends State<LogInPage> {
             child: Column(
               children: [
                 Text(
-                  "Marcador",
+                  "marcador",
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
                     fontSize: expectedTitlesize,
                     color: MyColors.secundary,

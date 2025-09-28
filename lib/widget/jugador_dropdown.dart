@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:Marcador/design/my_colors.dart';
-import 'package:Marcador/models/jugador.dart';
-import 'package:Marcador/services/api_services.dart';
+import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/models/jugador.dart';
+import 'package:marcador/services/api_services.dart';
 
 class JugadorDropdown extends StatefulWidget {
   final Jugador? selectedItem;

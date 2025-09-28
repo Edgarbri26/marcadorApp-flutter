@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Marcador/design/my_colors.dart';
-import 'package:Marcador/design/type_button.dart';
+import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/design/type_button.dart';
 
 class ButtonApp extends StatelessWidget {
   final void Function() onPressed;

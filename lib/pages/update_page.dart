@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:Marcador/design/my_colors.dart';
-import 'package:Marcador/design/spacing.dart';
-import 'package:Marcador/services/update_service.dart';
+import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/design/spacing.dart';
+import 'package:marcador/services/update_service.dart';
 
 class UpdatePage extends StatefulWidget {
   const UpdatePage({super.key});
