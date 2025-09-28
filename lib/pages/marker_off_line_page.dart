@@ -16,7 +16,7 @@ class MarkerOffLinePage extends StatefulWidget {
 
 class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
   Marker marker = Marker();
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController controller = TextEditingController();
   String player1Name = 'Player1';
   String player2Name = 'Player2';
   bool swap = true;

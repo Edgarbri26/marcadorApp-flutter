@@ -55,7 +55,10 @@ class _LogInPageState extends State<LogInPage> {
     final isLogged = prefs.getString('ci');
 
     if (isLogged != null) {
+      print("Sì hay sesión activa: $isLogged");
       Navigator.of(context).pushReplacementNamed(AppRoutes.settings);
+    } else { 
+      print("No hay sesión activa: $isLogged");
     }
   }
 
@@ -122,12 +125,12 @@ class _LogInPageState extends State<LogInPage> {
                                   defaultContainerInputDecoration;
                             });
                           },
-                          onSaved: (userNameValue) {
-                            
-                          },
+                          onSaved: (userNameValue) {},
                           decoration: InputDecoration(
                             isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                            ),
                             border: defaultInputBorder,
                             label: Text(
                               "Usuario",
@@ -168,23 +171,27 @@ class _LogInPageState extends State<LogInPage> {
                           obscureText: !showPassword,
                           decoration: InputDecoration(
                             isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                            ),
                             border: defaultInputBorder,
                             label: const Text("Contraseña"),
                             labelStyle: defaultInputLabelTheme,
                             suffixIcon: IconButton(
-                            padding: const EdgeInsets.only(right: 8),
-                            icon: Icon(
-                              showPassword ? Icons.visibility_off : Icons.visibility,
-                              color: MyColors.lightGray,
-                              size: 23,
+                              padding: const EdgeInsets.only(right: 8),
+                              icon: Icon(
+                                showPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: MyColors.lightGray,
+                                size: 23,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  showPassword = !showPassword;
+                                });
+                              },
                             ),
-                            onPressed: () {
-                              setState(() {
-                                showPassword = !showPassword;
-                              });
-                            },
-                          ),
                           ),
                         ),
                       ),
@@ -223,10 +230,10 @@ class _LogInPageState extends State<LogInPage> {
                                     .authenticateAndVereficateAdmin(ci, psw);
 
                                 if (accessAllowed) {
-                                  if (accessAllowed) {
+                                  if (checkBoxState) {
                                     final prefs =
                                         await SharedPreferences.getInstance();
-                                        await prefs.setString('ci', ci);
+                                    await prefs.setString('ci', ci);
                                   }
                                   Navigator.of(
                                     // ignore: use_build_context_synchronously

@@ -129,7 +129,7 @@ class _SettingsPageState extends State<SettingsPage> {
     } else if (index == 1) {
       title = 'Partido amistoso';
     } else if (index == 2) {
-      title = 'Configuracion de partido';
+      title = 'Partidos por Torneos';
     }
     setState(() {
       _selectedIndex = index;
@@ -160,8 +160,8 @@ class _SettingsPageState extends State<SettingsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: Spacing.md),
+              Expanded(
+                //padding: const EdgeInsets.only(left: Spacing.md),
                 child: Text(
                   title,
                   style: TextStyle(
@@ -172,14 +172,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.logout),
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.remove('ci');
-                  Navigator.of(context).pushReplacementNamed(AppRoutes.logIn);
-                },
-              ),
-              IconButton(
                 onPressed: () {
                   Navigator.pushNamed(context, AppRoutes.update);
                 },
@@ -187,8 +179,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   // Icons.account_circle,
                   Icons.update,
                   color: MyColors.lightGray,
-                  size: 30,
+                  size: 25,
                 ),
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.logout,
+                  color: MyColors.lightGray,
+                  size: 25,
+                  ),
+                
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('ci');
+                  // ignore: use_build_context_synchronously
+                  Navigator.of(context).pushReplacementNamed(AppRoutes.logIn);
+                },
               ),
             ],
           ),

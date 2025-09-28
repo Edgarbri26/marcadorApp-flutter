@@ -16,6 +16,7 @@ class TakeOut2 {
   }
 
   /// Registra en historial
+  // ignore: unused_element
   void _addHistory(int turn) {
     historyTakeOut.add(turn);
   }

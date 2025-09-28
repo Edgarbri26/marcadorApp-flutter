@@ -13,7 +13,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
-  Marker marker = Marker();
+  final Marker marker = Marker();
 
   @override
   Widget build(BuildContext context) {
