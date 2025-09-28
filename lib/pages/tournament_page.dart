@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:marcador/config/app_routes.dart';
-import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/design/spacing.dart';
-import 'package:marcador/design/type_button.dart';
-import 'package:marcador/widget/match_dropdown.dart';
-import 'package:marcador/widget/button_app.dart';
-import 'package:marcador/models/match.dart';
+import 'package:Marcador/config/app_routes.dart';
+import 'package:Marcador/design/my_colors.dart';
+import 'package:Marcador/design/spacing.dart';
+import 'package:Marcador/design/type_button.dart';
+import 'package:Marcador/widget/match_dropdown.dart';
+import 'package:Marcador/widget/button_app.dart';
+import 'package:Marcador/models/match.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PartidoPage extends StatefulWidget {
-
   const PartidoPage({super.key});
 
   @override
@@ -60,7 +59,7 @@ class _PartidoPageState extends State<PartidoPage> {
           backgroundColor: MyColors.secundary,
         ),
       );
-      // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+      // Navigator.pushNamed(context, AppRoutes.MarcadorVertical);
       return;
     }
 
@@ -78,10 +77,10 @@ class _PartidoPageState extends State<PartidoPage> {
         ),
       ),
     );
-    Navigator.of(context).pushNamed(AppRoutes.markerTournament, arguments: _matchSelect);
+    Navigator.of(
+      context,
+    ).pushNamed(AppRoutes.markerTournament, arguments: _matchSelect);
   }
-
-  
 
   @override
   Widget build(BuildContext context) {

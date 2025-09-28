@@ -18,7 +18,7 @@ class Marker {
 
   Marker();
 
-  // marcador
+  // Marcador
 
   scoreHistoryAdd(int nJugador) {
     scoreHistory.add(nJugador);

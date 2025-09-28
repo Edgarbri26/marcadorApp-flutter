@@ -1,6 +1,6 @@
 {
-    "name": "marcador",
-    "short_name": "marcador",
+    "name": "Marcador",
+    "short_name": "Marcador",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:marcador/app.dart';
+import 'package:Marcador/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

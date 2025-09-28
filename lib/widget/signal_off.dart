@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:marcador/config/app_routes.dart';
-import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/design/type_button.dart';
-import 'package:marcador/services/marker.dart';
-import 'package:marcador/widget/button_app.dart';
-import 'package:marcador/widget/set_and_points_selet.dart';
+import 'package:Marcador/config/app_routes.dart';
+import 'package:Marcador/design/my_colors.dart';
+import 'package:Marcador/design/type_button.dart';
+import 'package:Marcador/services/marker.dart';
+import 'package:Marcador/widget/button_app.dart';
+import 'package:Marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignalOff extends StatefulWidget {
@@ -48,7 +48,7 @@ class _SignalOffState extends State<SignalOff> {
           backgroundColor: MyColors.secundary,
         ),
       );
-      // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
+      // Navigator.pushNamed(context, AppRoutes.MarcadorVertical);
       return;
     }
 

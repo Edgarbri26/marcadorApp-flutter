@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:marcador/design/my_colors.dart';
+import 'package:Marcador/design/my_colors.dart';
 
 class DividerWithText extends StatelessWidget {
   final String title;
@@ -8,21 +8,13 @@ class DividerWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children:  [
-        const Expanded(
-            child: Divider(
-          color: MyColors.primary,
-          thickness: 1.0,
-        )),
+      children: [
+        const Expanded(child: Divider(color: MyColors.primary, thickness: 1.0)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14.0),
           child: Text(title),
         ),
-        const Expanded(
-            child: Divider(
-          color: MyColors.primary,
-          thickness: 1.0,
-        )),
+        const Expanded(child: Divider(color: MyColors.primary, thickness: 1.0)),
       ],
     );
   }

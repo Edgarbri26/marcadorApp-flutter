@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:marcador/models/inscription.dart';
-import 'package:marcador/models/jugador.dart';
-import 'package:marcador/models/match.dart';
-import 'package:marcador/models/set_result.dart';
+import 'package:Marcador/models/inscription.dart';
+import 'package:Marcador/models/jugador.dart';
+import 'package:Marcador/models/match.dart';
+import 'package:Marcador/models/set_result.dart';
 
 class ApiService {
   //String baseUrl = 'https://lpp-backend.onrender.com/api';

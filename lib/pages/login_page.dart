@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:marcador/config/app_routes.dart';
-import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/design/radius.dart';
-import 'package:marcador/services/api_services.dart';
+import 'package:Marcador/config/app_routes.dart';
+import 'package:Marcador/design/my_colors.dart';
+import 'package:Marcador/design/radius.dart';
+import 'package:Marcador/services/api_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInPage extends StatefulWidget {
@@ -57,7 +57,7 @@ class _LogInPageState extends State<LogInPage> {
     if (isLogged != null) {
       print("Sì hay sesión activa: $isLogged");
       Navigator.of(context).pushReplacementNamed(AppRoutes.settings);
-    } else { 
+    } else {
       print("No hay sesión activa: $isLogged");
     }
   }

@@ -1,4 +1,4 @@
-import 'package:marcador/models/jugador.dart';
+import 'package:Marcador/models/jugador.dart';
 
 class Inscription {
   final int inscriptionId;
@@ -9,9 +9,10 @@ class Inscription {
   factory Inscription.fromJson(Map<String, dynamic> json) {
     return Inscription(
       inscriptionId: json['inscription_id'],
-      jugador: json['player'] != null
-          ? Jugador.fromJson(json['player'])
-          : throw Exception('Jugador no encontrado en la inscripción'),
+      jugador:
+          json['player'] != null
+              ? Jugador.fromJson(json['player'])
+              : throw Exception('Jugador no encontrado en la inscripción'),
     );
   }
 }

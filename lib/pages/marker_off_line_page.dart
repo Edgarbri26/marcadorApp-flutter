@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:marcador/config/app_routes.dart';
-import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/services/marker.dart';
-import 'package:marcador/widget/center_buttons.dart';
-import 'package:marcador/widget/player_game_area.dart';
-import 'package:marcador/widget/sets_points.dart';
+import 'package:Marcador/config/app_routes.dart';
+import 'package:Marcador/design/my_colors.dart';
+import 'package:Marcador/services/marker.dart';
+import 'package:Marcador/widget/center_buttons.dart';
+import 'package:Marcador/widget/player_game_area.dart';
+import 'package:Marcador/widget/sets_points.dart';
 
 class MarkerOffLinePage extends StatefulWidget {
   const MarkerOffLinePage({super.key});

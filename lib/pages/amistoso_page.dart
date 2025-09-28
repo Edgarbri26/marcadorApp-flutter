@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:marcador/config/app_routes.dart';
-import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/design/spacing.dart';
-import 'package:marcador/design/type_button.dart';
-import 'package:marcador/services/api_services.dart';
-import 'package:marcador/widget/button_app.dart';
-import 'package:marcador/widget/jugador_dropdown.dart';
-import 'package:marcador/models/jugador.dart';
-import 'package:marcador/models/match.dart';
+import 'package:Marcador/config/app_routes.dart';
+import 'package:Marcador/design/my_colors.dart';
+import 'package:Marcador/design/spacing.dart';
+import 'package:Marcador/design/type_button.dart';
+import 'package:Marcador/services/api_services.dart';
+import 'package:Marcador/widget/button_app.dart';
+import 'package:Marcador/widget/jugador_dropdown.dart';
+import 'package:Marcador/models/jugador.dart';
+import 'package:Marcador/models/match.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AmistosoPage extends StatefulWidget {
@@ -40,7 +40,6 @@ class _AmistosoPageState extends State<AmistosoPage> {
     super.initState();
     _loadSettings(); // Cargar datos guardados
   }
-  
 
   /// Cargar ajustes desde SharedPreferences
   Future<void> _loadSettings() async {
@@ -83,7 +82,9 @@ class _AmistosoPageState extends State<AmistosoPage> {
       ),
     );
 
-    final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(_player1Seleccionado!);
+    final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(
+      _player1Seleccionado!,
+    );
     final inscrip2 = await ApiService().obtenerInscriptionIdPorCI(
       _player2Seleccionado!,
     );

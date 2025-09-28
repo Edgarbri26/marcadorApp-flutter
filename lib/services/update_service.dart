@@ -16,7 +16,7 @@ import 'package:open_filex/open_filex.dart';
 
 class UpdateService {
   static const String githubRepoOwner = "Edgarbri26";
-  static const String githubRepoName = "marcadorApp-flutter";
+  static const String githubRepoName = "MarcadorApp-flutter";
   // static const String _portName = 'downloader_send_port';
 
   /// Obtiene información del último release en GitHub
@@ -192,7 +192,7 @@ class UpdateService {
     if (await file.exists()) {
       print("📂 Abriendo APK en: $filePath");
       await OpenFilex.open(
-        '/data/user/0/com.example.marcador/files/update.apk',
+        '/data/user/0/com.example.Marcador/files/update.apk',
       );
     } else {
       print("❌ El archivo APK no existe en: $filePath");
