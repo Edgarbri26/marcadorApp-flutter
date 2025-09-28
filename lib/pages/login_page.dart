@@ -83,7 +83,7 @@ class _LogInPageState extends State<LogInPage> {
             child: Column(
               children: [
                 Text(
-                  "marcador",
+                  "Marcador",
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
                     fontSize: expectedTitlesize,
                     color: MyColors.secundary,
