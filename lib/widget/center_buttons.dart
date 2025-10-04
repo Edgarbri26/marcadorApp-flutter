@@ -62,6 +62,7 @@ class CenterButtons extends StatelessWidget {
                   ),
               icon: Icon(Icons.add_box_outlined, color: MyColors.lightGray),
             ),
+            // reiniciar set
             IconButton(
               onPressed: () {
                 showDialog(
@@ -89,6 +90,7 @@ class CenterButtons extends StatelessWidget {
               },
               icon: Icon(Icons.refresh, color: MyColors.lightGray),
             ),
+            // reiniciar partido
             IconButton(
               onPressed: () {
                 showDialog(
@@ -116,6 +118,7 @@ class CenterButtons extends StatelessWidget {
               },
               icon: Icon(Icons.restart_alt, color: MyColors.lightGray),
             ),
+            // deaser
             IconButton(
               onPressed: onUndo,
               icon: Icon(Icons.undo, color: MyColors.lightGray),
@@ -125,6 +128,7 @@ class CenterButtons extends StatelessWidget {
               onPressed: onSwap,
               icon: Icon(Icons.swap_horiz_rounded, color: MyColors.lightGray),
             ),
+            // torneo
             IconButton(
               onPressed: onEvent,
               icon: Icon(Icons.emoji_events, color: MyColors.lightGray),
