@@ -223,7 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
             index: _selectedIndex,
             children: [
               SignalOff(marker: widget.marker),
-              AmistosoPage(),
+              AmistosoPage(marker: widget.marker),
               const PartidoPage(),
             ],
           ),

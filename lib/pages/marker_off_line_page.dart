@@ -21,7 +21,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
   String player2Name = 'Player2';
   bool swap = true;
 
-  get prefs => null;
+  Null get prefs => null;
 
   Future<void> mostrarDialogoCambiarNombre({
     required BuildContext context,

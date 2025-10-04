@@ -348,8 +348,9 @@ class _LogInPageState extends State<LogInPage> {
                                           );
                                         }
                                       } finally {
-                                        if (mounted)
+                                        if (mounted) {
                                           setState(() => isLoading = false);
+                                        }
                                       }
                                     }
                                   },

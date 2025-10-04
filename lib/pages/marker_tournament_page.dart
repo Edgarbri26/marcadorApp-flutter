@@ -31,9 +31,9 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
       DeviceOrientation.landscapeRight,
     ]);
     _player1Name = widget.match.nombre1 ?? 'Jugador 1';
-    _player2Name = widget.match.nombre2 ?? 'Jugador 1';
-    marker.targetSets = 3;
-    marker.targetPoints = 11;
+    _player2Name = widget.match.nombre2 ?? 'Jugador 2';
+    marker.targetSets = widget.match.setsSelected ?? 3;
+    marker.targetPoints = widget.match.pointsSelected ?? 11;
   }
 
   void _showMatchWinnerDialog(String winner) async {

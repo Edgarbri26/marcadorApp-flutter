@@ -32,7 +32,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<int>(
-          value: widget.marker.targetPoints,
+          initialValue: widget.marker.targetPoints,
           items:
               pointsOptions.map((int value) {
                 return DropdownMenuItem<int>(
@@ -67,7 +67,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<int>(
-          value: widget.marker.targetSets,
+          initialValue: widget.marker.targetSets,
           items:
               setsOptions.map((int value) {
                 return DropdownMenuItem<int>(

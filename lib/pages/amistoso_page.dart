@@ -4,14 +4,16 @@ import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
 import 'package:marcador/services/api_services.dart';
+import 'package:marcador/services/marker.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:marcador/widget/set_and_points_selet.dart';
 
 class AmistosoPage extends StatefulWidget {
-  const AmistosoPage({super.key});
+  final Marker marker;
+  const AmistosoPage({super.key, required this.marker});
 
   @override
   State<AmistosoPage> createState() => _AmistosoPageState();
@@ -22,37 +24,17 @@ class _AmistosoPageState extends State<AmistosoPage> {
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
 
+  int pointsSelect = 11;
+  int setsSelect = 3;
+
   Jugador? _player1Seleccionado;
   Jugador? _player2Seleccionado;
-
-  // Valores iniciales para puntos y sets
-  int _selectedPoints = 5;
-  int _selectedSets = 3;
-
-  // Opciones disponibles
-  final List<int> pointsOptions = [7, 11, 15, 21];
-  final List<int> setsOptions = [1, 3, 5, 7];
-
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadSettings(); // Cargar datos guardados
   }
 
-  /// Cargar ajustes desde SharedPreferences
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      _player1Controller.text = prefs.getString('player1') ?? '';
-      _player2Controller.text = prefs.getString('player2') ?? '';
-      _selectedPoints = prefs.getInt('points') ?? 5;
-      _selectedSets = prefs.getInt('sets') ?? 3;
-      _isLoading = false;
-    });
-  }
 
   /// Guardar ajustes en SharedPreferences
   Future<void> _saveSettings() async {
@@ -67,17 +49,11 @@ class _AmistosoPageState extends State<AmistosoPage> {
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('player1', _player1Controller.text);
-    await prefs.setString('player2', _player2Controller.text);
-    await prefs.setInt('points', _selectedPoints);
-    await prefs.setInt('sets', _selectedSets);
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           'Guardado: ${_player1Controller.text} vs ${_player2Controller.text} | '
-          'Puntos: $_selectedPoints | Sets: $_selectedSets',
+          'Puntos: ${widget.marker.targetPoints} | Sets: ${widget.marker.targetSets}',
         ),
       ),
     );
@@ -110,6 +86,8 @@ class _AmistosoPageState extends State<AmistosoPage> {
       date: DateTime.now().toIso8601String(),
       nombre1: _player1Controller.text,
       nombre2: _player2Controller.text,
+      pointsSelected: widget.marker.targetPoints,
+      setsSelected: widget.marker.targetSets,
     );
 
     final nuevoMatchId = await ApiService().createMatch(match);
@@ -122,14 +100,8 @@ class _AmistosoPageState extends State<AmistosoPage> {
     ).pushNamed(AppRoutes.markerTournament, arguments: match);
   }
 
-  // Jugador? _player1Seleccionado;
-  // Jugador? _player2Seleccionado;
-
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
 
     return Container(
       child: Column(
@@ -175,7 +147,8 @@ class _AmistosoPageState extends State<AmistosoPage> {
           ),
           const SizedBox(height: Spacing.xl),
 
-          //SetAndPointsSelet(marker: Marker(),),
+          SetAndPointsSelet(marker: widget.marker),
+
           const SizedBox(height: Spacing.xl),
           Center(
             child: ButtonApp(
@@ -192,7 +165,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

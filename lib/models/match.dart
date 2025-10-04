@@ -9,7 +9,8 @@ class Match {
   String status;
   String? nombre1;
   String? nombre2;
-  int? numSets;
+  int? pointsSelected;
+  int? setsSelected;
 
   Match({
     this.matchId,
@@ -22,7 +23,8 @@ class Match {
     required this.date,
     this.nombre1,
     this.nombre2,
-    this.numSets,
+    this.pointsSelected,
+    this.setsSelected,
   });
 
   Map<String, dynamic> toJson() => {

@@ -20,11 +20,11 @@ class Marker {
 
   // marcador
 
-  scoreHistoryAdd(int nJugador) {
+  void scoreHistoryAdd(int nJugador) {
     scoreHistory.add(nJugador);
   }
 
-  scoreHistoryUndo() {
+  void scoreHistoryUndo() {
     if (scoreHistory.isNotEmpty) {
       int lastScore = scoreHistory.removeLast();
 
