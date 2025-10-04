@@ -20,6 +20,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
   String player1Name = 'Player1';
   String player2Name = 'Player2';
   bool swap = true;
+  int _selectedIndex = 0;
 
   Null get prefs => null;
 
@@ -234,9 +235,36 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
                     });
                   },
                   onEvent: () {
-                    Navigator.of(
-                      context,
-                    ).pushReplacementNamed(AppRoutes.settings);
+                    _showCustomDialog();
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (context) {
+                    //     return  Column(
+                    //         children: [
+                    //           Row(
+                    //             children: [
+                    //               IconButton(
+                    //                 onPressed: () {
+                    //                   _onItemTapped(0);
+                    //                 },
+                    //                 icon: Icon(Icons.hail_rounded),
+                    //               ),
+                    //               IconButton(
+                    //                 onPressed: () {
+                    //                   _onItemTapped(1);
+                    //                 },
+                    //                 icon: Icon(Icons.emoji_events),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //           IndexedStack(index: _selectedIndex, children: [
+
+                    //             ],
+                    //           ),
+                    //         ],
+                    //       );
+                    //   },
+                    // );
                   },
                 ),
               ],
@@ -245,5 +273,129 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
         ),
       ),
     );
+  }
+
+  String selectedTab = "Orientación"; // Pestaña inicial
+
+  void _showCustomDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              contentPadding: EdgeInsets.all(16),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Menú superior (pestañas)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildTabButton("Amistoso", selectedTab, setState),
+                      _buildTabButton("Torneo", selectedTab, setState),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  // Contenido dinámico
+                  _getTabContent(selectedTab),
+                  SizedBox(height: 16),
+                  // Botones OK y Cancelar
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        child: Text("CANCELAR"),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      ElevatedButton(
+                        child: Text("OK"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          // Aquí aplicas los cambios
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildTabButton(String title, String selected, Function setState) {
+    bool active = selected == title;
+    return GestureDetector(
+      onTap: () {
+        setState(() => selectedTab = title);
+      },
+      child: Column(
+        children: [
+          Icon(
+            Icons.circle,
+            color: active ? Colors.blue : Colors.grey,
+            size: 20,
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: active ? FontWeight.bold : FontWeight.normal,
+              color: active ? Colors.blue : Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getTabContent(String selectedTab) {
+    switch (selectedTab) {
+      case "Orientación":
+        return Container(
+          color: Colors.green[50],
+          height: 100,
+          child: Center(child: Text("Opciones de Orientación")),
+        );
+      case "Oscuro":
+        return Container(
+          color: Colors.grey[200],
+          height: 100,
+          child: Center(child: Text("Opciones de Modo Oscuro")),
+        );
+      default:
+        return Container();
+    }
+  }
+
+  // Índice inicial en Configuración
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+}
+
+class Tournamen extends StatelessWidget {
+  const Tournamen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: Text("torneo"));
+  }
+}
+
+class Friendly extends StatelessWidget {
+  const Friendly({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: Text("amistoso"));
   }
 }
