@@ -22,11 +22,13 @@ class Marker {
 
   void scoreHistoryAdd(int nJugador) {
     scoreHistory.add(nJugador);
+    print(scoreHistory);
   }
 
   void scoreHistoryUndo() {
     if (scoreHistory.isNotEmpty) {
       int lastScore = scoreHistory.removeLast();
+      print(scoreHistory);
 
       if (lastScore == 1 && player1Score > 0) {
         player1Score--;
@@ -35,9 +37,10 @@ class Marker {
       }
 
       if (totalPoints > 0) {
-        totalPoints--;
         _updateTurn();
+        decrement();
       } else if (totalPoints == 0) {
+        playerTurn = 0;
         resetScores();
       }
 
@@ -47,6 +50,9 @@ class Marker {
       //   player2Score++;
       // }
       _updateTurn();
+      if (lastScore == 0) {
+        playerTurn = 0;
+      }
     }
   }
 
@@ -110,6 +116,7 @@ class Marker {
   /// Inicializa el jugador que tiene el saque al inicio
   void _init(int startingPlayer) {
     playerTurn = startingPlayer;
+    scoreHistoryAdd(0);
     // historyTakeOut.clear();
     firstServer = startingPlayer;
     // counter = 0;
@@ -130,6 +137,7 @@ class Marker {
       totalPoints--;
       _updateTurn();
     } else if (totalPoints == 0) {
+      playerTurn = 0;
       resetScores();
     }
   }
@@ -153,16 +161,15 @@ class Marker {
     }
   }
 
-  bool checkWinSetCondition() {
+  int checkWinSetCondition() {
+    int playerWinner = 0;
     if (player1Score >= targetPoints && player1Score >= player2Score + 2) {
-      incrementSet(1);
+      playerWinner = 1;
     } else if (player2Score >= targetPoints &&
         player2Score >= player1Score + 2) {
-      incrementSet(2);
-    } else {
-      return false;
+      playerWinner = 2;
     }
-    return true;
+    return playerWinner;
   }
 
   int checkMatchWinner() {

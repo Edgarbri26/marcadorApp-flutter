@@ -117,16 +117,46 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
   void _checkWinCondition() {
     int jugarWin = marker.checkMatchWinner();
 
-    if (marker.checkWinSetCondition()) {
-      marker.resetScores();
+    if (marker.checkWinSetCondition() != 0) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('¡Set para $jugarWin!'),
+            content: Text(
+              'El set ha terminado, el marcador de sets es: ${marker.player1Sets} - ${marker.player2Sets}.',
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    marker.scoreHistoryUndo();
+                  });
+                },
+                child: const Text('cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  marker.resetScores();
+                  _checkMatchWinner();
+                  marker.incrementSet(jugarWin);
+                  setState(() {
+                    swap = !swap;
+                  });
+                },
+                child: const Text('Continuar'),
+              ),
+            ],
+          );
+        },
+      );
     }
+  }
 
-    if (marker.checkWinSetCondition() && jugarWin != 0) {
-      setState(() {
-        swap = !swap;
-      });
-    }
-
+  void _checkMatchWinner() {
+    int jugarWin = marker.checkMatchWinner();
     if (jugarWin != 0) {
       if (jugarWin == 1) {
         _showMatchWinnerDialog(player1Name);
@@ -212,6 +242,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
               direction: Axis.vertical,
               children: [
                 SetsPoints(
+                  swap: swap,
                   player1Sets: marker.player1Sets,
                   player2Sets: marker.player2Sets,
                 ),

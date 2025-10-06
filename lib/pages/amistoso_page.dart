@@ -103,7 +103,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
   @override
   Widget build(BuildContext context) {
 
-    return Container(
+    return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

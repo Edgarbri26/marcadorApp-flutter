@@ -5,10 +5,12 @@ import 'package:marcador/design/spacing.dart';
 class SetsPoints extends StatelessWidget {
   final int player1Sets;
   final int player2Sets;
+  final bool swap;
   const SetsPoints({
     super.key,
     required this.player1Sets,
     required this.player2Sets,
+    required this.swap,
   });
 
   @override
@@ -30,6 +32,7 @@ class SetsPoints extends StatelessWidget {
           ),
           child: Flex(
             direction: Axis.horizontal,
+            textDirection: swap ? TextDirection.ltr : TextDirection.rtl,
             mainAxisSize: MainAxisSize.min,
             spacing: 10,
             children: [

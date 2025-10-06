@@ -117,7 +117,7 @@ class _marcadorVerticalPageState extends State<marcadorVerticalPage> {
           : _showMatchWinnerDialog(_player2Name);
     }
 
-    if (widget.marker.checkWinSetCondition()) {
+    if (widget.marker.checkWinSetCondition() != 0) {
       // aqui para guardar el set
     }
   }
@@ -280,6 +280,7 @@ class _marcadorVerticalPageState extends State<marcadorVerticalPage> {
 
                 children: [
                   SetsPoints(
+                    swap: orientation == Orientation.portrait ? false : true,
                     player1Sets: widget.marker.player1Sets,
                     player2Sets: widget.marker.player2Sets,
                   ),

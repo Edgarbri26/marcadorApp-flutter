@@ -72,7 +72,7 @@ class _PartidoPageState extends State<PartidoPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Guardado: ${_player1Controller.text} vs ${_player2Controller.text} | '
+          'Cargado: ${_player1Controller.text} vs ${_player2Controller.text} | '
           'Puntos: $_selectedPoints | Sets: $_selectedSets',
         ),
       ),
@@ -88,7 +88,7 @@ class _PartidoPageState extends State<PartidoPage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Container(
+    return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
