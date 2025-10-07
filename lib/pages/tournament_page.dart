@@ -24,6 +24,7 @@ class _PartidoPageState extends State<PartidoPage> {
   bool _isLoading = true;
   List<Tournament> _tournaments = [];
   int? selectedTournament;
+  Key _matchDropdownKey = UniqueKey();
 
   @override
   void initState() {
@@ -73,6 +74,7 @@ class _PartidoPageState extends State<PartidoPage> {
         _matchSelect = null;
         _player1Controller.clear();
         _player2Controller.clear();
+        _matchDropdownKey = UniqueKey();
       });
     }
 
@@ -151,6 +153,7 @@ class _PartidoPageState extends State<PartidoPage> {
           ),
           const SizedBox(height: Spacing.xl),
           MatchDropdown(
+            key: _matchDropdownKey,
             selectedItem: _matchSelect,
             filtroTournament:
                 selectedTournament, //INGRESA EL ID DEL TORNEO PARA FILTRAR
