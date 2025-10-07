@@ -3,6 +3,9 @@ import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
+import 'package:marcador/models/tournament.dart';
+import 'package:marcador/pages/marker_off_line_page.dart';
+import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/match_dropdown.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/models/match.dart';
@@ -20,6 +23,8 @@ class _PartidoPageState extends State<PartidoPage> {
   final TextEditingController _player2Controller = TextEditingController();
   Match? _matchSelect;
   bool _isLoading = true;
+  List<Tournament> _tournaments = [];
+  int? selectedTournament;
 
   @override
   void initState() {
@@ -27,9 +32,13 @@ class _PartidoPageState extends State<PartidoPage> {
     _loadSettings(); // Cargar datos guardados
   }
 
+
   /// Cargar ajustes desde SharedPreferences
   Future<void> _loadSettings() async {
+    List<Tournament> tournaments = await ApiService().fetchTournaments();
+    print('Torneos cargados: ${tournaments.length}');
     setState(() {
+      _tournaments = tournaments;
       _isLoading = false;
     });
   }
@@ -60,7 +69,7 @@ class _PartidoPageState extends State<PartidoPage> {
     ).pushNamed(AppRoutes.markerTournament, arguments: _matchSelect);
   }
 
-  void _CalculatePoints() {
+  void _calculatePoints() {
     if (_matchSelect != null) {
       if (_matchSelect!.round == 'Semifinal' ||
           _matchSelect!.round == 'Final') {
@@ -89,6 +98,38 @@ class _PartidoPageState extends State<PartidoPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Text(
+            "Seleccione el torneo",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: MyColors.lightGray,
+            ),
+          ),
+          DropdownButtonFormField<int>(
+            initialValue: selectedTournament,
+            items:
+                _tournaments.map((Tournament t) {
+                  return DropdownMenuItem<int>(
+                    value: t.tournamentId,
+                    child: Text(t.name),
+                  );
+                }).toList(),
+            style: TextStyle(color: MyColors.light),
+            dropdownColor: MyColors.dark,
+            decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.sports, color: MyColors.light),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: MyColors.secundary),
+              ),
+            ),
+            onChanged: (newValue) {
+              setState(() {
+                selectedTournament = newValue!;
+              });
+            },
+          ),
+
           // Nombres de jugadores
           const Text(
             "Selecciona un partido",
@@ -106,7 +147,7 @@ class _PartidoPageState extends State<PartidoPage> {
                 _matchSelect = match;
                 _player1Controller.text = match?.nombre1 ?? '';
                 _player2Controller.text = match?.nombre2 ?? '';
-                _CalculatePoints();
+                _calculatePoints();
               });
             },
           ),

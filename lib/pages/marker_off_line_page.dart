@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/services/marker.dart';
+import 'package:marcador/models/marker.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:marcador/widget/sets_points.dart';
