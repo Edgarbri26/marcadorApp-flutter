@@ -63,9 +63,22 @@ class _PartidoPageState extends State<PartidoPage> {
         ),
       ),
     );
-    Navigator.of(
-      context,
-    ).pushNamed(AppRoutes.markerTournament, arguments: _matchSelect);
+    // Navegar y esperar resultado de la pantalla de marcador
+    final resultado = await Navigator.of(context).pushNamed(
+      AppRoutes.markerTournament,
+      arguments: _matchSelect,
+    );
+
+    // Si la pantalla hija no devolvió un valor booleano true para "mantener",
+    // limpiamos la selección y los controles (convención: null o false => limpiar)
+    if (resultado != true) {
+      setState(() {
+        _matchSelect = null;
+        _player1Controller.clear();
+        _player2Controller.clear();
+      });
+    }
+
   }
 
   void _calculatePoints() {
@@ -143,10 +156,13 @@ class _PartidoPageState extends State<PartidoPage> {
             selectedItem: _matchSelect,
             filtroTournament: selectedTournament, //INGRESA EL ID DEL TORNEO PARA FILTRAR
             onChanged: (match) {
+
+              if(match == null) return;
+              
               setState(() {
                 _matchSelect = match;
-                _player1Controller.text = match?.nombre1 ?? '';
-                _player2Controller.text = match?.nombre2 ?? '';
+                _player1Controller.text = match.nombre1 ?? '';
+                _player2Controller.text = match.nombre2 ?? '';
                 _calculatePoints();
               });
             },
