@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/models/match.dart';
 import 'package:marcador/models/set_result.dart';
-import 'package:marcador/services/marker.dart';
+import 'package:marcador/models/marker.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
@@ -60,7 +60,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
             ),
             TextButton(
               onPressed: () async {
-                
+
                 //actualiza el macth
                 await ApiService().putMatch(widget.match);
                 // guarda los sets

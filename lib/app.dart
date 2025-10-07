@@ -6,7 +6,7 @@ import 'package:marcador/pages/marker_tournament_page.dart';
 import 'package:marcador/pages/settings_page.dart';
 import 'package:marcador/pages/update_page.dart';
 import 'package:marcador/pages/login_page.dart';
-import 'package:marcador/services/marker.dart';
+import 'package:marcador/models/marker.dart';
 import 'package:marcador/models/match.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

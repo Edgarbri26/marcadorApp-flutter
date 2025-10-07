@@ -5,11 +5,14 @@ import 'package:marcador/models/inscription.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
 import 'package:marcador/models/set_result.dart';
+import 'package:marcador/models/tournament.dart';
+import 'package:marcador/pages/marker_off_line_page.dart';
 
 class ApiService {
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
-  // String localUrl = 'http://localhost:3000/api';
-  String localUrl = 'https://lpp-backend.onrender.com/api';
+  // String localUrl = 'http://localhost:3000/api'; 192.168.1.125
+  String localUrl = 'http://192.168.1.125:3000/api';
+  // String localUrl = 'https://lpp-backend.onrender.com/api';
 
   Future<List<Jugador>> fetchJugadores() async {
     final response = await http.get(Uri.parse('$localUrl/player'));
@@ -27,6 +30,25 @@ class ApiService {
     return list
         .map((jsonMap) => Jugador.fromJson(jsonMap as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<List<Tournament>> fetchTournaments() async {
+    final response = await http.get(Uri.parse('$localUrl/tournament'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonBody = json.decode(response.body);
+      // print(jsonBody);
+      final tournamentsJson = jsonBody['data'];
+      if (tournamentsJson is List) {
+        return tournamentsJson
+            .map((json) => Tournament.fromJson(json))
+            .toList();
+      } else {
+        throw Exception('Formato inesperado en la respuesta de /tournament');
+      }
+    } else {
+      throw Exception('Error al cargar torneos');
+    }
   }
 
   Future<List<Match>> fetchMatches() async {
