@@ -6,7 +6,6 @@ import 'package:marcador/design/type_button.dart';
 import 'package:marcador/widget/match_dropdown.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/models/match.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PartidoPage extends StatefulWidget {
   const PartidoPage({super.key});
@@ -20,15 +19,6 @@ class _PartidoPageState extends State<PartidoPage> {
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
   Match? _matchSelect;
-
-  // Valores iniciales para puntos y sets
-  int _selectedPoints = 5;
-  int _selectedSets = 3;
-
-  // Opciones disponibles
-  final List<int> pointsOptions = [7, 11, 15, 21];
-  final List<int> setsOptions = [1, 3, 5, 7];
-
   bool _isLoading = true;
 
   @override
@@ -39,13 +29,7 @@ class _PartidoPageState extends State<PartidoPage> {
 
   /// Cargar ajustes desde SharedPreferences
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-
     setState(() {
-      _player1Controller.text = prefs.getString('player1') ?? '';
-      _player2Controller.text = prefs.getString('player2') ?? '';
-      _selectedPoints = prefs.getInt('points') ?? 5;
-      _selectedSets = prefs.getInt('sets') ?? 3;
       _isLoading = false;
     });
   }
@@ -63,23 +47,36 @@ class _PartidoPageState extends State<PartidoPage> {
       return;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('player1', _player1Controller.text);
-    await prefs.setString('player2', _player2Controller.text);
-    await prefs.setInt('points', _selectedPoints);
-    await prefs.setInt('sets', _selectedSets);
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           'Cargado: ${_player1Controller.text} vs ${_player2Controller.text} | '
-          'Puntos: $_selectedPoints | Sets: $_selectedSets',
+          'Puntos: ${_matchSelect!.setsSelected} | Sets: ${_matchSelect!.pointsSelected}',
         ),
       ),
     );
     Navigator.of(
       context,
     ).pushNamed(AppRoutes.markerTournament, arguments: _matchSelect);
+  }
+
+  void _CalculatePoints() {
+    if (_matchSelect != null) {
+      if (_matchSelect!.round == 'Semifinal' ||
+          _matchSelect!.round == 'Final') {
+        _matchSelect!.setsSelected = 5;
+        _matchSelect!.pointsSelected = 11;
+      } else if (_matchSelect!.round == 'Ronda 3' ||
+          _matchSelect!.round == 'Ronda 2' ||
+          _matchSelect!.round == 'Octavos de Final' ||
+          _matchSelect!.round == 'Cuartos de Final') {
+        _matchSelect!.setsSelected = 3;
+        _matchSelect!.pointsSelected = 11;
+      } else {
+        _matchSelect!.setsSelected = 3;
+        _matchSelect!.pointsSelected = 7;
+      }
+    }
   }
 
   @override
@@ -109,6 +106,7 @@ class _PartidoPageState extends State<PartidoPage> {
                 _matchSelect = match;
                 _player1Controller.text = match?.nombre1 ?? '';
                 _player2Controller.text = match?.nombre2 ?? '';
+                _CalculatePoints();
               });
             },
           ),

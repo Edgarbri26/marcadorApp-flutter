@@ -151,11 +151,11 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
           const SizedBox(height: Spacing.xl),
           Center(
-            child: ButtonApp(
+            child:   ButtonApp(
               onPressed: _saveSettings,
-              title: 'Comenzar juego',
-              icon: Icon(Icons.play_arrow_rounded, color: MyColors.light),
-              typeButton: TypeButton.secundary,
+              title:  'Comenzar juego',
+              icon: const Icon(Icons.play_arrow_rounded, color: MyColors.light),
+              typeButton:  TypeButton.secundary,
             ),
           ),
         ],

@@ -129,12 +129,12 @@ class ApiService {
   }
 
   Future<bool> putMatch(Match match) async {
-    final url = Uri.parse('$localUrl/match/${match.matchId}');
+    final url = Uri.parse('$localUrl/match/${match.matchId}/result');
 
     final response = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(match.toJson()),
+      body: json.encode(match.toJsonResult()),
     );
 
     if (response.statusCode == 200) {

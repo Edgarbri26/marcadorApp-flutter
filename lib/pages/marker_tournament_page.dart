@@ -35,24 +35,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     _player2Name = widget.match.nombre2 ?? 'Jugador 2';
     marker.targetSets = widget.match.setsSelected ?? 3;
     marker.targetPoints = widget.match.pointsSelected ?? 11;
-
-    if (widget.match.round == 'Semifinal' || widget.match.round == 'Final') {
-      marker.targetSets = 5;
-      marker.targetPoints = 11;
-    } else if (widget.match.round == 'Ronda 3' ||
-        widget.match.round == 'Ronda 2' ||
-        widget.match.round == 'Octavos de Final' ||
-        widget.match.round == 'Cuartos de Final') {
-      marker.targetSets = 3;
-      marker.targetPoints = 11;
-    } else if (widget.match.round == 'Repechaje' ||
-        widget.match.round == 'Ronda 1') {
-      marker.targetSets = 3;
-      marker.targetPoints = 11;
-    } else {
-      marker.targetSets = 3;
-      marker.targetPoints = 7;
-    }
   }
 
   void _showMatchWinnerDialog(String winner) async {
@@ -67,60 +49,41 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                marker.scoreHistoryUndo();
+                _sets.removeLast();
+                setState(() {
+                  winner == _player1Name
+                      ? marker.player1Sets--
+                      : marker.player2Sets--;
+                });
               },
               child: const Text('cancelar'),
             ),
             TextButton(
-              onPressed: () {
-                print("si funciono");
-                Navigator.of(context).pop(); // Cerrar el diálogo de ganador
-                print('Sets guardados: $_sets');
-                print('Match guardado: ${widget.match.matchId}');
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Confirmar finalización del partido'),
-                      content: const Text(
-                        '¿Estás seguro de que quieres finalizar el partido?',
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(
-                              context,
-                            ).pop(); // Cerrar el diálogo de confirmación
-                            marker.scoreHistoryUndo();
-                          },
-                          child: const Text('Cancelar'),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            //actualiza el macth
+              onPressed: () async {
+                //actualiza el macth
+                await ApiService().putMatch(widget.match);
+                // guarda los sets
+                for (final set in _sets) {
+                  await ApiService().postSet(set);
+                }
 
-                            await ApiService().putMatch(widget.match);
-
-                            // guarda los sets
-                            for (final set in _sets) {
-                              await ApiService().postSet(set);
-                            }
-
-                            // Cerrar el diálogo de confirmación
-                            Navigator.of(
-                              context,
-                            ).pop(); // Cerrar el diálogo de confirmación
-                            Navigator.of(
-                              context,
-                            ).pop(); // Cerrar el diálogo de confirmación
-                          },
-                          child: const Text('Confirmar'),
-                        ),
-                      ],
-                    );
-                  },
+                // Cerrar el diálogo de confirmación
+                Navigator.of(context).pop();
+                // Cerrar marcador
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '¡Ganador del partido: $winner! | partido guardado exitosamente',
+                    ),
+                  ),
                 );
+                setState(() {
+                  marker.resetAll();
+                });
+                // Cerrar el diálogo de confirmación
               },
+
               child: const Text('Cargar partido'),
             ),
           ],
@@ -129,8 +92,52 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     );
   }
 
+  // showDialog(
+  //                 context: context,
+  //                 builder: (BuildContext context) {
+  //                   return AlertDialog(
+  //                     title: const Text('Confirmar finalización del partido'),
+  //                     content: const Text(
+  //                       '¿Estás seguro de que quieres finalizar el partido?',
+  //                     ),
+  //                     actions: <Widget>[
+  //                       TextButton(
+  //                         onPressed: () {
+  //                           Navigator.of(
+  //                             context,
+  //                           ).pop(); // Cerrar el diálogo de confirmación
+  //                           marker.scoreHistoryUndo();
+  //                         },
+  //                         child: const Text('Cancelar'),
+  //                       ),
+  //                       TextButton(
+  //                         onPressed: () async {
+  //                           //actualiza el macth
+
+  //                           await ApiService().putMatch(widget.match);
+
+  //                           // guarda los sets
+  //                           for (final set in _sets) {
+  //                             await ApiService().postSet(set);
+  //                           }
+
+  //                           // Cerrar el diálogo de confirmación
+  //                           Navigator.of(
+  //                             context,
+  //                           ).pop(); // Cerrar el diálogo de confirmación
+  //                           Navigator.of(
+  //                             context,
+  //                           ).pop(); // Cerrar el diálogo de confirmación
+  //                         },
+  //                         child: const Text('Confirmar'),
+  //                       ),
+  //                     ],
+  //                   );
+  //                 },
+  //               );
+
   void _checkWinCondition() {
-    int jugarWin = marker.checkMatchWinner();
+    int jugarWin = marker.checkWinSetCondition();
 
     if (marker.checkWinSetCondition() != 0) {
       showDialog(
@@ -155,13 +162,13 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _guardarSet();
-                  marker.resetScores();
-                  _checkMatchWinner();
+                  _guardarSet(jugarWin);
                   marker.incrementSet(jugarWin);
+                  _checkMatchWinner();
                   setState(() {
                     swap = !swap;
                   });
+                  marker.resetScores();
                 },
                 child: const Text('Continuar'),
               ),
@@ -169,46 +176,10 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
           );
         },
       );
-      // aqui para guardar el set
-      // final p1Score = marker.player1Score;
-      // final p2Score = marker.player2Score;
-
-      // final setResult = SetResult(
-      //   matchId: widget.match.matchId ?? 0,
-      //   setNumber: marker.totalSetsPlayed,
-      //   scoreParticipant1: p1Score,
-      //   scoreParticipant2: p2Score,
-      // );
-      // _sets.add(setResult);
-
-      // print("marker.player1Score ${marker.player1Score}");
-      // print("marker.player2Score ${marker.player2Score}");
-      // print(
-      //   'Set guardado: ${_sets[0].scoreParticipant1} y ${_sets[0].scoreParticipant2}',
-      // );
     }
-
-    // if (jugarWin != 0) {
-    //   widget.match.status = 'Finalizado';
-
-    //   final fechaLocal = DateTime.now();
-    //   final fechaAjustada = fechaLocal.subtract(Duration(hours: 4));
-    //   final fechaIso = fechaAjustada.toIso8601String();
-    //   widget.match.date = fechaIso;
-
-    //   if (jugarWin == 1) {
-    //     _showMatchWinnerDialog(_player1Name);
-    //     widget.match.winnerInscriptionId = widget.match.inscription1Id;
-    //   } else {
-    //     _showMatchWinnerDialog(_player2Name);
-    //     widget.match.winnerInscriptionId = widget.match.inscription2Id;
-    //   }
-
-    //   marker.resetAll();
-    // }
   }
 
-  void _guardarSet() {
+  void _guardarSet(int jugarWin) {
     final p1Score = marker.player1Score;
     final p2Score = marker.player2Score;
 
@@ -220,17 +191,21 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     );
     _sets.add(setResult);
 
-    print("marker.player1Score ${marker.player1Score}");
-    print("marker.player2Score ${marker.player2Score}");
-    print(
-      'Set guardado: ${_sets[0].scoreParticipant1} y ${_sets[0].scoreParticipant2}',
+    String winner = jugarWin == 1 ? _player1Name : _player2Name;
+    String sets = swap ? '$p1Score - $p2Score' : '$p2Score - $p1Score';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Ganador: $winner | '
+          'Set guardado: $sets',
+        ),
+      ),
     );
   }
 
   void _checkMatchWinner() {
     int jugarWin = marker.checkMatchWinner();
     if (jugarWin != 0) {
-      widget.match.status = 'Finalizado';
 
       final fechaLocal = DateTime.now();
       final fechaAjustada = fechaLocal.subtract(Duration(hours: 4));
@@ -244,8 +219,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
         _showMatchWinnerDialog(_player2Name);
         widget.match.winnerInscriptionId = widget.match.inscription2Id;
       }
-
-      marker.resetAll();
     }
   }
 

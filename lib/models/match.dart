@@ -38,6 +38,10 @@ class Match {
     'match_datetime': date,
   };
 
+  Map<String, dynamic> toJsonResult() => {
+    'winner_inscription_id': winnerInscriptionId,
+  };
+
   factory Match.fromJson(Map<String, dynamic> json) {
     return Match(
       matchId: json['match_id'],
