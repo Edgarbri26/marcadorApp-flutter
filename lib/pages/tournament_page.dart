@@ -101,6 +101,7 @@ class _PartidoPageState extends State<PartidoPage> {
           const SizedBox(height: Spacing.xl),
           MatchDropdown(
             selectedItem: _matchSelect,
+            filtroTournament: 1, //INGRESA EL ID DEL TORNEO PARA FILTRAR
             onChanged: (match) {
               setState(() {
                 _matchSelect = match;

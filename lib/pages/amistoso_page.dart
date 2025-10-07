@@ -30,6 +30,12 @@ class _AmistosoPageState extends State<AmistosoPage> {
   Jugador? _player1Seleccionado;
   Jugador? _player2Seleccionado;
 
+  bool ifRanked = false;
+
+  int tournament = 2; // ID fijo para torneo amistoso
+
+  String nameMode = "Amistoso";
+
   @override
   void initState() {
     super.initState();
@@ -76,12 +82,19 @@ class _AmistosoPageState extends State<AmistosoPage> {
       );
       return;
     }
+
+    if(ifRanked) {
+      tournament = 1; // ID fijo para torneo competitivo
+    } else {
+      tournament = 2; // ID fijo para torneo amistoso
+    }
+
     Match match = Match(
       matchId: null,
-      tournamentId: 1, // ID fijo para amistoso
+      tournamentId: tournament, // ID fijo para amistoso
       inscription1Id: inscrip1,
       inscription2Id: inscrip2,
-      round: 'Amistoso',
+      round: nameMode,
       status: 'En Juego',
       date: DateTime.now().toIso8601String(),
       nombre1: _player1Controller.text,
@@ -89,6 +102,8 @@ class _AmistosoPageState extends State<AmistosoPage> {
       pointsSelected: widget.marker.targetPoints,
       setsSelected: widget.marker.targetSets,
     );
+
+    print("torneo asignado: ${match.tournamentId}");
 
     final nuevoMatchId = await ApiService().createMatch(match);
     if (nuevoMatchId != null) {
@@ -99,6 +114,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
       context,
     ).pushNamed(AppRoutes.markerTournament, arguments: match);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +165,22 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
           SetAndPointsSelet(marker: widget.marker),
 
+          SwitchListTile(
+              title: Text("Modo $nameMode"),
+              value: ifRanked,
+              onChanged: (bool value) {
+                setState(() {
+                  ifRanked = value;
+                  // Aquí puedes activar lógica según el modo
+                  if (ifRanked) {
+                    nameMode = "Competitivo";
+                  } else {
+                    nameMode = "Amistoso";
+                  }
+                });
+              },
+              secondary: Icon(Icons.sports_esports),
+            ),
           const SizedBox(height: Spacing.xl),
           Center(
             child:   ButtonApp(
@@ -162,6 +194,8 @@ class _AmistosoPageState extends State<AmistosoPage> {
       ),
     );
   }
+  
+  
 }
 
 class HomeScreen extends StatelessWidget {

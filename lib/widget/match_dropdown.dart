@@ -7,8 +7,9 @@ import 'package:marcador/models/match.dart';
 class MatchDropdown extends StatefulWidget {
   final Match? selectedItem;
   final ValueChanged<Match?> onChanged;
+  final int filtroTournament;
 
-  const MatchDropdown({super.key, this.selectedItem, required this.onChanged});
+  const MatchDropdown({super.key, this.selectedItem, required this.onChanged, required this.filtroTournament});
 
   @override
   State<MatchDropdown> createState() => _MatchDropdownState();
@@ -31,7 +32,10 @@ class _MatchDropdownState extends State<MatchDropdown> {
     final matches = await ApiService().fetchMatches();
 
     return matches.where((match) {
+      
       if (match.status == 'Finalizado') return false;
+
+      if(match.tournamentId != widget.filtroTournament) return false;
 
       final nombre1 = _nombresPorInscriptionId[match.inscription1Id] ?? '';
       final nombre2 = _nombresPorInscriptionId[match.inscription2Id] ?? '';
