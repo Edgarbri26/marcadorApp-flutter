@@ -10,8 +10,8 @@ import 'package:marcador/models/tournament.dart';
 class ApiService {
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
   // String localUrl = 'http://localhost:3000/api'; 192.168.1.125
-  String localUrl = 'http://192.168.1.125:3000/api';
-  // String localUrl = 'https://lpp-backend.onrender.com/api';
+  // String localUrl = 'http://192.168.1.125:28743/api';
+  String localUrl = 'https://lpp-backend.onrender.com/api';
 
   Future<List<Jugador>> fetchJugadores() async {
     final response = await http.get(Uri.parse('$localUrl/player'));

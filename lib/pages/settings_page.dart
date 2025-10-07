@@ -30,6 +30,7 @@ class _SettingsPageState extends State<SettingsPage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    // SystemChrome.setEnabledSystemUIMode();
     _loadSettings(); // Cargar datos guardados
     debugVersion();
     WidgetsBinding.instance.addPostFrameCallback((_) {

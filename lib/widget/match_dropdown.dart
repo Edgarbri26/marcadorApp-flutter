@@ -9,7 +9,12 @@ class MatchDropdown extends StatefulWidget {
   final ValueChanged<Match?> onChanged;
   final int? filtroTournament;
 
-  const MatchDropdown({super.key, this.selectedItem, required this.onChanged, required this.filtroTournament});
+  const MatchDropdown({
+    super.key,
+    this.selectedItem,
+    required this.onChanged,
+    required this.filtroTournament,
+  });
 
   @override
   State<MatchDropdown> createState() => _MatchDropdownState();
@@ -32,10 +37,9 @@ class _MatchDropdownState extends State<MatchDropdown> {
     final matches = await ApiService().fetchMatches();
 
     return matches.where((match) {
-
       if (match.status == 'Finalizado') return false;
 
-      if(match.tournamentId != widget.filtroTournament) return false;
+      if (match.tournamentId != widget.filtroTournament) return false;
 
       final nombre1 = _nombresPorInscriptionId[match.inscription1Id] ?? '';
       final nombre2 = _nombresPorInscriptionId[match.inscription2Id] ?? '';
@@ -53,7 +57,7 @@ class _MatchDropdownState extends State<MatchDropdown> {
             _nombresPorInscriptionId[match.inscription1Id] ?? 'Jugador 1';
         final nombre2 =
             _nombresPorInscriptionId[match.inscription2Id] ?? 'Jugador 2';
-        return '$nombre1 vs $nombre2';
+        return '$nombre1 vs $nombre2 ';
       },
       selectedItem: _matchSeleccionado,
       compareFn: (a, b) => a.matchId == b.matchId,

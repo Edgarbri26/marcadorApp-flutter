@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/models/match.dart';
 import 'package:marcador/models/set_result.dart';
@@ -31,6 +32,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _player1Name = widget.match.nombre1 ?? 'Jugador 1';
     _player2Name = widget.match.nombre2 ?? 'Jugador 2';
     marker.targetSets = widget.match.setsSelected ?? 3;
@@ -60,7 +62,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
             ),
             TextButton(
               onPressed: () async {
-
                 //actualiza el macth
                 await ApiService().putMatch(widget.match);
                 // guarda los sets
@@ -163,7 +164,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   void _checkMatchWinner() {
     int jugarWin = marker.checkMatchWinner();
     if (jugarWin != 0) {
-
       final fechaLocal = DateTime.now();
       final fechaAjustada = fechaLocal.subtract(Duration(hours: 4));
       final fechaIso = fechaAjustada.toIso8601String();

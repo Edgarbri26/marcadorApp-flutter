@@ -31,7 +31,6 @@ class _PartidoPageState extends State<PartidoPage> {
     _loadSettings(); // Cargar datos guardados
   }
 
-
   /// Cargar ajustes desde SharedPreferences
   Future<void> _loadSettings() async {
     List<Tournament> tournaments = await ApiService().fetchTournaments();
@@ -42,7 +41,6 @@ class _PartidoPageState extends State<PartidoPage> {
     });
   }
 
-  /// Guardar ajustes en SharedPreferences
   Future<void> _saveSettings() async {
     if (_player1Controller.text.isEmpty || _player2Controller.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -51,7 +49,6 @@ class _PartidoPageState extends State<PartidoPage> {
           backgroundColor: MyColors.secundary,
         ),
       );
-      // Navigator.pushNamed(context, AppRoutes.marcadorVertical);
       return;
     }
 
@@ -130,7 +127,7 @@ class _PartidoPageState extends State<PartidoPage> {
             style: TextStyle(color: MyColors.light),
             dropdownColor: MyColors.dark,
             decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.sports, color: MyColors.light),
+              prefixIcon: Icon(Icons.emoji_events, color: MyColors.light),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: MyColors.secundary),
               ),
@@ -141,6 +138,7 @@ class _PartidoPageState extends State<PartidoPage> {
               });
             },
           ),
+          const SizedBox(height: Spacing.xl),
 
           // Nombres de jugadores
           const Text(
@@ -154,7 +152,8 @@ class _PartidoPageState extends State<PartidoPage> {
           const SizedBox(height: Spacing.xl),
           MatchDropdown(
             selectedItem: _matchSelect,
-            filtroTournament: selectedTournament, //INGRESA EL ID DEL TORNEO PARA FILTRAR
+            filtroTournament:
+                selectedTournament, //INGRESA EL ID DEL TORNEO PARA FILTRAR
             onChanged: (match) {
 
               if(match == null) return;
