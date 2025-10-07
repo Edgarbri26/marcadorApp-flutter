@@ -4,7 +4,6 @@ import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
 import 'package:marcador/models/tournament.dart';
-import 'package:marcador/pages/marker_off_line_page.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/match_dropdown.dart';
 import 'package:marcador/widget/button_app.dart';
@@ -142,7 +141,7 @@ class _PartidoPageState extends State<PartidoPage> {
           const SizedBox(height: Spacing.xl),
           MatchDropdown(
             selectedItem: _matchSelect,
-            filtroTournament: 1, //INGRESA EL ID DEL TORNEO PARA FILTRAR
+            filtroTournament: selectedTournament, //INGRESA EL ID DEL TORNEO PARA FILTRAR
             onChanged: (match) {
               setState(() {
                 _matchSelect = match;
