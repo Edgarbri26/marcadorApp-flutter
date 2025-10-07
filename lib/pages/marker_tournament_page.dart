@@ -60,6 +60,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
             ),
             TextButton(
               onPressed: () async {
+                
                 //actualiza el macth
                 await ApiService().putMatch(widget.match);
                 // guarda los sets
@@ -91,50 +92,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
       },
     );
   }
-
-  // showDialog(
-  //                 context: context,
-  //                 builder: (BuildContext context) {
-  //                   return AlertDialog(
-  //                     title: const Text('Confirmar finalización del partido'),
-  //                     content: const Text(
-  //                       '¿Estás seguro de que quieres finalizar el partido?',
-  //                     ),
-  //                     actions: <Widget>[
-  //                       TextButton(
-  //                         onPressed: () {
-  //                           Navigator.of(
-  //                             context,
-  //                           ).pop(); // Cerrar el diálogo de confirmación
-  //                           marker.scoreHistoryUndo();
-  //                         },
-  //                         child: const Text('Cancelar'),
-  //                       ),
-  //                       TextButton(
-  //                         onPressed: () async {
-  //                           //actualiza el macth
-
-  //                           await ApiService().putMatch(widget.match);
-
-  //                           // guarda los sets
-  //                           for (final set in _sets) {
-  //                             await ApiService().postSet(set);
-  //                           }
-
-  //                           // Cerrar el diálogo de confirmación
-  //                           Navigator.of(
-  //                             context,
-  //                           ).pop(); // Cerrar el diálogo de confirmación
-  //                           Navigator.of(
-  //                             context,
-  //                           ).pop(); // Cerrar el diálogo de confirmación
-  //                         },
-  //                         child: const Text('Confirmar'),
-  //                       ),
-  //                     ],
-  //                   );
-  //                 },
-  //               );
 
   void _checkWinCondition() {
     int jugarWin = marker.checkWinSetCondition();
