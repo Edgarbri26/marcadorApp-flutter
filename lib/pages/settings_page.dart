@@ -30,15 +30,6 @@ class _SettingsPageState extends State<SettingsPage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor:
-            Colors.transparent, // Hace transparente la barra de estado
-        statusBarIconBrightness:
-            Brightness
-                .dark, // Elige el color de los iconos (dark para iconos claros, light para oscuros)
-      ),
-    );
 
     _loadSettings(); // Cargar datos guardados
     debugVersion();

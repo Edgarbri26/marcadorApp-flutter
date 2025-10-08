@@ -131,7 +131,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
                   color: ifRanked ? Colors.grey : MyColors.secundary,
                 ),
                 Text(
-                  '',
+                  'Amistoso',
                   style: TextStyle(
                     color: ifRanked ? Colors.grey : MyColors.secundary,
                     fontWeight: FontWeight.bold,

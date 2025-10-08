@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
+import 'package:marcador/design/radius.dart';
 import 'package:marcador/models/match.dart';
 import 'package:marcador/models/set_result.dart';
 import 'package:marcador/models/marker.dart';
@@ -24,34 +25,53 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   String _player1Name = '';
   String _player2Name = '';
   bool swap = true;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.landscapeLeft,
-    //   DeviceOrientation.landscapeRight,
-    // ]);
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _player1Name = widget.match.nombre1 ?? 'Jugador 1';
     _player2Name = widget.match.nombre2 ?? 'Jugador 2';
     marker.targetSets = widget.match.setsSelected ?? 3;
     marker.targetPoints = widget.match.pointsSelected ?? 11;
   }
 
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.dispose();
+  }
+
+  // Tu función donde muestras el diálogo
   void _showMatchWinnerDialog(String winner) async {
+    // Mantenemos 'isLoading' como variable local.
+    // El estado de 'isLoading' para el botón se manejará con el StatefulBuilder.
+    bool dialogIsLoading = false;
+
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
+        // Renombramos el contexto a dialogContext
         return AlertDialog(
           title: Text('¡Ganador del partido: $winner!'),
           content: Text('¡Felicidades, $winner ha ganado el partido!'),
           actions: <Widget>[
+            // Botón CANCELAR - No necesita StatefulBuilder
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
                 _sets.removeLast();
+                // Usamos el setState de la pantalla principal para la lógica de datos
                 setState(() {
                   winner == _player1Name
                       ? marker.player1Sets--
@@ -60,33 +80,103 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
               },
               child: const Text('cancelar'),
             ),
-            TextButton(
-              onPressed: () async {
-                //actualiza el macth
-                await ApiService().putMatch(widget.match);
-                // guarda los sets
-                for (final set in _sets) {
-                  await ApiService().postSet(set);
-                }
 
-                // Cerrar el diálogo de confirmación
-                Navigator.of(context).pop();
-                // Cerrar marcador
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '¡Ganador del partido: $winner! | partido guardado exitosamente',
+            // ¡EL CAMBIO CLAVE! Usamos StatefulBuilder para actualizar solo el botón
+            StatefulBuilder(
+              builder: (contextSB, setStateSB) {
+                // contextSB y setStateSB son para el botón
+                return ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: MyColors.secundary,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(WeinFluRadius.small),
                     ),
                   ),
-                );
-                setState(() {
-                  marker.resetAll();
-                });
-                // Cerrar el diálogo de confirmación
-              },
+                  // El botón solo funciona si NO está cargando
+                  onPressed:
+                      dialogIsLoading
+                          ? null
+                          : () async {
+                            // 1. Activar el loader del botón usando el setState del Builder
+                            setStateSB(() => dialogIsLoading = true);
 
-              child: const Text('Cargar partido'),
+                            try {
+                              // --- LÓGICA CLAVE: EJECUTAR LAS PETICIONES ---
+                              // Puedes usar la simulación si quieres probar el loader primero
+                              // await Future.delayed(const Duration(seconds: 2));
+
+                              await ApiService().putMatch(widget.match);
+                              for (final set in _sets) {
+                                await ApiService().postSet(set);
+                              }
+
+                              // ---------------------- FIN DE LAS PETICIONES -------------------------
+
+                              // 2. CERRAR DIÁLOGO DE CONFIRMACIÓN
+                              // Usa el context del diálogo (dialogContext)
+                              Navigator.of(dialogContext).pop();
+
+                              // 3. MOSTRAR MENSAJE DE ÉXITO
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '¡Ganador del partido: $winner! | partido guardado exitosamente',
+                                  ),
+                                ),
+                              );
+
+                              // 4. ACTUALIZAR LA PANTALLA PRINCIPAL Y RESETEAR
+                              // Usamos el setState de la pantalla principal (el que está fuera de showDialog)
+                              setState(() {
+                                marker.resetAll();
+                                // No hace falta poner isLoading = false aquí si cerramos el diálogo.
+                              });
+
+                              // 5. CERRAR EL MARCADOR
+                              Navigator.of(context).pop();
+                            } catch (e) {
+                              // Manejo de Errores: Si algo falla
+
+                              // 1. Desactivar el loader del botón
+                              setStateSB(() => dialogIsLoading = false);
+
+                              // 2. Cierra el diálogo si aún está abierto
+                              if (Navigator.of(dialogContext).canPop()) {
+                                Navigator.of(dialogContext).pop();
+                              }
+
+                              // 3. Muestra un mensaje de error
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Error al guardar el partido: $e',
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                            // No se necesita el bloque finally aquí ya que el éxito o error terminan la operación.
+                          },
+
+                  // Contenido del botón: Muestra el loader o el texto
+                  child:
+                      dialogIsLoading
+                          ? const SizedBox(
+                            width: 30,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ), // Color blanco para un ElevatedButton
+                            ),
+                          )
+                          : const Text(
+                            "Guardar partido",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                );
+              },
             ),
           ],
         );
