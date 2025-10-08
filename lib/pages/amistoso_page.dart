@@ -165,22 +165,47 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
           SetAndPointsSelet(marker: widget.marker),
 
-          SwitchListTile(
-              title: Text("Modo $nameMode"),
-              value: ifRanked,
-              onChanged: (bool value) {
-                setState(() {
-                  ifRanked = value;
-                  // Aquí puedes activar lógica según el modo
-                  if (ifRanked) {
-                    nameMode = "Competitivo";
-                  } else {
-                    nameMode = "Amistoso";
-                  }
-                });
-              },
-              secondary: Icon(Icons.sports_esports),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Icons.sports_esports),
+                Text(
+                  'Amistoso',
+                  style: TextStyle(
+                    color: !ifRanked ? Colors.grey : Colors.green,
+                    fontWeight: FontWeight.bold,
+
+                  ), 
+                ),
+                
+                Switch(
+                    value: ifRanked,
+                    onChanged: (bool value) {
+                      setState(() {
+                        ifRanked = value;
+                        // Aquí puedes activar lógica según el modo
+                        if (ifRanked) {
+                          nameMode = "Competitivo";
+                        } else {
+                          nameMode = "Amistoso";
+                        }
+                      });
+                    },
+                  ),
+                  Icon(Icons.sports_esports),
+                  Text(
+                  'Amistoso',
+                  style: TextStyle(
+                    color: ifRanked ? Colors.grey : Colors.green,
+                    fontWeight: FontWeight.bold,
+
+                  ), 
+                ),
+              ],
             ),
+          ),
           const SizedBox(height: Spacing.xl),
           Center(
             child:   ButtonApp(
