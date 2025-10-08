@@ -28,11 +28,11 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeLeft,
+    //   DeviceOrientation.landscapeRight,
+    // ]);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _player1Name = widget.match.nombre1 ?? 'Jugador 1';
     _player2Name = widget.match.nombre2 ?? 'Jugador 2';
     marker.targetSets = widget.match.setsSelected ?? 3;

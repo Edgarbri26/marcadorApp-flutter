@@ -62,10 +62,9 @@ class _PartidoPageState extends State<PartidoPage> {
       ),
     );
     // Navegar y esperar resultado de la pantalla de marcador
-    final resultado = await Navigator.of(context).pushNamed(
-      AppRoutes.markerTournament,
-      arguments: _matchSelect,
-    );
+    final resultado = await Navigator.of(
+      context,
+    ).pushNamed(AppRoutes.markerTournament, arguments: _matchSelect);
 
     // Si la pantalla hija no devolvió un valor booleano true para "mantener",
     // limpiamos la selección y los controles (convención: null o false => limpiar)
@@ -77,7 +76,6 @@ class _PartidoPageState extends State<PartidoPage> {
         _matchDropdownKey = UniqueKey();
       });
     }
-
   }
 
   void _calculatePoints() {
@@ -130,7 +128,11 @@ class _PartidoPageState extends State<PartidoPage> {
             dropdownColor: MyColors.dark,
             decoration: const InputDecoration(
               prefixIcon: Icon(Icons.emoji_events, color: MyColors.light),
-              focusedBorder: UnderlineInputBorder(
+              border: UnderlineInputBorder(
+                // 
+                
+              ),
+              focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: MyColors.secundary),
               ),
             ),
@@ -158,9 +160,8 @@ class _PartidoPageState extends State<PartidoPage> {
             filtroTournament:
                 selectedTournament, //INGRESA EL ID DEL TORNEO PARA FILTRAR
             onChanged: (match) {
+              if (match == null) return;
 
-              if(match == null) return;
-              
               setState(() {
                 _matchSelect = match;
                 _player1Controller.text = match.nombre1 ?? '';

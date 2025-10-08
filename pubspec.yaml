@@ -44,6 +44,7 @@ dependencies:
   permission_handler: ^12.0.1
   open_filex: ^4.7.0
   flutter_downloader: ^1.12.0
+  material_symbols_icons: ^4.2874.0
 
 
 

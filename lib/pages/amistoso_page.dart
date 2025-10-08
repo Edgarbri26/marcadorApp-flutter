@@ -10,6 +10,7 @@ import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
 import 'package:marcador/widget/set_and_points_selet.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class AmistosoPage extends StatefulWidget {
   final Marker marker;
@@ -40,7 +41,6 @@ class _AmistosoPageState extends State<AmistosoPage> {
   void initState() {
     super.initState();
   }
-
 
   /// Guardar ajustes en SharedPreferences
   Future<void> _saveSettings() async {
@@ -83,7 +83,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
       return;
     }
 
-    if(ifRanked) {
+    if (ifRanked) {
       tournament = 1; // ID fijo para torneo competitivo
     } else {
       tournament = 2; // ID fijo para torneo amistoso
@@ -115,14 +115,64 @@ class _AmistosoPageState extends State<AmistosoPage> {
     ).pushNamed(AppRoutes.markerTournament, arguments: match);
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  Symbols.handshake,
+                  color: ifRanked ? Colors.grey : MyColors.secundary,
+                ),
+                Text(
+                  '',
+                  style: TextStyle(
+                    color: ifRanked ? Colors.grey : MyColors.secundary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                Switch(
+                  activeThumbColor: MyColors.primary,
+                  inactiveThumbColor: MyColors.secundaryContraste,
+                  inactiveTrackColor: MyColors.secundary,
+                  value: ifRanked,
+                  onChanged: (bool value) {
+                    setState(() {
+                      ifRanked = value;
+                      // Aquí puedes activar lógica según el modo
+                      if (ifRanked) {
+                        nameMode = "Competitivo";
+                      } else {
+                        nameMode = "Amistoso";
+                      }
+                    });
+                  },
+                ),
+                Text(
+                  'Ranked',
+                  style: TextStyle(
+                    color: !ifRanked ? Colors.grey : MyColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                Icon(
+                  Symbols.swords,
+                  color: !ifRanked ? Colors.grey : MyColors.primary,
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: Spacing.xl),
+
           // Nombres de jugadores
           const Text(
             "Selecciona Jugador 1",
@@ -165,62 +215,18 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
           SetAndPointsSelet(marker: widget.marker),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Icon(Icons.sports_esports),
-                Text(
-                  'Amistoso',
-                  style: TextStyle(
-                    color: !ifRanked ? Colors.grey : Colors.green,
-                    fontWeight: FontWeight.bold,
-
-                  ), 
-                ),
-                
-                Switch(
-                    value: ifRanked,
-                    onChanged: (bool value) {
-                      setState(() {
-                        ifRanked = value;
-                        // Aquí puedes activar lógica según el modo
-                        if (ifRanked) {
-                          nameMode = "Competitivo";
-                        } else {
-                          nameMode = "Amistoso";
-                        }
-                      });
-                    },
-                  ),
-                  Icon(Icons.sports_esports),
-                  Text(
-                  'Amistoso',
-                  style: TextStyle(
-                    color: ifRanked ? Colors.grey : Colors.green,
-                    fontWeight: FontWeight.bold,
-
-                  ), 
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: Spacing.xl),
           Center(
-            child:   ButtonApp(
+            child: ButtonApp(
               onPressed: _saveSettings,
-              title:  'Comenzar juego',
+              title: 'Comenzar juego',
               icon: const Icon(Icons.play_arrow_rounded, color: MyColors.light),
-              typeButton:  TypeButton.secundary,
+              typeButton: !ifRanked ? TypeButton.secundary : TypeButton.primary,
             ),
           ),
         ],
       ),
     );
   }
-  
-  
 }
 
 class HomeScreen extends StatelessWidget {

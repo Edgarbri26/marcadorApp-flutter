@@ -30,7 +30,16 @@ class _SettingsPageState extends State<SettingsPage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    // SystemChrome.setEnabledSystemUIMode();
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor:
+            Colors.transparent, // Hace transparente la barra de estado
+        statusBarIconBrightness:
+            Brightness
+                .dark, // Elige el color de los iconos (dark para iconos claros, light para oscuros)
+      ),
+    );
+
     _loadSettings(); // Cargar datos guardados
     debugVersion();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -128,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
     if (index == 0) {
       title = 'Partido sin conexion';
     } else if (index == 1) {
-      title = 'Partido amistoso';
+      title = 'Partidos de Duelos';
     } else if (index == 2) {
       title = 'Partidos por Torneos';
     }
@@ -151,10 +160,13 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.dark,
-
+      // backgroundColor: MyColors.dark,
       appBar: AppBar(
-        toolbarHeight: 60,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+        // toolbarHeight: 60,
         title: Container(
           margin: const EdgeInsets.only(top: Spacing.xs),
           child: Row(
@@ -241,8 +253,8 @@ class _SettingsPageState extends State<SettingsPage> {
             label: 'sin conexion',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.handshake_rounded),
-            label: 'Amistoso',
+            icon: Icon(Icons.sports_esports),
+            label: 'Duelo',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.emoji_events),

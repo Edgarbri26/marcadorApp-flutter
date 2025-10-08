@@ -31,37 +31,6 @@ class CenterButtons extends StatelessWidget {
           spacing: 8,
           runSpacing: 8,
           children: [
-            IconButton(
-              onPressed:
-                  () => showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Confirmación'),
-                        content: Text(
-                          '¿Estás seguro de jugar una nueva partida?',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed:
-                                () => Navigator.of(
-                                  context,
-                                ).pushReplacementNamed(AppRoutes.settings),
-                            child: Text('Cancelar'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                            child: Text('Aceptar'),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-              icon: Icon(Icons.add_box_outlined, color: MyColors.lightGray),
-            ),
             // reiniciar set
             IconButton(
               onPressed: () {
@@ -123,15 +92,42 @@ class CenterButtons extends StatelessWidget {
               onPressed: onUndo,
               icon: Icon(Icons.undo, color: MyColors.lightGray),
             ),
+            // torneo
+            IconButton(
+              onPressed: onEvent,
+              icon: Icon(Icons.emoji_events, color: MyColors.lightGray),
+            ),
             // flip
             IconButton(
               onPressed: onSwap,
               icon: Icon(Icons.swap_horiz_rounded, color: MyColors.lightGray),
             ),
-            // torneo
+
             IconButton(
-              onPressed: onEvent,
-              icon: Icon(Icons.emoji_events, color: MyColors.lightGray),
+              onPressed:
+                  () => showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Confirmación'),
+                        content: Text('¿Estás seguro de salir del partido?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('Cancelar'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            child: Text('Aceptar'),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+              icon: Icon(Icons.logout_sharp, color: MyColors.lightGray),
             ),
           ],
         ),
