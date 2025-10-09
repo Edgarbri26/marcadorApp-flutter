@@ -45,6 +45,7 @@ dependencies:
   open_filex: ^4.7.0
   flutter_downloader: ^1.12.0
   material_symbols_icons: ^4.2874.0
+  confetti: ^0.8.0
 
 
 

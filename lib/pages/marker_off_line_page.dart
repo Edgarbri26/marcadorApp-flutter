@@ -266,35 +266,6 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
                   },
                   onEvent: () {
                     _showCustomDialog();
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (context) {
-                    //     return  Column(
-                    //         children: [
-                    //           Row(
-                    //             children: [
-                    //               IconButton(
-                    //                 onPressed: () {
-                    //                   _onItemTapped(0);
-                    //                 },
-                    //                 icon: Icon(Icons.hail_rounded),
-                    //               ),
-                    //               IconButton(
-                    //                 onPressed: () {
-                    //                   _onItemTapped(1);
-                    //                 },
-                    //                 icon: Icon(Icons.emoji_events),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           IndexedStack(index: _selectedIndex, children: [
-
-                    //             ],
-                    //           ),
-                    //         ],
-                    //       );
-                    //   },
-                    // );
                   },
                 ),
               ],

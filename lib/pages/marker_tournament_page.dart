@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/config/app_routes.dart';
@@ -26,6 +29,11 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   String _player2Name = '';
   bool swap = true;
   bool isLoading = false;
+  TypeConfeti typeConfeti = TypeConfeti.right;
+  double blastDirection = 0;
+  Alignment blastDirectionality = Alignment.topCenter;
+  final confettiControllerLef = ConfettiController();
+  final confettiControllerRigh = ConfettiController();
 
   @override
   void initState() {
@@ -43,6 +51,8 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
 
   @override
   void dispose() {
+    confettiControllerLef.dispose();
+    confettiControllerRigh.dispose();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -118,6 +128,9 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                               setState(() {
                                 marker.resetAll();
                               });
+                              confettiControllerLef.stop();
+                              confettiControllerRigh.stop();
+
                               Navigator.of(context).pop();
                             } catch (e) {
                               setStateSB(() => dialogIsLoading = false);
@@ -231,100 +244,149 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   void _checkMatchWinner() {
     int jugarWin = marker.checkMatchWinner();
     if (jugarWin != 0) {
+      swap = !swap;
       final fechaLocal = DateTime.now();
       final fechaAjustada = fechaLocal.subtract(Duration(hours: 4));
       final fechaIso = fechaAjustada.toIso8601String();
       widget.match.date = fechaIso;
 
       if (jugarWin == 1) {
+        !swap
+            ? confettiControllerLef.play()
+            : confettiControllerRigh
+                .play(); // Ajusta la dirección según el swap
+
         _showMatchWinnerDialog(_player1Name);
         widget.match.winnerInscriptionId = widget.match.inscription1Id;
       } else {
+        !swap ? confettiControllerRigh.play() : confettiControllerLef.play();
+        // Ajusta la dirección según el swap
+
         _showMatchWinnerDialog(_player2Name);
         widget.match.winnerInscriptionId = widget.match.inscription2Id;
-      }
+      } // Ajusta la dirección
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: null,
-      body: Stack(
-        children: [
-          Flex(
-            direction: Axis.horizontal,
-            textDirection: swap ? TextDirection.ltr : TextDirection.rtl,
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Scaffold(
+          appBar: null,
+          body: Stack(
             children: [
-              Expanded(
-                child: PlayerGameArea(
-                  isTournament: true,
-                  takeOut: marker.playerTurn == 1,
-                  playerName: _player1Name,
-                  playerNumber: 1,
-                  playerScore: marker.player1Score,
-                  backgroundColor: MyColors.secundary,
-                  onIncrement: () {
-                    setState(() {
-                      marker.incrementScore(1);
-                      _checkWinCondition();
-                    });
-                  },
-                ),
+              Flex(
+                direction: Axis.horizontal,
+                textDirection: swap ? TextDirection.ltr : TextDirection.rtl,
+                children: [
+                  Expanded(
+                    child: PlayerGameArea(
+                      isTournament: true,
+                      takeOut: marker.playerTurn == 1,
+                      playerName: _player1Name,
+                      playerNumber: 1,
+                      playerScore: marker.player1Score,
+                      backgroundColor: MyColors.secundary,
+                      onIncrement: () {
+                        setState(() {
+                          marker.incrementScore(1);
+                          _checkWinCondition();
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: PlayerGameArea(
+                      isTournament: true,
+                      takeOut: marker.playerTurn == 2,
+                      playerName: _player2Name,
+                      playerNumber: 2,
+                      playerScore: marker.player2Score,
+                      backgroundColor: MyColors.primary,
+                      onIncrement: () {
+                        setState(() {
+                          marker.incrementScore(2);
+                        });
+                        _checkWinCondition();
+                      },
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: PlayerGameArea(
-                  isTournament: true,
-                  takeOut: marker.playerTurn == 2,
-                  playerName: _player2Name,
-                  playerNumber: 2,
-                  playerScore: marker.player2Score,
-                  backgroundColor: MyColors.primary,
-                  onIncrement: () {
-                    setState(() {
-                      marker.incrementScore(2);
-                    });
-                    _checkWinCondition();
-                  },
-                ),
-              ),
-            ],
-          ),
-          Flex(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            direction: Axis.vertical,
+              Flex(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                direction: Axis.vertical,
 
-            children: [
-              SetsPoints(
-                swap: swap,
-                player1Sets: marker.player1Sets,
-                player2Sets: marker.player2Sets,
-              ),
-              CenterButtons(
-                onResetScores:
-                    () => setState(() {
-                      marker.resetScores();
-                    }),
-                onResetAll:
-                    () => setState(() {
-                      marker.resetAll();
-                    }),
-                onUndo: () {
-                  setState(() {
-                    marker.scoreHistoryUndo();
-                  });
-                },
-                onSwap: () {
-                  setState(() {
-                    swap = !swap;
-                  });
-                },
+                children: [
+                  SetsPoints(
+                    swap: swap,
+                    player1Sets: marker.player1Sets,
+                    player2Sets: marker.player2Sets,
+                  ),
+                  CenterButtons(
+                    onResetScores:
+                        () => setState(() {
+                          marker.resetScores();
+                        }),
+                    onResetAll:
+                        () => setState(() {
+                          marker.resetAll();
+                        }),
+                    onUndo: () {
+                      setState(() {
+                        marker.scoreHistoryUndo();
+                      });
+                    },
+                    onSwap: () {
+                      setState(() {
+                        swap = !swap;
+                      });
+                    },
+                    onEvent: () {
+                      confettiControllerLef.play();
+                      confettiControllerRigh.play();
+                    },
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        ),
+
+        Positioned.fill(
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ConfettiWidget(
+                  confettiController: confettiControllerLef,
+                  blastDirection: 0, // derecha
+                  blastDirectionality: BlastDirectionality.directional,
+                  emissionFrequency: 0.8,
+                  numberOfParticles: 20,
+                  gravity: 0.3,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ConfettiWidget(
+                  confettiController: confettiControllerRigh,
+                  blastDirection: pi, // izquierda
+                  blastDirectionality: BlastDirectionality.directional,
+                  emissionFrequency: 0.8,
+                  numberOfParticles: 20,
+                  gravity: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
+
+enum TypeConfeti { lef, right }
