@@ -101,22 +101,13 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                             setStateSB(() => dialogIsLoading = true);
 
                             try {
-                              // --- LÓGICA CLAVE: EJECUTAR LAS PETICIONES ---
-                              // Puedes usar la simulación si quieres probar el loader primero
-                              // await Future.delayed(const Duration(seconds: 2));
-
                               await ApiService().putMatch(widget.match);
+
                               for (final set in _sets) {
+                                print('Set a guardar: ${set.toJson()}');
                                 await ApiService().postSet(set);
                               }
-
-                              // ---------------------- FIN DE LAS PETICIONES -------------------------
-
-                              // 2. CERRAR DIÁLOGO DE CONFIRMACIÓN
-                              // Usa el context del diálogo (dialogContext)
                               Navigator.of(dialogContext).pop();
-
-                              // 3. MOSTRAR MENSAJE DE ÉXITO
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -124,28 +115,16 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                                   ),
                                 ),
                               );
-
-                              // 4. ACTUALIZAR LA PANTALLA PRINCIPAL Y RESETEAR
-                              // Usamos el setState de la pantalla principal (el que está fuera de showDialog)
                               setState(() {
                                 marker.resetAll();
-                                // No hace falta poner isLoading = false aquí si cerramos el diálogo.
                               });
-
-                              // 5. CERRAR EL MARCADOR
                               Navigator.of(context).pop();
                             } catch (e) {
-                              // Manejo de Errores: Si algo falla
-
-                              // 1. Desactivar el loader del botón
                               setStateSB(() => dialogIsLoading = false);
-
-                              // 2. Cierra el diálogo si aún está abierto
                               if (Navigator.of(dialogContext).canPop()) {
                                 Navigator.of(dialogContext).pop();
                               }
 
-                              // 3. Muestra un mensaje de error
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -155,10 +134,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                                 ),
                               );
                             }
-                            // No se necesita el bloque finally aquí ya que el éxito o error terminan la operación.
                           },
-
-                  // Contenido del botón: Muestra el loader o el texto
                   child:
                       dialogIsLoading
                           ? const SizedBox(
@@ -186,6 +162,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
 
   void _checkWinCondition() {
     int jugarWin = marker.checkWinSetCondition();
+    String winner = jugarWin == 1 ? _player1Name : _player2Name;
 
     if (marker.checkWinSetCondition() != 0) {
       showDialog(
@@ -193,7 +170,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('¡Set para $jugarWin!'),
+            title: Text('¡Set para $winner!'),
             content: Text(
               'El set ha terminado, el marcador de sets es: ${marker.player1Sets} - ${marker.player2Sets}.',
             ),
@@ -210,8 +187,8 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _guardarSet(jugarWin);
                   marker.incrementSet(jugarWin);
+                  _guardarSet(jugarWin);
                   _checkMatchWinner();
                   setState(() {
                     swap = !swap;
@@ -232,7 +209,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     final p2Score = marker.player2Score;
 
     final setResult = SetResult(
-      matchId: widget.match.matchId ?? 0,
+      matchId: widget.match.matchId ?? 1,
       setNumber: marker.totalSetsPlayed,
       scoreParticipant1: p1Score,
       scoreParticipant2: p2Score,

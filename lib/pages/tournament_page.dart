@@ -80,14 +80,15 @@ class _PartidoPageState extends State<PartidoPage> {
 
   void _calculatePoints() {
     if (_matchSelect != null) {
-      if (_matchSelect!.round == 'Semifinal' ||
-          _matchSelect!.round == 'Final') {
+      String round = _matchSelect!.round.toLowerCase() ?? '';
+      if (round == 'semifinal' ||
+          round == 'final') {
         _matchSelect!.setsSelected = 5;
         _matchSelect!.pointsSelected = 11;
-      } else if (_matchSelect!.round == 'Ronda 3' ||
-          _matchSelect!.round == 'Ronda 2' ||
-          _matchSelect!.round == 'Octavos de Final' ||
-          _matchSelect!.round == 'Cuartos de Final') {
+      } else if (round == 'ronda 3' ||
+          round == 'ronda 2' ||
+          round == 'octavos de Final' ||
+          round == 'cuartos de Final') {
         _matchSelect!.setsSelected = 3;
         _matchSelect!.pointsSelected = 11;
       } else {
@@ -129,8 +130,7 @@ class _PartidoPageState extends State<PartidoPage> {
             decoration: const InputDecoration(
               prefixIcon: Icon(Icons.emoji_events, color: MyColors.light),
               border: UnderlineInputBorder(
-                // 
-                
+                //
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: MyColors.secundary),

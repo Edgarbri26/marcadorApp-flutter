@@ -83,10 +83,10 @@ class _AmistosoPageState extends State<AmistosoPage> {
       return;
     }
 
-    if (ifRanked) {
-      tournament = 1; // ID fijo para torneo competitivo
+    if (!ifRanked) {
+      tournament = 1; // ID fijo para torneo amistoso
     } else {
-      tournament = 2; // ID fijo para torneo amistoso
+      tournament = 2; // ID fijo para torneo competitivo
     }
 
     Match match = Match(
