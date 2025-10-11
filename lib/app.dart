@@ -6,14 +6,13 @@ import 'package:marcador/pages/marker_tournament_page.dart';
 import 'package:marcador/pages/settings_page.dart';
 import 'package:marcador/pages/update_page.dart';
 import 'package:marcador/pages/login_page.dart';
-import 'package:marcador/models/marker.dart';
+
 import 'package:marcador/models/match.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-  final Marker marker = Marker();
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +29,7 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case AppRoutes.settings:
-            return MaterialPageRoute(
-              builder: (context) => SettingsPage(marker: marker),
-            );
+            return MaterialPageRoute(builder: (context) => SettingsPage());
           case AppRoutes.markerOffLine:
             return MaterialPageRoute(builder: (context) => MarkerOffLinePage());
           case AppRoutes.update:

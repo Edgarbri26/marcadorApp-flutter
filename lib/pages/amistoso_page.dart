@@ -4,17 +4,16 @@ import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
 import 'package:marcador/services/api_services.dart';
-import 'package:marcador/models/marker.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
 import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AmistosoPage extends StatefulWidget {
-  final Marker marker;
-  const AmistosoPage({super.key, required this.marker});
+  const AmistosoPage({super.key});
 
   @override
   State<AmistosoPage> createState() => _AmistosoPageState();
@@ -25,21 +24,39 @@ class _AmistosoPageState extends State<AmistosoPage> {
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
 
-  int pointsSelect = 11;
-  int setsSelect = 3;
+  int targetPoints = 11;
+  int targetSets = 3;
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    targetPoints = prefs.getInt('points') ?? 11;
+    targetSets = prefs.getInt('sets') ?? 1;
+
+    setState(() {
+      targetPoints = prefs.getInt('points') ?? 11;
+      targetSets = prefs.getInt('sets') ?? 1;
+    });
+  }
 
   Jugador? _player1Seleccionado;
   Jugador? _player2Seleccionado;
 
   bool ifRanked = false;
 
-  int tournament = 2; // ID fijo para torneo amistoso
+  int tournament = 1; // ID fijo para torneo amistoso
 
   String nameMode = "Amistoso";
 
   @override
   void initState() {
     super.initState();
+    _loadSettings(); // Cargar datos guardados
+  }
+
+  Future<void> _saveSetAndPointsSelec() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('points', targetPoints);
+    await prefs.setInt('sets', targetSets);
   }
 
   /// Guardar ajustes en SharedPreferences
@@ -59,7 +76,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
       SnackBar(
         content: Text(
           'Guardado: ${_player1Controller.text} vs ${_player2Controller.text} | '
-          'Puntos: ${widget.marker.targetPoints} | Sets: ${widget.marker.targetSets}',
+          'Puntos: ${targetPoints} | Sets: ${targetSets}',
         ),
       ),
     );
@@ -99,8 +116,8 @@ class _AmistosoPageState extends State<AmistosoPage> {
       date: DateTime.now().toIso8601String(),
       nombre1: _player1Controller.text,
       nombre2: _player2Controller.text,
-      pointsSelected: widget.marker.targetPoints,
-      setsSelected: widget.marker.targetSets,
+      pointsSelected: targetPoints,
+      setsSelected: targetSets,
     );
 
     print("torneo asignado: ${match.tournamentId}");
@@ -213,7 +230,11 @@ class _AmistosoPageState extends State<AmistosoPage> {
           ),
           const SizedBox(height: Spacing.xl),
 
-          SetAndPointsSelet(marker: widget.marker),
+          SetAndPointsSelet(
+            targetPoints: targetPoints,
+            targetSets: targetSets,
+            onSelectedSave: _saveSetAndPointsSelec,
+          ),
 
           Center(
             child: ButtonApp(

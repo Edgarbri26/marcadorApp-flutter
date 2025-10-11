@@ -5,15 +5,13 @@ import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/pages/tournament_page.dart';
-import 'package:marcador/models/marker.dart';
 import 'package:marcador/services/update_service.dart';
 import 'package:marcador/widget/signal_off.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatefulWidget {
-  final Marker marker;
-  const SettingsPage({super.key, required this.marker});
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -26,12 +24,11 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
     // 🔹 Bloquea orientación vertical
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);
 
-    _loadSettings(); // Cargar datos guardados
     debugVersion();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForUpdate(showDialogOnUpdate: true);
@@ -137,15 +134,6 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      widget.marker.targetPoints = prefs.getInt('points') ?? 5;
-      widget.marker.targetSets = prefs.getInt('sets') ?? 3;
-    });
-  }
-
   /// Cargar ajustes desde SharedPreferences
 
   @override
@@ -225,11 +213,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Center(
           child: IndexedStack(
             index: _selectedIndex,
-            children: [
-              SignalOff(marker: widget.marker),
-              AmistosoPage(marker: widget.marker),
-              const PartidoPage(),
-            ],
+            children: [SignalOff(), AmistosoPage(), const PartidoPage()],
           ),
         ),
       ),

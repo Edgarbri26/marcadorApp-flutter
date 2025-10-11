@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/models/marker.dart';
 
 class SetAndPointsSelet extends StatefulWidget {
-  final Marker marker;
-  const SetAndPointsSelet({super.key, required this.marker});
+  int targetPoints;
+  int targetSets;
+  final Function? onSelectedSave;
+  SetAndPointsSelet({
+    super.key,
+    required this.targetPoints,
+    required this.targetSets,
+    this.onSelectedSave,
+  });
 
   @override
   State<SetAndPointsSelet> createState() => _SetAndPointsSeletState();
@@ -32,7 +38,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<int>(
-          initialValue: widget.marker.targetPoints,
+          initialValue: widget.targetPoints,
           items:
               pointsOptions.map((int value) {
                 return DropdownMenuItem<int>(
@@ -50,8 +56,9 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
           ),
           onChanged: (newValue) {
             setState(() {
-              widget.marker.targetPoints = newValue!;
+              widget.targetPoints = newValue!;
             });
+            widget.onSelectedSave?.call();
           },
         ),
         const SizedBox(height: 30),
@@ -67,7 +74,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<int>(
-          initialValue: widget.marker.targetSets,
+          initialValue: widget.targetSets,
           items:
               setsOptions.map((int value) {
                 return DropdownMenuItem<int>(
@@ -91,8 +98,9 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
           ),
           onChanged: (newValue) {
             setState(() {
-              widget.marker.targetSets = newValue!;
+              widget.targetSets = newValue!;
             });
+            widget.onSelectedSave?.call();
           },
         ),
         const SizedBox(height: 40),

@@ -14,12 +14,10 @@ class Marker {
   int changeEvery = 2;
   int firstServer = 0;
 
-  // List<int> historyTakeOut = [];
-
+  // Constructor
   Marker();
 
   // marcador
-
   void scoreHistoryAdd(int nJugador) {
     scoreHistory.add(nJugador);
   }
@@ -42,11 +40,6 @@ class Marker {
         resetScores();
       }
 
-      // if (lastScore == -1 && player1Score < targetPoints) {
-      //   player1Score++;
-      // } else if (lastScore == -2 && player2Score < targetPoints) {
-      //   player2Score++;
-      // }
       _updateTurn();
       if (lastScore == 0) {
         playerTurn = 0;
@@ -115,19 +108,8 @@ class Marker {
   void _init(int startingPlayer) {
     playerTurn = startingPlayer;
     scoreHistoryAdd(0);
-    // historyTakeOut.clear();
     firstServer = startingPlayer;
-    // counter = 0;
   }
-
-  // void increment(int scoringPlayer) {
-  //   // Primer punto define quién tiene el saque
-  //   if (playerTurn == 0) {
-  //     _init(scoringPlayer);
-  //     return;
-  //   }
-  //   totalPoints++;
-  // }
 
   /// Retroceder un punto
   void decrement() {
@@ -142,6 +124,8 @@ class Marker {
 
   /// Recalcula el jugador con el saque
   void _updateTurn() {
+    changeEvery = difference ? 1 : 2;
+
     playerTurn =
         ((totalPoints ~/ changeEvery) % 2 == 0)
             ? firstServer

@@ -8,8 +8,7 @@ import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignalOff extends StatefulWidget {
-  final Marker marker;
-  const SignalOff({super.key, required this.marker});
+  const SignalOff({super.key});
 
   @override
   State<SignalOff> createState() => _SignalOffState();
@@ -19,6 +18,8 @@ class _SignalOffState extends State<SignalOff> {
   // Controladores para nombres
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
+  int targetPoints = 11;
+  int targetSets = 3;
 
   bool _isLoading = true;
 
@@ -55,14 +56,14 @@ class _SignalOffState extends State<SignalOff> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('player1', _player1Controller.text);
     await prefs.setString('player2', _player2Controller.text);
-    await prefs.setInt('points', widget.marker.targetPoints);
-    await prefs.setInt('sets', widget.marker.targetSets);
+    // await prefs.setInt('points', widget.marker.targetPoints);
+    // await prefs.setInt('sets', widget.marker.targetSets);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           'Guardado: ${_player1Controller.text} vs ${_player2Controller.text} | '
-          'Puntos: ${widget.marker.targetPoints} | Sets: ${widget.marker.targetSets}',
+          'Puntos: $targetPoints | Sets: $targetSets',
         ),
       ),
     );
@@ -118,7 +119,7 @@ class _SignalOffState extends State<SignalOff> {
           ),
           const SizedBox(height: 30),
 
-          SetAndPointsSelet(marker: widget.marker),
+          SetAndPointsSelet(targetPoints: targetPoints, targetSets: targetSets),
 
           // Botón de JUgar
           Center(
