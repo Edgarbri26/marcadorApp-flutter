@@ -9,6 +9,7 @@ import 'package:marcador/services/update_service.dart';
 import 'package:marcador/widget/signal_off.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -29,16 +30,24 @@ class _SettingsPageState extends State<SettingsPage> {
     //   DeviceOrientation.portraitDown,
     // ]);
 
-    debugVersion();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkForUpdate(showDialogOnUpdate: true);
-    });
+    // debugVersion();
+    if (!kIsWeb) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkForUpdate(showDialogOnUpdate: true);
+      });
+    }
   }
 
   @override
   void dispose() {
     // 🔹 Restaurar orientación libre al salir
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    kIsWeb
+        ? null
+        : SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
 
@@ -110,12 +119,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
   /////////////////////////////////////////////////////////////////////////////////////
 
-  Future<void> debugVersion() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    print(
-      "📱 Versión instalada: ${packageInfo.version}+${packageInfo.buildNumber}",
-    );
-  }
+  // Future<void> debugVersion() async {
+  //   final packageInfo = await PackageInfo.fromPlatform();
+  //   print(
+  //     "📱 Versión instalada: ${packageInfo.version}+${packageInfo.buildNumber}",
+  //   );
+  // }
 
   int _selectedIndex = 0;
   String title = 'Amistoso';
@@ -163,17 +172,19 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.update);
-                },
-                icon: Icon(
-                  // Icons.account_circle,
-                  Icons.update,
-                  color: MyColors.lightGray,
-                  size: 25,
-                ),
-              ),
+              kIsWeb
+                  ? const SizedBox.shrink()
+                  : IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.update);
+                    },
+                    icon: Icon(
+                      // Icons.account_circle,
+                      Icons.update,
+                      color: MyColors.lightGray,
+                      size: 25,
+                    ),
+                  ),
               IconButton(
                 icon: const Icon(
                   Icons.logout,

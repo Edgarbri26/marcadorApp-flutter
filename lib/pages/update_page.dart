@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
@@ -23,9 +24,11 @@ class _UpdatePageState extends State<UpdatePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkForUpdate();
-    });
+    kIsWeb
+        ? null
+        : WidgetsBinding.instance.addPostFrameCallback((_) {
+          _checkForUpdate();
+        });
   }
 
   Future<void> _checkForUpdate() async {
@@ -50,38 +53,40 @@ class _UpdatePageState extends State<UpdatePage> {
   }
 
   Future<void> _downloadUpdate() async {
-    updateService.deleteDownloadedApk();
-    setState(() {
-      _downloading = true;
-      _isError = false;
-      _downloadProgress = 0.0;
-      _statusMessage = "⬇️ Downloading update...";
-    });
-
-    final error = await updateService.downloadAndInstallApkWithProgress(
-      onProgress: (progress) {
-        if (!mounted) return;
-        setState(() {
-          _downloadProgress = progress;
-          _statusMessage =
-              "⬇️ Downloading: ${(progress * 100).toStringAsFixed(0)}%";
-        });
-      },
-    );
-
-    if (!mounted) return;
-
-    setState(() {
-      _downloading = false;
-      if (error != null) {
-        _isError = true;
-        _statusMessage = error;
-      } else {
-        _isError = false;
+    if (!kIsWeb) {
+  updateService.deleteDownloadedApk();
+  setState(() {
+    _downloading = true;
+    _isError = false;
+    _downloadProgress = 0.0;
+    _statusMessage = "⬇️ Downloading update...";
+  });
+  
+  final error = await updateService.downloadAndInstallApkWithProgress(
+    onProgress: (progress) {
+      if (!mounted) return;
+      setState(() {
+        _downloadProgress = progress;
         _statusMessage =
-            "✅ Download complete. The installer has been launched.";
-      }
-    });
+            "⬇️ Downloading: ${(progress * 100).toStringAsFixed(0)}%";
+      });
+    },
+  );
+  
+  if (!mounted) return;
+  
+  setState(() {
+    _downloading = false;
+    if (error != null) {
+      _isError = true;
+      _statusMessage = error;
+    } else {
+      _isError = false;
+      _statusMessage =
+          "✅ Download complete. The installer has been launched.";
+    }
+  });
+}
   }
 
   Widget _buildProgressIndicator() {
