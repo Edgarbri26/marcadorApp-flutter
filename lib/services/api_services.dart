@@ -4,14 +4,15 @@ import 'package:http/http.dart' as http;
 import 'package:marcador/models/inscription.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
+import 'package:marcador/models/match_save.dart';
 import 'package:marcador/models/set_result.dart';
 import 'package:marcador/models/tournament.dart';
 
 class ApiService {
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
   // String localUrl = 'http://localhost:3000/api'; 192.168.1.125
-  // String localUrl = 'http://192.168.1.125:3000/api';
-  String localUrl = 'https://lpp-backend.onrender.com/api';
+  String localUrl = 'http://192.168.1.125:3000/api';
+  // String localUrl = 'https://lpp-backend.onrender.com/api';
 
   Future<List<Jugador>> fetchJugadores() async {
     final response = await http.get(Uri.parse('$localUrl/player'));
@@ -149,13 +150,13 @@ class ApiService {
     }
   }
 
-  Future<bool> putMatch(Match match) async {
-    final url = Uri.parse('$localUrl/match/${match.matchId}/result');
+  Future<bool> putMatch(MatchSave matchSave) async {
+    final url = Uri.parse('$localUrl/match/${matchSave.matchId}/result');
 
     final response = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(match.toJsonResult()),
+      body: json.encode(matchSave.toJsonResult()),
     );
 
     if (response.statusCode == 200) {

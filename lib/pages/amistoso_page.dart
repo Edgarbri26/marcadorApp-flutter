@@ -1,8 +1,11 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
+import 'package:marcador/models/match_repository.dart';
+import 'package:marcador/models/match_save.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
@@ -10,7 +13,6 @@ import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
 import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AmistosoPage extends StatefulWidget {
   const AmistosoPage({super.key});
@@ -23,20 +25,21 @@ class _AmistosoPageState extends State<AmistosoPage> {
   // Controladores para nombres
   final TextEditingController _player1Controller = TextEditingController();
   final TextEditingController _player2Controller = TextEditingController();
+  final MatchRepository _repo = MatchRepository();
 
   int targetPoints = 11;
-  int targetSets = 3;
+  int targetSets = 1;
 
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    targetPoints = prefs.getInt('points') ?? 11;
-    targetSets = prefs.getInt('sets') ?? 1;
+  // Future<void> _loadSettings() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   targetPoints = prefs.getInt('points') ?? 11;
+  //   targetSets = prefs.getInt('sets') ?? 1;
 
-    setState(() {
-      targetPoints = prefs.getInt('points') ?? 11;
-      targetSets = prefs.getInt('sets') ?? 1;
-    });
-  }
+  //   setState(() {
+  //     targetPoints = prefs.getInt('points') ?? 11;
+  //     targetSets = prefs.getInt('sets') ?? 1;
+  //   });
+  // }
 
   Jugador? _player1Seleccionado;
   Jugador? _player2Seleccionado;
@@ -50,17 +53,76 @@ class _AmistosoPageState extends State<AmistosoPage> {
   @override
   void initState() {
     super.initState();
-    _loadSettings(); // Cargar datos guardados
+    Connectivity().onConnectivityChanged.listen((status) {
+      print('🔄 Cambio en el estado de conectividad: $status');
+      if (status != ConnectivityResult.none) {
+        _syncAllMatches(); // sube automáticamente al tener conexión
+        print('📶 Conexión disponible, intentando sincronizar partidos...');
+      }
+    });
   }
 
-  Future<void> _saveSetAndPointsSelec() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('points', targetPoints);
-    await prefs.setInt('sets', targetSets);
+  void _syncAllMatches() async {
+    final unsyncedMatches = _repo.getUnsyncedMatches();
+    if (unsyncedMatches.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No hay partidos pendientes de sincronización.'),
+        ),
+      );
+      return;
+    }
+
+    for (final match in unsyncedMatches) {
+      _attemptSync(match);
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Se ha intentado sincronizar todos los partidos.'),
+      ),
+    );
+    // setState(() {}); // Refrescar la UI después de intentar sincronizar todos
+  }
+
+  void _attemptSync(MatchSave match) async {
+    try {
+      for (final set in match.setsResults) {
+        await ApiService().postSet(set);
+      }
+      final Response = await ApiService().putMatch(match);
+
+      // Si todo va bien, marcar como sincronizado
+      if (Response) {
+        await _repo.markMatchAsSynced(match);
+        setState(() {}); // Refrescar la UI
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Partido ID ${match.matchId} sincronizado con éxito!',
+            ),
+          ),
+        );
+      } else {
+        throw Exception('Error en la respuesta del servidor');
+      }
+
+      // ignore: use_build_context_synchronously
+    } catch (e) {
+      // Simulación de error (por ejemplo, si no hay conexión real)
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Error al sincronizar partido ID ${match.matchId}. Inténtalo de nuevo.',
+          ),
+        ),
+      );
+    }
   }
 
   /// Guardar ajustes en SharedPreferences
   Future<void> _saveSettings() async {
+    _syncAllMatches();
     if (_player1Controller.text.isEmpty || _player2Controller.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -233,7 +295,15 @@ class _AmistosoPageState extends State<AmistosoPage> {
           SetAndPointsSelet(
             targetPoints: targetPoints,
             targetSets: targetSets,
-            onSelectedSave: _saveSetAndPointsSelec,
+            // onSelectedSave: () {
+            //   print("Puntos seleccionados: $targetPoints");
+            //   print("Sets seleccionados: $targetSets");
+            //   // setState(() {
+            //   //   targetPoints = targetPoints;
+            //   //   targetSets = targetSets;
+            //   // });
+            //   // _saveSetAndPointsSelec();
+            // },
           ),
 
           Center(
@@ -246,17 +316,6 @@ class _AmistosoPageState extends State<AmistosoPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Pantalla de Inicio', style: TextStyle(fontSize: 30)),
     );
   }
 }

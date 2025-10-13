@@ -1,14 +1,19 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
+import 'package:marcador/models/match_repository.dart';
+import 'package:marcador/models/match_save.dart';
 import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/pages/tournament_page.dart';
+import 'package:marcador/services/api_services.dart';
 import 'package:marcador/services/update_service.dart';
 import 'package:marcador/widget/signal_off.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SettingsPage extends StatefulWidget {
@@ -20,6 +25,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final UpdateService updateService = UpdateService();
+  // late final StreamSubscription _connectionSub;
 
   @override
   void initState() {
@@ -30,6 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
     //   DeviceOrientation.portraitDown,
     // ]);
 
+    
     // debugVersion();
     if (!kIsWeb) {
       SystemChrome.setPreferredOrientations([
@@ -42,6 +49,8 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  
+
   @override
   void dispose() {
     // 🔹 Restaurar orientación libre al salir
@@ -49,6 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ? null
         : SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
+    // _connectionSub.cancel();
   }
 
   Future<void> _checkForUpdate({bool showDialogOnUpdate = false}) async {
@@ -117,14 +127,6 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     );
   }
-  /////////////////////////////////////////////////////////////////////////////////////
-
-  // Future<void> debugVersion() async {
-  //   final packageInfo = await PackageInfo.fromPlatform();
-  //   print(
-  //     "📱 Versión instalada: ${packageInfo.version}+${packageInfo.buildNumber}",
-  //   );
-  // }
 
   int _selectedIndex = 0;
   String title = 'Amistoso';
@@ -142,8 +144,6 @@ class _SettingsPageState extends State<SettingsPage> {
       _selectedIndex = index;
     });
   }
-
-  /// Cargar ajustes desde SharedPreferences
 
   @override
   Widget build(BuildContext context) {
@@ -198,6 +198,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   // ignore: use_build_context_synchronously
                   Navigator.of(context).pushReplacementNamed(AppRoutes.logIn);
                 },
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.matches);
+                },
+                icon: const Icon(
+                  Icons.cloud_upload,
+                  color: MyColors.lightGray,
+                  size: 25,
+                ),
               ),
             ],
           ),

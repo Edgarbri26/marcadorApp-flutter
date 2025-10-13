@@ -80,9 +80,8 @@ class _PartidoPageState extends State<PartidoPage> {
 
   void _calculatePoints() {
     if (_matchSelect != null) {
-      String round = _matchSelect!.round.toLowerCase() ?? '';
-      if (round == 'semifinal' ||
-          round == 'final') {
+      String round = _matchSelect!.round.toLowerCase();
+      if (round == 'semifinal' || round == 'final') {
         _matchSelect!.setsSelected = 5;
         _matchSelect!.pointsSelected = 11;
       } else if (round == 'ronda 3' ||
@@ -90,6 +89,9 @@ class _PartidoPageState extends State<PartidoPage> {
           round == 'octavos de Final' ||
           round == 'cuartos de Final') {
         _matchSelect!.setsSelected = 3;
+        _matchSelect!.pointsSelected = 11;
+      } else if (round == 'Competitivo') {
+        _matchSelect!.setsSelected = 1;
         _matchSelect!.pointsSelected = 11;
       } else {
         _matchSelect!.setsSelected = 3;

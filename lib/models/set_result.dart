@@ -1,7 +1,16 @@
+import 'package:hive/hive.dart';
+
+part 'set_result.g.dart';
+
+@HiveType(typeId: 2)
 class SetResult {
+  @HiveField(0)
   final int matchId;
+  @HiveField(1)
   final int setNumber;
+  @HiveField(2)
   final int scoreParticipant1;
+  @HiveField(3)
   final int scoreParticipant2;
 
   SetResult({

@@ -1,12 +1,15 @@
 import 'dart:io'
     show Platform; // Importa 'Platform' para verificar la plataforma
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:marcador/app.dart';
+import 'package:marcador/models/match_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  await MatchRepository().init();
 
   try {
     if (Platform.isAndroid || Platform.isIOS) {

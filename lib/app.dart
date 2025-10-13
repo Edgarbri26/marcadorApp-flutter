@@ -3,6 +3,7 @@ import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/pages/marker_off_line_page.dart';
 import 'package:marcador/pages/marker_tournament_page.dart';
+import 'package:marcador/pages/matches_page.dart';
 import 'package:marcador/pages/settings_page.dart';
 import 'package:marcador/pages/update_page.dart';
 import 'package:marcador/pages/login_page.dart';
@@ -40,6 +41,8 @@ class MyApp extends StatelessWidget {
                   (context) =>
                       MarkerTournamentPage(match: settings.arguments as Match),
             );
+          case AppRoutes.matches:
+            return MaterialPageRoute(builder: (context) => MatchesPage());
           default:
             return MaterialPageRoute(builder: (context) => LogInPage());
         }

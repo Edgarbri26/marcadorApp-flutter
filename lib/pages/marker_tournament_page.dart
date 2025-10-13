@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/radius.dart';
 import 'package:marcador/models/match.dart';
+import 'package:marcador/models/match_repository.dart';
+import 'package:marcador/models/match_save.dart';
 import 'package:marcador/models/set_result.dart';
 import 'package:marcador/models/marker.dart';
 import 'package:marcador/services/api_services.dart';
@@ -33,6 +35,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   Alignment blastDirectionality = Alignment.topCenter;
   final confettiControllerLef = ConfettiController();
   final confettiControllerRigh = ConfettiController();
+  final repo = MatchRepository();
 
   @override
   void initState() {
@@ -107,13 +110,25 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                             // 1. Activar el loader del botón usando el setState del Builder
                             setStateSB(() => dialogIsLoading = true);
 
-                            try {
-                              await ApiService().putMatch(widget.match);
+                            final MatchSave finishedMatch = MatchSave(
+                              matchId: widget.match.matchId ?? 1,
+                              player1Name: widget.match.nombre1 ?? 'Jugador 1',
+                              player2Name: widget.match.nombre2 ?? 'Jugador 2',
+                              winnerInscriptionId:
+                                  widget.match.winnerInscriptionId ?? 1,
+                              winnerName: winner,
+                              isSynced: false, // Aún no se ha sincronizado
+                              setsResults: _sets,
+                            );
+                            repo.savePendingMatch(finishedMatch);
 
-                              for (final set in _sets) {
-                                print('Set a guardar: ${set.toJson()}');
-                                await ApiService().postSet(set);
-                              }
+                            try {
+                              // await ApiService().putMatch(widget.match);
+
+                              // for (final set in _sets) {
+                              //   print('Set a guardar: ${set.toJson()}');
+                              //   await ApiService().postSet(set);
+                              // }
                               Navigator.of(dialogContext).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

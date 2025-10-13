@@ -4,12 +4,12 @@ import 'package:marcador/design/my_colors.dart';
 class SetAndPointsSelet extends StatefulWidget {
   int targetPoints;
   int targetSets;
-  final Function? onSelectedSave;
+  // final Function? onSelectedSave;
   SetAndPointsSelet({
     super.key,
     required this.targetPoints,
     required this.targetSets,
-    this.onSelectedSave,
+    // this.onSelectedSave,
   });
 
   @override
@@ -57,8 +57,9 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
           onChanged: (newValue) {
             setState(() {
               widget.targetPoints = newValue!;
+              print("Puntos seleccionados: ${widget.targetPoints}");
             });
-            widget.onSelectedSave?.call();
+            // widget.onSelectedSave?.call();
           },
         ),
         const SizedBox(height: 30),
@@ -100,7 +101,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
             setState(() {
               widget.targetSets = newValue!;
             });
-            widget.onSelectedSave?.call();
+            // widget.onSelectedSave?.call();
           },
         ),
         const SizedBox(height: 40),
