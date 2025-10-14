@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 

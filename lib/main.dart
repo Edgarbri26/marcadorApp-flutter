@@ -1,6 +1,5 @@
 import 'dart:io'
     show Platform; // Importa 'Platform' para verificar la plataforma
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:marcador/app.dart';

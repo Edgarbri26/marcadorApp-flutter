@@ -5,8 +5,6 @@ import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
 import 'package:marcador/design/type_button.dart';
 import 'package:marcador/models/match_repository.dart';
-import 'package:marcador/models/match_save.dart';
-import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugador.dart';

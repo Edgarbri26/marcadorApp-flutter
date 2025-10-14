@@ -1,6 +1,5 @@
 import 'package:marcador/models/set_result.dart';
 import 'package:hive/hive.dart';
-import 'package:uuid/uuid.dart';
 
 part 'match_save.g.dart'; // Corregí el nombre del archivo generado a match_save.g.dart
 

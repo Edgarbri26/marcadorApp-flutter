@@ -1,16 +1,11 @@
 import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
-import 'package:marcador/models/match_repository.dart';
-import 'package:marcador/models/match_save.dart';
 import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/pages/tournament_page.dart';
-import 'package:marcador/services/api_services.dart';
 import 'package:marcador/services/update_service.dart';
 import 'package:marcador/widget/signal_off.dart';
 import 'package:shared_preferences/shared_preferences.dart';
