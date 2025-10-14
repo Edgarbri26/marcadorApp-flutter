@@ -11,8 +11,8 @@ import 'package:marcador/models/tournament.dart';
 class ApiService {
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
   // String localUrl = 'http://localhost:3000/api'; 192.168.1.125
-  String localUrl = 'http://192.168.1.125:3000/api';
-  // String localUrl = 'https://lpp-backend.onrender.com/api';
+  // String localUrl = 'http://192.168.1.125:3000/api';
+  String localUrl = 'https://lpp-backend.onrender.com/api';
 
   Future<List<Jugador>> fetchJugadores() async {
     final response = await http.get(Uri.parse('$localUrl/player'));
@@ -183,51 +183,48 @@ class ApiService {
     }
   }
 
+  Future<int?> obtenerInscriptionIdPorCI(String ci, int idTournament) async {
+    // Se asume el endpoint: '$localUrl/inscription/player/$ci'
+    final response = await http.get(
+      Uri.parse('$localUrl/inscription/player/$ci'),
+      headers: {'Content-Type': 'application/json'},
+    );
 
-Future<int?> obtenerInscriptionIdPorCI(String ci, int idTournament) async {
-  // Se asume el endpoint: '$localUrl/inscription/player/$ci'
-  final response = await http.get(
-    Uri.parse('$localUrl/inscription/player/$ci'),
-    headers: {'Content-Type': 'application/json'},
-  );
+    if (response.statusCode == 200) {
+      try {
+        final data = jsonDecode(response.body);
 
-  if (response.statusCode == 200) {
-    try {
-      final data = jsonDecode(response.body);
+        // Accedemos a la clave "data" que contiene la lista de inscripciones
+        if (data['data'] != null && data['data'] is List) {
+          final inscriptions = data['data'] as List;
 
-      // Accedemos a la clave "data" que contiene la lista de inscripciones
-      if (data['data'] != null && data['data'] is List) {
-        final inscriptions = data['data'] as List;
-
-        if (inscriptions.isNotEmpty) {
-          // Buscamos la inscripción que coincida con el ID del torneo
-          for (var insc in inscriptions) {
-            
-            // Filtramos por el ID del torneo para asegurarnos de tomar la correcta
-            if (insc["tournament_id"] == idTournament) {
-              
-              // Retornamos "inscription_id", asegurando que sea un entero (int)
-              if (insc["inscription_id"] is int) {
-                return insc["inscription_id"] as int;
-              }
-              // Manejo si viniera como String
-              if (insc["inscription_id"] is String) {
-                return int.tryParse(insc["inscription_id"]);
+          if (inscriptions.isNotEmpty) {
+            // Buscamos la inscripción que coincida con el ID del torneo
+            for (var insc in inscriptions) {
+              // Filtramos por el ID del torneo para asegurarnos de tomar la correcta
+              if (insc["tournament_id"] == idTournament) {
+                // Retornamos "inscription_id", asegurando que sea un entero (int)
+                if (insc["inscription_id"] is int) {
+                  return insc["inscription_id"] as int;
+                }
+                // Manejo si viniera como String
+                if (insc["inscription_id"] is String) {
+                  return int.tryParse(insc["inscription_id"]);
+                }
               }
             }
           }
         }
+      } catch (e) {
+        print("Error decodificando la respuesta JSON: $e");
       }
-    } catch (e) {
-      print("Error decodificando la respuesta JSON: $e");
+    } else {
+      print("Error en la API. Status Code: ${response.statusCode}");
     }
-  } else {
-    print("Error en la API. Status Code: ${response.statusCode}");
-  }
 
-  // Retorna null si no se encuentra la inscripción o si hubo un error en la API
-  return null;
-}
+    // Retorna null si no se encuentra la inscripción o si hubo un error en la API
+    return null;
+  }
 
   Future<void> crearInscripcion({
     required int tournamentId,
