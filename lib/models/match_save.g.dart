@@ -17,20 +17,25 @@ class MatchSaveAdapter extends TypeAdapter<MatchSave> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return MatchSave(
-      winnerInscriptionId: fields[0] as int,
-      matchId: fields[1] as int,
+      winnerInscriptionId: fields[0] as int?,
+      matchId: fields[1] as int?,
       setsResults: (fields[2] as List).cast<SetResult>(),
       isSynced: fields[3] as bool,
       player1Name: fields[4] as String,
       player2Name: fields[5] as String,
       winnerName: fields[6] as String,
-    );
+      round: fields[7] as String,
+      ci1: fields[9] as String,
+      ci2: fields[10] as String,
+      tournamentId: fields[11] as int,
+      ciWiner: fields[12] as String?,
+    )..id = fields[8] as int?;
   }
 
   @override
   void write(BinaryWriter writer, MatchSave obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.winnerInscriptionId)
       ..writeByte(1)
@@ -44,7 +49,19 @@ class MatchSaveAdapter extends TypeAdapter<MatchSave> {
       ..writeByte(5)
       ..write(obj.player2Name)
       ..writeByte(6)
-      ..write(obj.winnerName);
+      ..write(obj.winnerName)
+      ..writeByte(7)
+      ..write(obj.round)
+      ..writeByte(8)
+      ..write(obj.id)
+      ..writeByte(9)
+      ..write(obj.ci1)
+      ..writeByte(10)
+      ..write(obj.ci2)
+      ..writeByte(11)
+      ..write(obj.tournamentId)
+      ..writeByte(12)
+      ..write(obj.ciWiner);
   }
 
   @override

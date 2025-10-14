@@ -56,7 +56,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
     Connectivity().onConnectivityChanged.listen((status) {
       print('🔄 Cambio en el estado de conectividad: $status');
       if (status != ConnectivityResult.none) {
-        _syncAllMatches(); // sube automáticamente al tener conexión
+        // _syncAllMatches(); // sube automáticamente al tener conexión
         print('📶 Conexión disponible, intentando sincronizar partidos...');
       }
     });
@@ -64,65 +64,63 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
   void _syncAllMatches() async {
     final unsyncedMatches = _repo.getUnsyncedMatches();
-    if (unsyncedMatches.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No hay partidos pendientes de sincronización.'),
-        ),
-      );
-      return;
-    }
+    // if (unsyncedMatches.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text('No hay partidos pendientes de sincronización.'),
+    //     ),
+    //   );
+    //   return;
+    // }
 
     for (final match in unsyncedMatches) {
-      _attemptSync(match);
+      // _attemptSync(match);
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Se ha intentado sincronizar todos los partidos.'),
-      ),
+      const SnackBar(content: Text('Sincronizando todos los partidos.')),
     );
-    // setState(() {}); // Refrescar la UI después de intentar sincronizar todos
   }
 
-  void _attemptSync(MatchSave match) async {
-    try {
-      for (final set in match.setsResults) {
-        await ApiService().postSet(set);
-      }
-      final Response = await ApiService().putMatch(match);
+  // void _attemptSync(MatchSave match) async {
+  //   try {
+  //     for (final set in match.setsResults) {
+  //       await ApiService().postSet(set);
+  //     }
+  //     final Response = await ApiService().putMatch(match);
 
-      // Si todo va bien, marcar como sincronizado
-      if (Response) {
-        await _repo.markMatchAsSynced(match);
-        setState(() {}); // Refrescar la UI
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Partido ID ${match.matchId} sincronizado con éxito!',
-            ),
-          ),
-        );
-      } else {
-        throw Exception('Error en la respuesta del servidor');
-      }
+  //     // Si todo va bien, marcar como sincronizado
+  //     if (Response) {
+  //       await _repo.markMatchAsSynced(match);
+  //       setState(() {}); // Refrescar la UI
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(
+  //             'Partido ID ${match.matchId} sincronizado con éxito!',
+  //           ),
+  //         ),
+  //       );
+  //     } else {
+  //       throw Exception('Error en la respuesta del servidor');
+  //     }
 
-      // ignore: use_build_context_synchronously
-    } catch (e) {
-      // Simulación de error (por ejemplo, si no hay conexión real)
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Error al sincronizar partido ID ${match.matchId}. Inténtalo de nuevo.',
-          ),
-        ),
-      );
-    }
-  }
+  //     // ignore: use_build_context_synchronously
+  //   } catch (e) {
+  //     // Simulación de error (por ejemplo, si no hay conexión real)
+  //     // ignore: use_build_context_synchronously
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(
+  //           'Error al sincronizar partido ID ${match.matchId}. Inténtalo de nuevo.',
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 
   /// Guardar ajustes en SharedPreferences
   Future<void> _saveSettings() async {
-    _syncAllMatches();
+    //para sincronizar los partidos pendientes
+    // _syncAllMatches();
     if (_player1Controller.text.isEmpty || _player2Controller.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -143,36 +141,40 @@ class _AmistosoPageState extends State<AmistosoPage> {
       ),
     );
 
-    final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(
-      _player1Seleccionado!,
-    );
-    final inscrip2 = await ApiService().obtenerInscriptionIdPorCI(
-      _player2Seleccionado!,
-    );
-
-    if (inscrip1 == null || inscrip2 == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'No se pudo obtener la inscripción de uno o ambos jugadores',
-          ),
-          backgroundColor: MyColors.secundary,
-        ),
-      );
-      return;
-    }
-
     if (!ifRanked) {
       tournament = 1; // ID fijo para torneo amistoso
     } else {
       tournament = 2; // ID fijo para torneo competitivo
     }
 
+    // final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(
+    //   _player1Seleccionado!,
+    //   tournament,
+    // );
+    // final inscrip2 = await ApiService().obtenerInscriptionIdPorCI(
+    //   _player2Seleccionado!,
+    //   tournament,
+    // );
+
+    // if (inscrip1 == null || inscrip2 == null) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text(
+    //         'No se pudo obtener la inscripción de uno o ambos jugadores',
+    //       ),
+    //       backgroundColor: MyColors.secundary,
+    //     ),
+    //   );
+    //   return;
+    // }
+
     Match match = Match(
+      ci1: _player1Seleccionado!.ci,
+      ci2: _player2Seleccionado!.ci,
       matchId: null,
       tournamentId: tournament, // ID fijo para amistoso
-      inscription1Id: inscrip1,
-      inscription2Id: inscrip2,
+      inscription1Id: null,
+      inscription2Id: null,
       round: nameMode,
       status: 'En Juego',
       date: DateTime.now().toIso8601String(),
@@ -184,10 +186,10 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
     print("torneo asignado: ${match.tournamentId}");
 
-    final nuevoMatchId = await ApiService().createMatch(match);
-    if (nuevoMatchId != null) {
-      match.matchId = nuevoMatchId;
-    }
+    // final nuevoMatchId = await ApiService().createMatch(match);
+    // if (nuevoMatchId != null) {
+    //   match.matchId = nuevoMatchId;
+    // }
 
     Navigator.of(
       context,

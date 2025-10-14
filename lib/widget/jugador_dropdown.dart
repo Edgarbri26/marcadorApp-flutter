@@ -25,7 +25,7 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
   Widget build(BuildContext context) {
     return DropdownSearch<Jugador>(
       items: (String? filtro, _) async {
-        final todos = await ApiService().fetchJugadores();
+        final todos = await ApiService().loadPlayerLocal();
         /*for (var j in todos) {
           await ApiService().crearInscripcion(
             tournamentId: 1,

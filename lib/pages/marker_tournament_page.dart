@@ -111,11 +111,16 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                             setStateSB(() => dialogIsLoading = true);
 
                             final MatchSave finishedMatch = MatchSave(
-                              matchId: widget.match.matchId ?? 1,
+                              ciWiner: widget.match.ciWiner,
+                              ci1: widget.match.ci1!,
+                              ci2: widget.match.ci2!,
+                              tournamentId: widget.match.tournamentId,
+                              round: widget.match.round,
+                              matchId: widget.match.matchId,
                               player1Name: widget.match.nombre1 ?? 'Jugador 1',
                               player2Name: widget.match.nombre2 ?? 'Jugador 2',
                               winnerInscriptionId:
-                                  widget.match.winnerInscriptionId ?? 1,
+                                  widget.match.winnerInscriptionId,
                               winnerName: winner,
                               isSynced: false, // Aún no se ha sincronizado
                               setsResults: _sets,
@@ -270,12 +275,14 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
 
         _showMatchWinnerDialog(_player1Name);
         widget.match.winnerInscriptionId = widget.match.inscription1Id;
+        widget.match.ciWiner = widget.match.ci1;
       } else {
         !swap ? confettiControllerRigh.play() : confettiControllerLef.play();
         // Ajusta la dirección según el swap
 
         _showMatchWinnerDialog(_player2Name);
         widget.match.winnerInscriptionId = widget.match.inscription2Id;
+        widget.match.ciWiner = widget.match.ci2;
       } // Ajusta la dirección
     }
   }

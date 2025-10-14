@@ -35,7 +35,13 @@ class MatchRepository {
   /// Guarda o actualiza un MatchSave usando su matchId como clave de Hive.
   Future<void> savePendingMatch(MatchSave match) async {
     // Convierte el ID numérico a String para usarlo como clave de Hive.
-    final hiveKey = match.matchId.toString();
+    final int hiveKey = await _matchBox.add(match);
+
+    // 2. Modificar la clave interna del objeto
+    match.id = hiveKey;
+
+    // 3. Sobrescribir el objeto usando la clave que acabamos de obtener.
+    // Esto es necesario para que el hiveLocalKey se persista.
     await _matchBox.put(hiveKey, match);
     print('💾 Partido ID ${match.matchId} guardado/actualizado localmente.');
   }
@@ -47,13 +53,11 @@ class MatchRepository {
 
   /// Marca un partido como sincronizado.
   Future<void> markMatchAsSynced(MatchSave match) async {
-    final hiveKey = match.matchId.toString();
-
     // 1. Modificar el objeto en la memoria
     match.isSynced = true;
 
     // 2. Guardar el objeto actualizado con la misma clave.
-    await _matchBox.put(hiveKey, match);
+    await _matchBox.put(match.id, match);
     print(
       '🔄 Partido ID ${match.matchId} actualizado a "Sincronizado" en Hive.',
     );

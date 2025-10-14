@@ -90,7 +90,7 @@ class _PartidoPageState extends State<PartidoPage> {
           round == 'cuartos de Final') {
         _matchSelect!.setsSelected = 3;
         _matchSelect!.pointsSelected = 11;
-      } else if (round == 'Competitivo') {
+      } else if (round == 'competitivo') {
         _matchSelect!.setsSelected = 1;
         _matchSelect!.pointsSelected = 11;
       } else {

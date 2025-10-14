@@ -32,6 +32,20 @@ class ApiService {
         .toList();
   }
 
+  Future<List<Jugador>> loadPlayerLocal() async {
+    final response = await rootBundle.loadString('assets/config/player.json');
+    final decoded = json.decode(response);
+    // Si la API devuelve { data: [...] }
+    final list =
+        (decoded is Map)
+            ? decoded['data'] as List<dynamic>? ?? []
+            : decoded as List<dynamic>;
+
+    return list
+        .map((jsonMap) => Jugador.fromJson(jsonMap as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<List<Tournament>> fetchTournaments() async {
     final response = await http.get(Uri.parse('$localUrl/tournament'));
 
@@ -138,11 +152,12 @@ class ApiService {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(match.toJson()),
+      body: json.encode(match.toJsonPost()),
     );
 
     if (response.statusCode == 201 || response.statusCode == 200) {
       final jsonBody = json.decode(response.body);
+      print("ide desde la respuesta  ${jsonBody['data']['match_id']}");
       return jsonBody['data']['match_id']; // Devuelve el ID del partido creado
     } else {
       print('Error al crear el partido: ${response.body}');
@@ -150,7 +165,7 @@ class ApiService {
     }
   }
 
-  Future<bool> putMatch(MatchSave matchSave) async {
+  Future<bool> putMatch(Match matchSave) async {
     final url = Uri.parse('$localUrl/match/${matchSave.matchId}/result');
 
     final response = await http.put(
@@ -168,25 +183,51 @@ class ApiService {
     }
   }
 
-  Future<int?> obtenerInscriptionIdPorCI(Jugador player) async {
-    final response = await http.get(
-      Uri.parse('$localUrl/inscription/player/${player.ci}'),
-      headers: {'Content-Type': 'application/json'},
-    );
 
-    if (response.statusCode == 200) {
+Future<int?> obtenerInscriptionIdPorCI(String ci, int idTournament) async {
+  // Se asume el endpoint: '$localUrl/inscription/player/$ci'
+  final response = await http.get(
+    Uri.parse('$localUrl/inscription/player/$ci'),
+    headers: {'Content-Type': 'application/json'},
+  );
+
+  if (response.statusCode == 200) {
+    try {
       final data = jsonDecode(response.body);
 
+      // Accedemos a la clave "data" que contiene la lista de inscripciones
       if (data['data'] != null && data['data'] is List) {
         final inscriptions = data['data'] as List;
+
         if (inscriptions.isNotEmpty) {
-          return inscriptions.first['inscription_id'];
+          // Buscamos la inscripción que coincida con el ID del torneo
+          for (var insc in inscriptions) {
+            
+            // Filtramos por el ID del torneo para asegurarnos de tomar la correcta
+            if (insc["tournament_id"] == idTournament) {
+              
+              // Retornamos "inscription_id", asegurando que sea un entero (int)
+              if (insc["inscription_id"] is int) {
+                return insc["inscription_id"] as int;
+              }
+              // Manejo si viniera como String
+              if (insc["inscription_id"] is String) {
+                return int.tryParse(insc["inscription_id"]);
+              }
+            }
+          }
         }
       }
+    } catch (e) {
+      print("Error decodificando la respuesta JSON: $e");
     }
-
-    return null;
+  } else {
+    print("Error en la API. Status Code: ${response.statusCode}");
   }
+
+  // Retorna null si no se encuentra la inscripción o si hubo un error en la API
+  return null;
+}
 
   Future<void> crearInscripcion({
     required int tournamentId,

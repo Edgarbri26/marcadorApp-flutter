@@ -5,7 +5,7 @@ part 'set_result.g.dart';
 @HiveType(typeId: 2)
 class SetResult {
   @HiveField(0)
-  final int matchId;
+  int matchId;
   @HiveField(1)
   final int setNumber;
   @HiveField(2)

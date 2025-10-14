@@ -1,8 +1,11 @@
 class Match {
   int? matchId;
   final int tournamentId;
-  final int inscription1Id;
-  final int inscription2Id;
+  int? inscription1Id;
+  int? inscription2Id;
+  String? ci1;
+  String? ci2;
+  String? ciWiner;
   final String round;
   String date;
   int? winnerInscriptionId;
@@ -15,8 +18,8 @@ class Match {
   Match({
     this.matchId,
     required this.tournamentId,
-    required this.inscription1Id,
-    required this.inscription2Id,
+    this.inscription1Id,
+    this.inscription2Id,
     this.winnerInscriptionId,
     required this.status,
     required this.round,
@@ -25,6 +28,8 @@ class Match {
     this.nombre2,
     this.pointsSelected,
     this.setsSelected,
+    this.ci1,
+    this.ci2,
   });
 
   Map<String, dynamic> toJson() => {
@@ -36,6 +41,16 @@ class Match {
     'status': status,
     'round': round,
     'match_datetime': date,
+  };
+
+  Map<String, dynamic> toJsonPost() => {
+    'tournament_id': tournamentId,
+    'inscription1_id': inscription1Id,
+    'inscription2_id': inscription2Id,
+    'winner_inscription_id': winnerInscriptionId,
+    'match_datetime': date,
+    'round': round,
+    'status': status,
   };
 
   Map<String, dynamic> toJsonResult() => {
@@ -51,6 +66,8 @@ class Match {
       status: json['status'],
       round: json['round'],
       date: json['round'],
+      ci1: '',
+      ci2: '',
     );
   }
 }

@@ -1,12 +1,11 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/spacing.dart';
-import 'package:marcador/design/type_button.dart';
 import 'package:marcador/models/match_repository.dart';
 import 'package:marcador/models/match_save.dart';
+import 'package:marcador/models/set_result.dart';
 import 'package:marcador/services/api_services.dart';
-import 'package:marcador/widget/button_app.dart'; // Asegúrate de que esta ruta sea correcta
+import 'package:marcador/models/match.dart';
 
 class MatchesPage extends StatefulWidget {
   const MatchesPage({super.key});
@@ -18,6 +17,8 @@ class MatchesPage extends StatefulWidget {
 class _MatchesPageState extends State<MatchesPage> {
   // Instancia del repositorio
   final MatchRepository _repo = MatchRepository();
+  late Match matchSyn;
+  List<SetResult> _sets = [];
 
   // Future para almacenar la lista de partidos cargados
   late Future<List<MatchSave>> _matchesFuture;
@@ -103,26 +104,74 @@ class _MatchesPageState extends State<MatchesPage> {
 
   // --- LÓGICA DE SINCRONIZACIÓN (Simulación de subida) ---
   void _attemptSync(MatchSave match) async {
+    _sets = match.setsResults;
     try {
-      for (final set in match.setsResults) {
+      if (match.tournamentId == 1 || match.tournamentId == 2) {
+        final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(
+          match.ci1,
+          match.tournamentId,
+        );
+        final inscrip2 = await ApiService().obtenerInscriptionIdPorCI(
+          match.ci2,
+          match.tournamentId,
+        );
+        print('inscrp 1 : $inscrip1 y inscrp 2 : $inscrip2');
+
+        if (inscrip1 == null || inscrip2 == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'No se pudo obtener la inscripción de uno o ambos jugadores',
+              ),
+              backgroundColor: MyColors.secundary,
+            ),
+          );
+          return;
+        }
+
+        matchSyn = Match(
+          matchId: match.matchId,
+          tournamentId: match.tournamentId, // ID fijo para amistoso
+          inscription1Id: inscrip1,
+          inscription2Id: inscrip2,
+          round: match.round,
+          status: 'En Juego',
+          date: DateTime.now().toIso8601String(),
+        );
+
+        matchSyn.winnerInscriptionId =
+            match.ci1 == match.ciWiner ? inscrip1 : inscrip2;
+
+        final nuevoMatchId = await ApiService().createMatch(matchSyn);
+        print('id del partido 💫 $nuevoMatchId');
+        if (nuevoMatchId != null) {
+          matchSyn.matchId = nuevoMatchId;
+        }
+
+        for (final set in _sets) {
+          set.matchId = matchSyn.matchId!;
+        }
+      }
+
+      for (final set in _sets) {
         await ApiService().postSet(set);
       }
-      final Response = await ApiService().putMatch(match);
 
-      // Si todo va bien, marcar como sincronizado
-      if (Response) {
+      final response = await ApiService().putMatch(matchSyn);
+      if (response) {
         await _repo.markMatchAsSynced(match);
         setState(() {}); // Refrescar la UI
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Partido ID ${match.matchId} sincronizado con éxito!',
+              'Partido ID ${matchSyn.matchId} sincronizado con éxito!',
             ),
           ),
         );
       } else {
         throw Exception('Error en la respuesta del servidor');
       }
+      // Si todo va bien, marcar como sincronizado
 
       // ignore: use_build_context_synchronously
     } catch (e) {
@@ -235,7 +284,8 @@ class _MatchesPageState extends State<MatchesPage> {
                 child: ListView.builder(
                   itemCount: matches.length,
                   itemBuilder: (context, index) {
-                    final match = matches[index];
+                    final invertedIndex = matches.length - 1 - index;
+                    final match = matches[invertedIndex];
                     return MatchCard(
                       onDeletePressed: () => _deleteMatch(match),
                       match: match,
@@ -312,6 +362,7 @@ class MatchCard extends StatelessWidget {
             Text('Ganador: $winnerName'),
             Text('Resultados: ${_formatSets(match)}'),
             const SizedBox(height: 4),
+            Text('Round: ${match.round}'),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
@@ -383,6 +434,16 @@ class MatchCard extends StatelessWidget {
           ),
           actions: [
             TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showDeleteDialog(context);
+              },
+              child: const Text(
+                'Eliminar Partido',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cerrar'),
             ),
@@ -392,7 +453,7 @@ class MatchCard extends StatelessWidget {
     );
   }
 
-  void_showDeleteDialog(BuildContext context) {
+  void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {

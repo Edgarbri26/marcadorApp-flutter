@@ -1,15 +1,16 @@
 import 'package:marcador/models/set_result.dart';
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 
 part 'match_save.g.dart'; // Corregí el nombre del archivo generado a match_save.g.dart
 
 @HiveType(typeId: 1) // ID único para MatchSave
 class MatchSave {
   @HiveField(0)
-  final int winnerInscriptionId;
+  int? winnerInscriptionId;
 
   @HiveField(1)
-  final int matchId;
+  int? matchId;
 
   @HiveField(2)
   final List<SetResult> setsResults;
@@ -26,14 +27,37 @@ class MatchSave {
   @HiveField(6)
   final String winnerName;
 
+  @HiveField(7)
+  final String round;
+
+  @HiveField(8)
+  int? id;
+
+  @HiveField(9)
+  final String ci1;
+
+  @HiveField(10)
+  final String ci2;
+
+  @HiveField(11)
+  final int tournamentId;
+
+  @HiveField(12)
+  String? ciWiner;
+
   MatchSave({
-    required this.winnerInscriptionId,
-    required this.matchId,
+    this.winnerInscriptionId,
+    this.matchId,
     required this.setsResults,
     this.isSynced = false,
     required this.player1Name,
     required this.player2Name,
     required this.winnerName,
+    required this.round,
+    required this.ci1,
+    required this.ci2,
+    required this.tournamentId,
+    this.ciWiner,
   });
 
   Map<String, dynamic> toJsonResult() => {

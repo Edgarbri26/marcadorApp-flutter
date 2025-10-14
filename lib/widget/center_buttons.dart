@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class CenterButtons extends StatelessWidget {
   final VoidCallback? onResetScores;
   final VoidCallback? onResetAll;
   final VoidCallback? onUndo;
   final VoidCallback? onSwap;
+  final VoidCallback? onRorate;
   final VoidCallback? onEvent;
   const CenterButtons({
     super.key,
@@ -15,6 +17,7 @@ class CenterButtons extends StatelessWidget {
     this.onUndo,
     this.onSwap,
     this.onEvent,
+    this.onRorate,
   });
 
   @override
@@ -57,7 +60,7 @@ class CenterButtons extends StatelessWidget {
                   },
                 );
               },
-              icon: Icon(Icons.refresh, color: MyColors.lightGray),
+              icon: Icon(Icons.replay, color: MyColors.lightGray),
             ),
             // reiniciar partido
             IconButton(
@@ -90,19 +93,25 @@ class CenterButtons extends StatelessWidget {
             // deaser
             IconButton(
               onPressed: onUndo,
-              icon: Icon(Icons.undo, color: MyColors.lightGray),
+              icon: Icon(Symbols.undo, color: MyColors.lightGray),
             ),
             // torneo
+            // IconButton(
+            //   onPressed: onEvent,
+            //   icon: Icon(Icons.emoji_events, color: MyColors.lightGray),
+            // ),
+
+            // rotate
             IconButton(
-              onPressed: onEvent,
-              icon: Icon(Icons.emoji_events, color: MyColors.lightGray),
+              onPressed: onRorate,
+              icon: Icon(Symbols.mobile_rotate, color: MyColors.lightGray),
             ),
+
             // flip
             IconButton(
               onPressed: onSwap,
               icon: Icon(Icons.swap_horiz_rounded, color: MyColors.lightGray),
             ),
-
             IconButton(
               onPressed:
                   () => showDialog(
