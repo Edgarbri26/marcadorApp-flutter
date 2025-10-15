@@ -14,6 +14,7 @@ import 'package:marcador/models/marker.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:marcador/widget/sets_points.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MarkerTournamentPage extends StatefulWidget {
   final Match match;
@@ -46,10 +47,12 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     _player2Name = widget.match.nombre2 ?? 'Jugador 2';
     marker.targetSets = widget.match.setsSelected ?? 3;
     marker.targetPoints = widget.match.pointsSelected ?? 11;
+    preferenceGet();
   }
 
   @override
   void dispose() {
+    enterPortraitMode();
     confettiControllerLef.dispose();
     confettiControllerRigh.dispose();
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
@@ -72,6 +75,16 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     // if (!kIsWeb) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     // }
+  }
+
+  void preferenceGet() async {
+    final prefs = await SharedPreferences.getInstance();
+    isRotate = prefs.getBool('isRotate') ?? true;
+  }
+
+  void preferenceSet() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool("isRotate", isRotate);
   }
 
   // Tu función donde muestras el diálogo
@@ -369,6 +382,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                     setState(() {
                       isRotate = !isRotate;
                     });
+                    preferenceSet();
                     isRotate ? enterLandscapeMode() : enterPortraitMode();
                   },
                 ),
