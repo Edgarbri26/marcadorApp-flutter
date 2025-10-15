@@ -13,13 +13,14 @@ class ApiService {
     'api_backend',
     defaultValue:
         'https://lpp-backend.onrender.com/api', // Valor para desarrollo local
+    // 'http://192.168.1.125:3000/api',
   );
 
-  // String baseUrl = 'https://lpp-backend.onrender.com/api';
+  // String baseUrl = ;
 
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
   // String localUrl = 'http://localhost:3000/api'; 192.168.1.125
-  // String localUrl = 'http://192.168.1.125:3000/api';
+  // String localUrl = '';
 
   Future<List<Jugador>> fetchJugadores() async {
     final response = await http.get(Uri.parse('$baseUrl/player'));
@@ -121,7 +122,7 @@ class ApiService {
       final jsonBody = json.decode(response.body);
       return jsonBody['data']['match_id']; // Devuelve el ID del partido creado
     } else {
-      // print('Error al crear el partido: ${response.body}');
+      print('Error al crear el partido: ${response.body}');
       return null;
     }
   }
@@ -181,6 +182,8 @@ class ApiService {
       body: json.encode(matchSave.toJsonResult()),
     );
 
+    print(matchSave.winnerInscriptionId);
+
     if (response.statusCode == 200) {
       print('Partido actualizado exitosamente: ${response.body}');
       return true; // Actualización exitosa
@@ -214,10 +217,10 @@ class ApiService {
                 if (insc["inscription_id"] is int) {
                   return insc["inscription_id"] as int;
                 }
-                // Manejo si viniera como String
-                if (insc["inscription_id"] is String) {
-                  return int.tryParse(insc["inscription_id"]);
-                }
+                // // Manejo si viniera como String
+                // if (insc["inscription_id"] is String) {
+                //   return int.tryParse(insc["inscription_id"]);
+                // }
               }
             }
           }

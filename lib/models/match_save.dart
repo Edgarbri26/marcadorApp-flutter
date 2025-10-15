@@ -44,6 +44,12 @@ class MatchSave {
   @HiveField(12)
   String? ciWiner;
 
+  @HiveField(13)
+  int? inscription1Id;
+
+  @HiveField(14)
+  int? inscription2Id;
+
   MatchSave({
     this.winnerInscriptionId,
     this.matchId,

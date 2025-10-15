@@ -40,6 +40,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
 
   @override
   void initState() {
+    preferenceGet();
     super.initState();
     isRotate ? enterLandscapeMode() : enterPortraitMode();
     FullScreen.setFullScreen(true);
@@ -47,7 +48,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     _player2Name = widget.match.nombre2 ?? 'Jugador 2';
     marker.targetSets = widget.match.setsSelected ?? 3;
     marker.targetPoints = widget.match.pointsSelected ?? 11;
-    preferenceGet();
   }
 
   @override
@@ -129,6 +129,9 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                           ? null
                           : () async {
                             setStateSB(() => dialogIsLoading = true);
+                            print(
+                              "inscripncion 1: ${widget.match.inscription1Id}, inscripncion 2: ${widget.match.inscription2Id} inscripncion win: ${widget.match.winnerInscriptionId}",
+                            );
 
                             final MatchSave finishedMatch = MatchSave(
                               ciWiner: widget.match.ciWiner,
@@ -141,6 +144,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                               player2Name: widget.match.nombre2 ?? 'Jugador 2',
                               winnerInscriptionId:
                                   widget.match.winnerInscriptionId,
+
                               winnerName: winner,
                               isSynced: false, // Aún no se ha sincronizado
                               setsResults: _sets,
@@ -253,7 +257,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     final p2Score = marker.player2Score;
 
     final setResult = SetResult(
-      matchId: widget.match.matchId ?? 1,
+      matchId: widget.match.matchId,
       setNumber: marker.totalSetsPlayed,
       scoreParticipant1: p1Score,
       scoreParticipant2: p2Score,

@@ -1,0 +1,15 @@
+flutter_native_splash:
+  # Configuración base para el modo claro
+  color: "#2196f3" 
+  image: assets/images/logo.png
+  color_dark: "#2196f3" 
+  image_dark:  assets/images/logo.png
+
+  android_12:
+    image: assets/images/logo_android_splash.png
+    icon_background_color: "#2196f3"
+    image_dark: assets/images/logo_android_splash.png
+    icon_background_color_dark: "#2196f3"
+
+
+  web: true

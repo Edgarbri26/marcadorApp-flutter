@@ -17,7 +17,7 @@ class SetResultAdapter extends TypeAdapter<SetResult> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SetResult(
-      matchId: fields[0] as int,
+      matchId: fields[0] as int?,
       setNumber: fields[1] as int,
       scoreParticipant1: fields[2] as int,
       scoreParticipant2: fields[3] as int,

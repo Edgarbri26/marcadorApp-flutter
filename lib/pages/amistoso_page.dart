@@ -42,7 +42,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
   Jugador? _player1Seleccionado;
   Jugador? _player2Seleccionado;
 
-  bool ifRanked = false;
+  bool ifRanked = true;
 
   int tournament = 1; // ID fijo para torneo amistoso
 
@@ -151,8 +151,10 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
     if (!ifRanked) {
       tournament = 1; // ID fijo para torneo amistoso
+      nameMode = "Amistoso";
     } else {
       tournament = 2; // ID fijo para torneo competitivo
+      nameMode = "Competitivo";
     }
 
     Match match = Match(
@@ -209,12 +211,6 @@ class _AmistosoPageState extends State<AmistosoPage> {
                   onChanged: (bool value) {
                     setState(() {
                       ifRanked = value;
-                      // Aquí puedes activar lógica según el modo
-                      if (ifRanked) {
-                        nameMode = "Competitivo";
-                      } else {
-                        nameMode = "Amistoso";
-                      }
                     });
                   },
                 ),
@@ -294,9 +290,9 @@ class _AmistosoPageState extends State<AmistosoPage> {
             child: ButtonApp(
               onPressed: _saveSettings,
               title: const Text(
-                        "Comenzar juego",
-                        style: TextStyle(color: MyColors.lightGray),
-                      ),
+                "Comenzar juego",
+                style: TextStyle(color: MyColors.lightGray),
+              ),
               icon: const Icon(Icons.play_arrow_rounded, color: MyColors.light),
               typeButton: !ifRanked ? TypeButton.secundary : TypeButton.primary,
             ),

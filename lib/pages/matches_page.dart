@@ -78,9 +78,7 @@ class _MatchesPageState extends State<MatchesPage> {
       _attemptSync(match);
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Se ha intentado sincronizar todos los partidos.'),
-      ),
+      const SnackBar(content: Text('Sincronizando todos los partidos.')),
     );
     setState(() {}); // Refrescar la UI después de intentar sincronizar todos
   }
@@ -116,8 +114,16 @@ class _MatchesPageState extends State<MatchesPage> {
   // --- LÓGICA DE SINCRONIZACIÓN (Simulación de subida) ---
   void _attemptSync(MatchSave match) async {
     _sets = match.setsResults;
+    matchSyn = Match(
+      winnerInscriptionId: match.winnerInscriptionId,
+      matchId: match.matchId,
+      tournamentId: match.tournamentId, // ID fijo para amistoso
+      round: match.round,
+      status: 'En Juego',
+      date: DateTime.now().toIso8601String(),
+    );
     try {
-      if (match.tournamentId == 1 || match.tournamentId == 2) {
+      if (match.matchId == null) {
         final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(
           match.ci1,
           match.tournamentId,
@@ -139,19 +145,8 @@ class _MatchesPageState extends State<MatchesPage> {
           );
           return;
         }
-
-        matchSyn = Match(
-          matchId: match.matchId,
-          tournamentId: match.tournamentId, // ID fijo para amistoso
-          inscription1Id: inscrip1,
-          inscription2Id: inscrip2,
-          round: match.round,
-          status: 'En Juego',
-          date: DateTime.now().toIso8601String(),
-        );
-
-        matchSyn.winnerInscriptionId =
-            match.ci1 == match.ciWiner ? inscrip1 : inscrip2;
+        matchSyn.inscription1Id = inscrip1;
+        matchSyn.inscription2Id = inscrip2;
 
         final nuevoMatchId = await ApiService().createMatch(matchSyn);
         print('id del partido 💫 $nuevoMatchId');
@@ -159,15 +154,23 @@ class _MatchesPageState extends State<MatchesPage> {
           matchSyn.matchId = nuevoMatchId;
         }
 
+        matchSyn.winnerInscriptionId =
+            match.ci1 == match.ciWiner ? inscrip1 : inscrip2;
+
         for (final set in _sets) {
           set.matchId = matchSyn.matchId!;
         }
       }
-
-      for (final set in _sets) {
-        await ApiService().postSet(set);
+      if (matchSyn.matchId != null) {
+        for (final set in _sets) {
+          await ApiService().postSet(set);
+        }
       }
 
+      print(
+        "inscripncion 1: ${match.inscription1Id}, inscripncion 2: ${match.inscription2Id} inscripncion win: ${match.winnerInscriptionId}",
+      );
+      print('antes del put ${matchSyn.winnerInscriptionId}');
       final response = await ApiService().putMatch(matchSyn);
       if (response) {
         await _repo.markMatchAsSynced(match);
@@ -187,7 +190,8 @@ class _MatchesPageState extends State<MatchesPage> {
       // ignore: use_build_context_synchronously
     } catch (e) {
       // Simulación de error (por ejemplo, si no hay conexión real)
-      // ignore: use_build_context_synchronously
+      // ignore:
+      // print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -291,7 +295,7 @@ class _MatchesPageState extends State<MatchesPage> {
                       ),
                     ),
                     ButtonApp(
-                      onPressed: _deleteAllMatches,
+                      onPressed: _syncAllMatches,
                       title: const Text(
                         "Sincronizar todo",
                         style: TextStyle(color: MyColors.lightGray),

@@ -29,13 +29,16 @@ class MatchSaveAdapter extends TypeAdapter<MatchSave> {
       ci2: fields[10] as String,
       tournamentId: fields[11] as int,
       ciWiner: fields[12] as String?,
-    )..id = fields[8] as int?;
+    )
+      ..id = fields[8] as int?
+      ..inscription1Id = fields[13] as int?
+      ..inscription2Id = fields[14] as int?;
   }
 
   @override
   void write(BinaryWriter writer, MatchSave obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.winnerInscriptionId)
       ..writeByte(1)
@@ -61,7 +64,11 @@ class MatchSaveAdapter extends TypeAdapter<MatchSave> {
       ..writeByte(11)
       ..write(obj.tournamentId)
       ..writeByte(12)
-      ..write(obj.ciWiner);
+      ..write(obj.ciWiner)
+      ..writeByte(13)
+      ..write(obj.inscription1Id)
+      ..writeByte(14)
+      ..write(obj.inscription2Id);
   }
 
   @override

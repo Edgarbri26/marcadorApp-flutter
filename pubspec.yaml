@@ -51,6 +51,7 @@ dependencies:
   connectivity_plus: ^7.0.0
   uuid: ^4.5.1
   flutter_fullscreen: ^1.2.0
+  flutter_native_splash: ^2.4.6
 
 
 
@@ -76,8 +77,7 @@ flutter_icons:
   ios: true
   image_path: "assets/icon/icon.png"
   adaptive_icon_background: "assets/icon/fondo.png"
-
-  # adaptive_icon_foreground: "assets/icon/icon.png" # Opcional
+  adaptive_icon_foreground: "assets/icon/icon.png" # Opcional
 
 
 # For information on the generic Dart part of this file, see the
