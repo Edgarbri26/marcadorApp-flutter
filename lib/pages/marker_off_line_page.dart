@@ -247,6 +247,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
                   player2Sets: marker.player2Sets,
                 ),
                 CenterButtons(
+                  rotate: true,
                   onResetScores:
                       () => setState(() {
                         marker.resetScores();

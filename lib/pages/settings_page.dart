@@ -8,6 +8,7 @@ import 'package:marcador/pages/amistoso_page.dart';
 import 'package:marcador/pages/tournament_page.dart';
 import 'package:marcador/services/update_service.dart';
 import 'package:marcador/widget/signal_off.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -31,7 +32,6 @@ class _SettingsPageState extends State<SettingsPage> {
     //   DeviceOrientation.portraitDown,
     // ]);
 
-    
     // debugVersion();
     if (!kIsWeb) {
       SystemChrome.setPreferredOrientations([
@@ -43,8 +43,6 @@ class _SettingsPageState extends State<SettingsPage> {
       });
     }
   }
-
-  
 
   @override
   void dispose() {
@@ -123,15 +121,15 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  int _selectedIndex = 0;
-  String title = 'Amistoso';
+  int _selectedIndex = 1;
+  String title = 'Duelos';
 
   // Índice inicial en Configuración
   void _onItemTapped(int index) {
     if (index == 0) {
       title = 'Partido sin conexion';
     } else if (index == 1) {
-      title = 'Partidos de Duelos';
+      title = 'Duelos';
     } else if (index == 2) {
       title = 'Partidos por Torneos';
     }
@@ -243,10 +241,7 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: Icon(Icons.wifi_off_outlined),
             label: 'sin conexion',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sports_esports),
-            label: 'Duelo',
-          ),
+          BottomNavigationBarItem(icon: Icon(Symbols.swords), label: 'Duelo'),
           BottomNavigationBarItem(
             icon: Icon(Icons.emoji_events),
             label: 'Torneo',

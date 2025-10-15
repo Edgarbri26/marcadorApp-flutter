@@ -286,6 +286,7 @@ class _marcadorVerticalPageState extends State<marcadorVerticalPage> {
                     player2Sets: widget.marker.player2Sets,
                   ),
                   CenterButtons(
+                    rotate: true,
                     onResetScores:
                         () => setState(() {
                           widget.marker.resetScores();

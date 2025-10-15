@@ -10,6 +10,7 @@ class CenterButtons extends StatelessWidget {
   final VoidCallback? onSwap;
   final VoidCallback? onRorate;
   final VoidCallback? onEvent;
+  final bool rotate;
   const CenterButtons({
     super.key,
     this.onResetScores,
@@ -18,6 +19,7 @@ class CenterButtons extends StatelessWidget {
     this.onSwap,
     this.onEvent,
     this.onRorate,
+    required this.rotate,
   });
 
   @override
@@ -117,7 +119,10 @@ class CenterButtons extends StatelessWidget {
               // flip/swap (Icono 5)
               IconButton(
                 onPressed: onSwap,
-                icon: Icon(Icons.swap_horiz_rounded, color: MyColors.lightGray),
+                icon: Icon(
+                  rotate ? Icons.swap_horiz_outlined : Icons.swap_vert_outlined,
+                  color: MyColors.lightGray,
+                ),
               ),
               // salir (logout) (Icono 6)
               IconButton(

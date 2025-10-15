@@ -40,9 +40,8 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
 
   @override
   void initState() {
-    preferenceGet();
     super.initState();
-    isRotate ? enterLandscapeMode() : enterPortraitMode();
+    preferenceGet();
     FullScreen.setFullScreen(true);
     _player1Name = widget.match.nombre1 ?? 'Jugador 1';
     _player2Name = widget.match.nombre2 ?? 'Jugador 2';
@@ -79,7 +78,11 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
 
   void preferenceGet() async {
     final prefs = await SharedPreferences.getInstance();
-    isRotate = prefs.getBool('isRotate') ?? true;
+    setState(() {
+      // isRotate = !isRotate;
+      isRotate = prefs.getBool('isRotate') ?? true;
+    });
+    isRotate ? enterLandscapeMode() : enterPortraitMode();
   }
 
   void preferenceSet() async {
@@ -360,6 +363,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
               Align(
                 alignment: Alignment.center,
                 child: CenterButtons(
+                  rotate: isRotate,
                   onResetScores:
                       () => setState(() {
                         marker.resetScores();

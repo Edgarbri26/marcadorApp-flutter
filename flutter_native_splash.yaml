@@ -1,15 +1,29 @@
 flutter_native_splash:
-  # Configuración base para el modo claro
+  # Configuración base para el modo claro y oscuro
   color: "#2196f3" 
   image: assets/images/logo.png
   color_dark: "#2196f3" 
-  image_dark:  assets/images/logo.png
+  image_dark: assets/images/logo.png
 
+  # --- MODIFICACIONES PARA EVITAR EL RECORTE ---
+  
+  # 1. Para iOS: Usamos 'scaleAspectFit' para que la imagen se muestre completa sin recortarse,
+  #    ajustando su tamaño para encajar en la pantalla (como 'BoxFit.contain' en Flutter).
+  ios_content_mode: scaleAspectFit
+  
+  # 2. Para Android (versiones < 12): Usamos 'center' junto a la imagen con padding.
+  android_gravity: fill
+  
+  # ---------------------------------------------
+
+  # Configuración de Android 12 (Android 12 maneja la imagen como un icono centrado)
   android_12:
+    # La imagen en Android 12 se recorta a un círculo, por lo que necesita el relleno
     image: assets/images/logo_android_splash.png
     icon_background_color: "#2196f3"
     image_dark: assets/images/logo_android_splash.png
     icon_background_color_dark: "#2196f3"
 
-
   web: true
+  android: true
+  ios: true # Asegúrate de que iOS no esté deshabilitado si tienes problemas allí.
