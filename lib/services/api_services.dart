@@ -8,13 +8,18 @@ import 'package:marcador/models/set_result.dart';
 import 'package:marcador/models/tournament.dart';
 
 class ApiService {
+  String baseUrl = String.fromEnvironment(
+    'api_backend',
+    defaultValue:
+        'http://192.168.1.125:3000/api', // Valor para desarrollo local
+  );
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
   // String localUrl = 'http://localhost:3000/api'; 192.168.1.125
   // String localUrl = 'http://192.168.1.125:3000/api';
-  String localUrl = 'https://lpp-backend.onrender.com/api';
+  // String baseUrl = 'https://lpp-backend.onrender.com/api';
 
   Future<List<Jugador>> fetchJugadores() async {
-    final response = await http.get(Uri.parse('$localUrl/player'));
+    final response = await http.get(Uri.parse('$baseUrl/player'));
     if (response.statusCode != 200) {
       throw Exception('Error al cargar jugadores');
     }
@@ -46,7 +51,7 @@ class ApiService {
   }
 
   Future<List<Tournament>> fetchTournaments() async {
-    final response = await http.get(Uri.parse('$localUrl/tournament'));
+    final response = await http.get(Uri.parse('$baseUrl/tournament'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonBody = json.decode(response.body);
@@ -65,7 +70,7 @@ class ApiService {
   }
 
   Future<List<Match>> fetchMatches() async {
-    final response = await http.get(Uri.parse('$localUrl/match'));
+    final response = await http.get(Uri.parse('$baseUrl/match'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonBody = json.decode(response.body);
@@ -82,7 +87,7 @@ class ApiService {
   }
 
   Future<List<Inscription>> fetchInscriptions() async {
-    final response = await http.get(Uri.parse('$localUrl/inscription'));
+    final response = await http.get(Uri.parse('$baseUrl/inscription'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonBody = json.decode(response.body);
@@ -101,7 +106,7 @@ class ApiService {
   }
 
   Future<int?> postMatch(Match match) async {
-    final url = Uri.parse('$localUrl/match');
+    final url = Uri.parse('$baseUrl/match');
 
     final response = await http.post(
       url,
@@ -119,7 +124,7 @@ class ApiService {
   }
 
   Future<int?> postSet(SetResult setResult) async {
-    final url = Uri.parse('$localUrl/set');
+    final url = Uri.parse('$baseUrl/set');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -146,7 +151,7 @@ class ApiService {
   }
 
   Future<int?> createMatch(Match match) async {
-    final url = Uri.parse('$localUrl/match');
+    final url = Uri.parse('$baseUrl/match');
 
     final response = await http.post(
       url,
@@ -165,7 +170,7 @@ class ApiService {
   }
 
   Future<bool> putMatch(Match matchSave) async {
-    final url = Uri.parse('$localUrl/match/${matchSave.matchId}/result');
+    final url = Uri.parse('$baseUrl/match/${matchSave.matchId}/result');
 
     final response = await http.put(
       url,
@@ -185,7 +190,7 @@ class ApiService {
   Future<int?> obtenerInscriptionIdPorCI(String ci, int idTournament) async {
     // Se asume el endpoint: '$localUrl/inscription/player/$ci'
     final response = await http.get(
-      Uri.parse('$localUrl/inscription/player/$ci'),
+      Uri.parse('$baseUrl/inscription/player/$ci'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -279,7 +284,7 @@ class ApiService {
     }
 
     final response = await http.post(
-      Uri.parse("$localUrl/credential/authenticate"),
+      Uri.parse("$baseUrl/credential/authenticate"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
