@@ -8,15 +8,18 @@ import 'package:marcador/models/set_result.dart';
 import 'package:marcador/models/tournament.dart';
 
 class ApiService {
+  // variable de entorno de render
   String baseUrl = String.fromEnvironment(
     'api_backend',
     defaultValue:
-        'http://192.168.1.125:3000/api', // Valor para desarrollo local
+        'https://lpp-backend.onrender.com/api', // Valor para desarrollo local
   );
+
+  // String baseUrl = 'https://lpp-backend.onrender.com/api';
+
   //String baseUrl = 'https://lpp-backend.onrender.com/api';
   // String localUrl = 'http://localhost:3000/api'; 192.168.1.125
   // String localUrl = 'http://192.168.1.125:3000/api';
-  // String baseUrl = 'https://lpp-backend.onrender.com/api';
 
   Future<List<Jugador>> fetchJugadores() async {
     final response = await http.get(Uri.parse('$baseUrl/player'));
