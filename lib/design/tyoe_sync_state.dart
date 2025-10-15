@@ -1,0 +1,1 @@
+enum TypeSyncState { sincronizado, pendiente }

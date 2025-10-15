@@ -130,6 +130,16 @@ class _AmistosoPageState extends State<AmistosoPage> {
       return;
     }
 
+    if (_player1Controller.text == _player2Controller.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Elige dos jugadores distintos'),
+          backgroundColor: MyColors.secundary,
+        ),
+      );
+
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -144,27 +154,6 @@ class _AmistosoPageState extends State<AmistosoPage> {
     } else {
       tournament = 2; // ID fijo para torneo competitivo
     }
-
-    // final inscrip1 = await ApiService().obtenerInscriptionIdPorCI(
-    //   _player1Seleccionado!,
-    //   tournament,
-    // );
-    // final inscrip2 = await ApiService().obtenerInscriptionIdPorCI(
-    //   _player2Seleccionado!,
-    //   tournament,
-    // );
-
-    // if (inscrip1 == null || inscrip2 == null) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text(
-    //         'No se pudo obtener la inscripción de uno o ambos jugadores',
-    //       ),
-    //       backgroundColor: MyColors.secundary,
-    //     ),
-    //   );
-    //   return;
-    // }
 
     Match match = Match(
       ci1: _player1Seleccionado!.ci,
@@ -183,11 +172,6 @@ class _AmistosoPageState extends State<AmistosoPage> {
     );
 
     print("torneo asignado: ${match.tournamentId}");
-
-    // final nuevoMatchId = await ApiService().createMatch(match);
-    // if (nuevoMatchId != null) {
-    //   match.matchId = nuevoMatchId;
-    // }
 
     Navigator.of(
       context,
@@ -309,7 +293,10 @@ class _AmistosoPageState extends State<AmistosoPage> {
           Center(
             child: ButtonApp(
               onPressed: _saveSettings,
-              title: 'Comenzar juego',
+              title: const Text(
+                        "Comenzar juego",
+                        style: TextStyle(color: MyColors.lightGray),
+                      ),
               icon: const Icon(Icons.play_arrow_rounded, color: MyColors.light),
               typeButton: !ifRanked ? TypeButton.secundary : TypeButton.primary,
             ),

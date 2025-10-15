@@ -280,6 +280,7 @@ class _marcadorVerticalPageState extends State<marcadorVerticalPage> {
 
                 children: [
                   SetsPoints(
+                    rotate: true,
                     swap: orientation == Orientation.portrait ? false : true,
                     player1Sets: widget.marker.player1Sets,
                     player2Sets: widget.marker.player2Sets,

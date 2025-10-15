@@ -124,7 +124,10 @@ class _SignalOffState extends State<SignalOff> {
           Center(
             child: ButtonApp(
               onPressed: _saveSettings,
-              title: 'Comenzar juego',
+              title: const Text(
+                "Comenzar juego",
+                style: TextStyle(color: MyColors.lightGray),
+              ),
               icon: Icon(Icons.play_arrow_rounded, color: MyColors.light),
               typeButton: TypeButton.secundary,
             ),

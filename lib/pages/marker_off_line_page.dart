@@ -241,6 +241,7 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
               direction: Axis.vertical,
               children: [
                 SetsPoints(
+                  rotate: true,
                   swap: swap,
                   player1Sets: marker.player1Sets,
                   player2Sets: marker.player2Sets,

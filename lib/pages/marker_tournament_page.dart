@@ -1,8 +1,9 @@
 import 'dart:math';
-
 import 'package:confetti/confetti.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/design/radius.dart';
 import 'package:marcador/models/match.dart';
@@ -10,7 +11,6 @@ import 'package:marcador/models/match_repository.dart';
 import 'package:marcador/models/match_save.dart';
 import 'package:marcador/models/set_result.dart';
 import 'package:marcador/models/marker.dart';
-import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:marcador/widget/sets_points.dart';
@@ -30,21 +30,18 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
   String _player2Name = '';
   bool swap = true;
   bool isLoading = false;
-  TypeConfeti typeConfeti = TypeConfeti.right;
   double blastDirection = 0;
   Alignment blastDirectionality = Alignment.topCenter;
   final confettiControllerLef = ConfettiController();
   final confettiControllerRigh = ConfettiController();
   final repo = MatchRepository();
+  bool isRotate = true;
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    isRotate ? enterLandscapeMode() : enterPortraitMode();
+    FullScreen.setFullScreen(true);
     _player1Name = widget.match.nombre1 ?? 'Jugador 1';
     _player2Name = widget.match.nombre2 ?? 'Jugador 2';
     marker.targetSets = widget.match.setsSelected ?? 3;
@@ -56,32 +53,44 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     confettiControllerLef.dispose();
     confettiControllerRigh.dispose();
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
+    FullScreen.setFullScreen(false);
     super.dispose();
+  }
+
+  void enterLandscapeMode() {
+    // if (!kIsWeb) {
+    // Esto es crucial para evitar errores en web
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft, // Rotación a la izquierda
+      DeviceOrientation.landscapeRight, // Rotación a la derecha
+    ]);
+    // }
+  }
+
+  // Función para volver al modo vertical/normal
+  void enterPortraitMode() {
+    // if (!kIsWeb) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // }
   }
 
   // Tu función donde muestras el diálogo
   void _showMatchWinnerDialog(String winner) async {
-    // Mantenemos 'isLoading' como variable local.
-    // El estado de 'isLoading' para el botón se manejará con el StatefulBuilder.
     bool dialogIsLoading = false;
 
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext dialogContext) {
-        // Renombramos el contexto a dialogContext
         return AlertDialog(
           title: Text('¡Ganador del partido: $winner!'),
           content: Text('¡Felicidades, $winner ha ganado el partido!'),
           actions: <Widget>[
-            // Botón CANCELAR - No necesita StatefulBuilder
+            // cancelar
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 _sets.removeLast();
-                // Usamos el setState de la pantalla principal para la lógica de datos
                 setState(() {
                   winner == _player1Name
                       ? marker.player1Sets--
@@ -91,7 +100,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
               child: const Text('cancelar'),
             ),
 
-            // ¡EL CAMBIO CLAVE! Usamos StatefulBuilder para actualizar solo el botón
             StatefulBuilder(
               builder: (contextSB, setStateSB) {
                 // contextSB y setStateSB son para el botón
@@ -102,12 +110,11 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                       borderRadius: BorderRadius.all(WeinFluRadius.small),
                     ),
                   ),
-                  // El botón solo funciona si NO está cargando
+
                   onPressed:
                       dialogIsLoading
                           ? null
                           : () async {
-                            // 1. Activar el loader del botón usando el setState del Builder
                             setStateSB(() => dialogIsLoading = true);
 
                             final MatchSave finishedMatch = MatchSave(
@@ -128,12 +135,6 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                             repo.savePendingMatch(finishedMatch);
 
                             try {
-                              // await ApiService().putMatch(widget.match);
-
-                              // for (final set in _sets) {
-                              //   print('Set a guardar: ${set.toJson()}');
-                              //   await ApiService().postSet(set);
-                              // }
                               Navigator.of(dialogContext).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -297,8 +298,11 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
           body: Stack(
             children: [
               Flex(
-                direction: Axis.horizontal,
+                direction: isRotate ? Axis.horizontal : Axis.vertical,
                 textDirection: swap ? TextDirection.ltr : TextDirection.rtl,
+                verticalDirection:
+                    swap ? VerticalDirection.up : VerticalDirection.down,
+                spacing: 4,
                 children: [
                   Expanded(
                     child: PlayerGameArea(
@@ -316,6 +320,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                       },
                     ),
                   ),
+
                   Expanded(
                     child: PlayerGameArea(
                       isTournament: true,
@@ -334,42 +339,49 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                   ),
                 ],
               ),
-              Flex(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                direction: Axis.vertical,
 
-                children: [
-                  SetsPoints(
-                    swap: swap,
-                    player1Sets: marker.player1Sets,
-                    player2Sets: marker.player2Sets,
-                  ),
-                  CenterButtons(
-                    onResetScores:
-                        () => setState(() {
-                          marker.resetScores();
-                        }),
-                    onResetAll:
-                        () => setState(() {
-                          marker.resetAll();
-                        }),
-                    onUndo: () {
-                      setState(() {
-                        marker.scoreHistoryUndo();
-                      });
-                    },
-                    onSwap: () {
-                      setState(() {
-                        swap = !swap;
-                      });
-                    },
-                    onEvent: () {
-                      confettiControllerLef.play();
-                      confettiControllerRigh.play();
-                    },
-                  ),
-                ],
+              Align(
+                alignment: Alignment.center,
+                child: CenterButtons(
+                  onResetScores:
+                      () => setState(() {
+                        marker.resetScores();
+                      }),
+                  onResetAll:
+                      () => setState(() {
+                        marker.resetAll();
+                      }),
+                  onUndo: () {
+                    setState(() {
+                      marker.scoreHistoryUndo();
+                    });
+                  },
+                  onSwap: () {
+                    setState(() {
+                      swap = !swap;
+                    });
+                  },
+                  onEvent: () {
+                    confettiControllerLef.play();
+                    confettiControllerRigh.play();
+                  },
+                  onRorate: () {
+                    setState(() {
+                      isRotate = !isRotate;
+                    });
+                    isRotate ? enterLandscapeMode() : enterPortraitMode();
+                  },
+                ),
+              ),
+              Align(
+                alignment:
+                    isRotate ? Alignment.topCenter : Alignment.centerLeft,
+                child: SetsPoints(
+                  rotate: isRotate,
+                  swap: swap,
+                  player1Sets: marker.player1Sets,
+                  player2Sets: marker.player2Sets,
+                ),
               ),
             ],
           ),
@@ -407,5 +419,3 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
     );
   }
 }
-
-enum TypeConfeti { lef, right }

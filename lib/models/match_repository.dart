@@ -64,9 +64,16 @@ class MatchRepository {
   }
 
   /// Elimina un partido de Hive por su ID.
-  Future<void> deleteMatchById(int id) async {
-    await _matchBox.delete(id.toString());
-    print('🗑️ Partido ID $id eliminado permanentemente.');
+  Future<bool> deleteMatchById(MatchSave match) async {
+    try {
+      await _matchBox.delete(match.id);
+      print('🗑️ Partido ID ${match.id} eliminado permanentemente.');
+      // Verifica si el elemento ya no existe
+      return !_matchBox.containsKey(match.id);
+    } catch (e) {
+      print('❌ Error al eliminar partido: $e');
+      return false;
+    }
   }
 
   /// Elimina todos los partidos sincronizados (limpieza).

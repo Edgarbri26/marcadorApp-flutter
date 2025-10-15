@@ -4,14 +4,14 @@ import 'package:marcador/design/type_button.dart';
 
 class ButtonApp extends StatelessWidget {
   final void Function() onPressed;
-  final String title;
-  final Icon icon;
+  final Text title;
+  final Icon? icon;
   final TypeButton typeButton;
   const ButtonApp({
     super.key,
     required this.onPressed,
     required this.title,
-    required this.icon,
+    this.icon,
     required this.typeButton,
   });
 
@@ -43,10 +43,7 @@ class ButtonApp extends StatelessWidget {
           ),
         ),
         icon: icon,
-        label: Text(
-          title,
-          style: TextStyle(fontSize: 16, color: MyColors.light),
-        ),
+        label: title,
         onPressed: onPressed,
       ),
     );
