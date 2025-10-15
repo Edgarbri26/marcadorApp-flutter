@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:marcador/design/my_colors.dart';
@@ -25,7 +26,14 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
   Widget build(BuildContext context) {
     return DropdownSearch<Jugador>(
       items: (String? filtro, _) async {
-        final todos = await ApiService().loadPlayerLocal();
+        late List<Jugador> todos;
+
+        if (kIsWeb) {
+          todos = await ApiService().fetchJugadores();
+        } else {
+          todos = await ApiService().loadPlayerLocal();
+        }
+
         /*for (var j in todos) {
           await ApiService().crearInscripcion(
             tournamentId: 1,
