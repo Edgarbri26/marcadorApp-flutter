@@ -1,0 +1,365 @@
+{
+  "data": [
+    {
+      "ci": "31026016",
+      "first_name": "Aaron",
+      "last_name": "Piña"
+    },
+    {
+      "ci": "30979752",
+      "first_name": "Adrián",
+      "last_name": "Alvarado"
+    },
+    {
+      "ci": "31770718",
+      "first_name": "Alejandro ",
+      "last_name": "Vargas "
+    },
+    {
+      "ci": "33136645",
+      "first_name": "Alejandro Jose",
+      "last_name": "Yepez Rodríguez "
+    },
+    {
+      "ci": "32086141",
+      "first_name": "Ali José",
+      "last_name": "Colmenarez Castillo"
+    },
+    {
+      "ci": "32199921",
+      "first_name": "Ambar Saraí",
+      "last_name": "Echeto Ramírez"
+    },
+    {
+      "ci": "32258204",
+      "first_name": "Ariannys Alexandra",
+      "last_name": "Hernández Tabares"
+    },
+    {
+      "ci": "30173481",
+      "first_name": "Christian Adrian ",
+      "last_name": "Yajure Mujica "
+    },
+    {
+      "ci": "28348684",
+      "first_name": "Diego",
+      "last_name": "García"
+    },
+    {
+      "ci": "30590776",
+      "first_name": "Diego",
+      "last_name": "Gil"
+    },
+    {
+      "ci": "27411161",
+      "first_name": "Dioiber Jesús",
+      "last_name": "Domoromo Sira"
+    },
+    {
+      "ci": "32861958",
+      "first_name": "Douglas josue",
+      "last_name": "Tua colmenarez"
+    },
+    {
+      "ci": "32352032",
+      "first_name": "Edgar",
+      "last_name": "Rivero "
+    },
+    {
+      "ci": "31366298",
+      "first_name": "Edgar José",
+      "last_name": "Briceño Mendez"
+    },
+    {
+      "ci": "31493062",
+      "first_name": "Eduardo Jose",
+      "last_name": "Vargas Sepulveda"
+    },
+    {
+      "ci": "32533151",
+      "first_name": "Edwards Javier",
+      "last_name": "Pérez Valles"
+    },
+    {
+      "ci": "31271715",
+      "first_name": "Enrique",
+      "last_name": "Perez"
+    },
+    {
+      "ci": "32742344",
+      "first_name": "Erick Gabriel",
+      "last_name": "Briceño Mendez"
+    },
+    {
+      "ci": "31492919",
+      "first_name": "Exner Argenis",
+      "last_name": "Sibrian Sanchez"
+    },
+    {
+      "ci": "32366214",
+      "first_name": "Ezequiel",
+      "last_name": "Aguiar"
+    },
+    {
+      "ci": "32439898",
+      "first_name": "Frannael Yair",
+      "last_name": "Pereira Ramos"
+    },
+    {
+      "ci": "29944901",
+      "first_name": "Gabriel Alejandro",
+      "last_name": "Piña Martinez"
+    },
+    {
+      "ci": "31003968",
+      "first_name": "Gabriel David",
+      "last_name": "Arenas Uzcanga"
+    },
+    {
+      "ci": "32356229",
+      "first_name": "Gabriela",
+      "last_name": "Quintero"
+    },
+    {
+      "ci": "30559841",
+      "first_name": "Genderson Gabriel ",
+      "last_name": "Piñango chinchilla "
+    },
+    {
+      "ci": "31355205",
+      "first_name": "Hahnemann Lenin",
+      "last_name": "Aguero Hernandez"
+    },
+    {
+      "ci": "28577019",
+      "first_name": "Humberto",
+      "last_name": "Alejandro"
+    },
+    {
+      "ci": "31502669",
+      "first_name": "Isaac Alexander ",
+      "last_name": "Palacios Torres "
+    },
+    {
+      "ci": "30916384",
+      "first_name": "Jaiker",
+      "last_name": "Figueredo"
+    },
+    {
+      "ci": "32236996",
+      "first_name": "Jaismary Andreina",
+      "last_name": "Piñero Castejón"
+    },
+    {
+      "ci": "32366210",
+      "first_name": "Javianny Sarai",
+      "last_name": "Cueri Bello"
+    },
+    {
+      "ci": "31765551",
+      "first_name": "Jesus",
+      "last_name": "Arrieche"
+    },
+    {
+      "ci": "29506102",
+      "first_name": "Jesus",
+      "last_name": "Martínez"
+    },
+    {
+      "ci": "30917054",
+      "first_name": "Jesus ",
+      "last_name": "Navas "
+    },
+    {
+      "ci": "29778174",
+      "first_name": "Jesus",
+      "last_name": "Ramos"
+    },
+    {
+      "ci": "31804754",
+      "first_name": "Johan Jose",
+      "last_name": "Torres Alvarado"
+    },
+    {
+      "ci": "28425297",
+      "first_name": "Jose",
+      "last_name": "Fernandez"
+    },
+    {
+      "ci": "31558793",
+      "first_name": "Joskarly Daniela",
+      "last_name": "Bracho Garcia"
+    },
+    {
+      "ci": "32023001",
+      "first_name": "José Antonio",
+      "last_name": "Vasquez Farias"
+    },
+    {
+      "ci": "32599624",
+      "first_name": "José Gregorio",
+      "last_name": "Avendaño Bucci"
+    },
+    {
+      "ci": "27198676",
+      "first_name": "Juan diego",
+      "last_name": "Perdomo martinez"
+    },
+    {
+      "ci": "29976065",
+      "first_name": "Juan Felix",
+      "last_name": "Rodriguez Alvarado"
+    },
+    {
+      "ci": "30630434",
+      "first_name": "Julio Cesar",
+      "last_name": "Durán Chavez"
+    },
+    {
+      "ci": "31843813",
+      "first_name": "Karla María",
+      "last_name": "Talavera González"
+    },
+    {
+      "ci": "32257442",
+      "first_name": "Karlos Amado",
+      "last_name": "Herrera Piña"
+    },
+    {
+      "ci": "31088933",
+      "first_name": "Keyler",
+      "last_name": "Carrillo"
+    },
+    {
+      "ci": "32467798",
+      "first_name": "Lexandro",
+      "last_name": "Quintero"
+    },
+    {
+      "ci": "30178822",
+      "first_name": "Luis Alejandro ",
+      "last_name": "Colmenarez pargas"
+    },
+    {
+      "ci": "30759981",
+      "first_name": "Luis Angel",
+      "last_name": "Díaz Hernández"
+    },
+    {
+      "ci": "30353315",
+      "first_name": "Luis Antonio",
+      "last_name": "Cala Pineda"
+    },
+    {
+      "ci": "30675774",
+      "first_name": "Luis Manuel",
+      "last_name": "Gutierrez Urbina"
+    },
+    {
+      "ci": "31132433",
+      "first_name": "Luis Miguel ",
+      "last_name": "Rodrígues Acevedo"
+    },
+    {
+      "ci": "31111417",
+      "first_name": "Marcos Antonio",
+      "last_name": "Castellanos Galíndez"
+    },
+    {
+      "ci": "32205197",
+      "first_name": "Mariana Alejandra",
+      "last_name": "Escobar Graziani"
+    },
+    {
+      "ci": "30803929",
+      "first_name": "Mario Daniel",
+      "last_name": "Oropeza Alvarado"
+    },
+    {
+      "ci": "29909792",
+      "first_name": "Peter Elias",
+      "last_name": "Riera Zárate"
+    },
+    {
+      "ci": "11123872",
+      "first_name": "Prof.",
+      "last_name": "Mariela "
+    },
+    {
+      "ci": "31212501",
+      "first_name": "Rafael Eloy",
+      "last_name": "Garmendia Rodríguez"
+    },
+    {
+      "ci": "20929099",
+      "first_name": "Reymar",
+      "last_name": "Lopez"
+    },
+    {
+      "ci": "32315295",
+      "first_name": "Reymar Valentina",
+      "last_name": "Sánchez Villamizar"
+    },
+    {
+      "ci": "32236895",
+      "first_name": "Rodrigo",
+      "last_name": "Rodriguez"
+    },
+    {
+      "ci": "31051934",
+      "first_name": "Samuel Alejandro",
+      "last_name": "Velásquez Moncada"
+    },
+    {
+      "ci": "31350493",
+      "first_name": "Samuel Enrique",
+      "last_name": "Rosales Díaz"
+    },
+    {
+      "ci": "31535546",
+      "first_name": "Santiago ",
+      "last_name": "Arrieche"
+    },
+    {
+      "ci": "31843360",
+      "first_name": "Sebastian",
+      "last_name": "Silva"
+    },
+    {
+      "ci": "31071004",
+      "first_name": "Sebastián de Jesús ",
+      "last_name": "Quintero Gómez "
+    },
+    {
+      "ci": "31347716",
+      "first_name": "Simón Alejandro ",
+      "last_name": "Carrera Guevara "
+    },
+    {
+      "ci": "32162950",
+      "first_name": "Susej Andreina",
+      "last_name": "Viscaya Quintero"
+    },
+    {
+      "ci": "32315026",
+      "first_name": "Verónica",
+      "last_name": "Pereira"
+    },
+    {
+      "ci": "32570826",
+      "first_name": "Vicleydy Andreina",
+      "last_name": "Granda Linares"
+    },
+    {
+      "ci": "31766199",
+      "first_name": "Víctor Eduardo ",
+      "last_name": "Rodríguez Noguera "
+    },
+    {
+      "ci": "31300904",
+      "first_name": "Yorgelis Alejandra ",
+      "last_name": "Linares Morillo"
+    }
+  ]
+}
+  
