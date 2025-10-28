@@ -12,7 +12,7 @@ class ApiService {
   String baseUrl = String.fromEnvironment(
     'api_backend',
     defaultValue:
-        'https://lpp-backend.onrender.com/api', // Valor para desarrollo local
+        'https://lpp-backend-ss9l.onrender.com/api', // Valor para desarrollo local
     // 'http://192.168.1.125:3000/api',
   );
 

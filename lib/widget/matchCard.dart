@@ -48,6 +48,7 @@ class MatchCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4),
+            Text('ID: ${match.matchId}'),
             Text('Ganador: $winnerName'),
             Text('Resultados: ${_formatSets(match)}'),
             const SizedBox(height: 4),
