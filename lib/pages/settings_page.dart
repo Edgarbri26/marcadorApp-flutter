@@ -202,6 +202,7 @@ class _SettingsPageState extends State<SettingsPage> {
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
               await prefs.remove('ci');
+              await prefs.remove('session_ci'); // Clear active session
               if (mounted) {
                 Navigator.of(context).pushReplacementNamed(AppRoutes.logIn);
               }

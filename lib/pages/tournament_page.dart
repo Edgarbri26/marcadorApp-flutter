@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/design/spacing.dart';
+
 import 'package:marcador/design/type_button.dart';
 import 'package:marcador/models/tournament.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/widget/match_dropdown.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/models/match.dart';
+import 'package:marcador/models/jugador.dart';
+import 'package:marcador/widget/double_auth_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PartidoPage extends StatefulWidget {
   const PartidoPage({super.key});
@@ -51,6 +54,54 @@ class _PartidoPageState extends State<PartidoPage> {
         ),
       );
       return;
+    }
+
+    // AUTH CHECK
+    if (_matchSelect != null) {
+      final prefs = await SharedPreferences.getInstance();
+      final rawCurrentCI = prefs.getString('ci');
+      final rawSessionCI = prefs.getString('session_ci');
+
+      // Use ci (auto-login) or session_ci (current active session)
+      final currentCI = (rawCurrentCI ?? rawSessionCI)?.trim();
+
+      final admins = await ApiService().loadAuthorizedCI();
+      final isAdmin =
+          currentCI != null &&
+          admins.any((adminCi) => adminCi.trim() == currentCI);
+
+      if (!isAdmin) {
+        final p1 = Jugador(
+          ci: _matchSelect!.ci1!,
+          nombreCompleto: _matchSelect!.nombre1 ?? 'Jugador 1',
+          status: true,
+        );
+        final p2 = Jugador(
+          ci: _matchSelect!.ci2!,
+          nombreCompleto: _matchSelect!.nombre2 ?? 'Jugador 2',
+          status: true,
+        );
+
+        // Determine which players need authentication (skip if it's the current user)
+        // Trim CIs to ensure no whitespace issues
+        final p1ToAuth = (p1.ci.trim() != currentCI) ? p1 : null;
+        final p2ToAuth = (p2.ci.trim() != currentCI) ? p2 : null;
+
+        // Only show dialog if at least one player needs auth
+        if (p1ToAuth != null || p2ToAuth != null) {
+          final bool? authorized = await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder:
+                (context) =>
+                    DoubleAuthDialog(player1: p1ToAuth, player2: p2ToAuth),
+          );
+
+          if (authorized != true) {
+            return; // Failed auth
+          }
+        }
+      }
     }
 
     ScaffoldMessenger.of(context).showSnackBar(

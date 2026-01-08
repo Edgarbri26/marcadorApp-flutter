@@ -309,4 +309,26 @@ class ApiService {
     }
     return false;
   }
+
+  Future<bool> authenticatePlayer(String ci, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/credential/authenticate"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'player_ci': ci, 'password': password}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['message'] == 'Autenticación exitosa';
+      }
+      return false;
+    } catch (e) {
+      print("Error autenticando jugador: $e");
+      return false;
+    }
+  }
 }

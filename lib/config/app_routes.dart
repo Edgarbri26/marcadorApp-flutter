@@ -7,4 +7,5 @@ class AppRoutes {
   static const String markerTournament = 'TournamentPage';
   static const String logIn = 'LogInPage';
   static const String matches = 'MatchesPage';
+  static const String offlineMode = 'OfflineModePage';
 }

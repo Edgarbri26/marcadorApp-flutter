@@ -69,21 +69,38 @@ class _PlayerGameAreaState extends State<PlayerGameArea> {
                     ),
                   ),
                 ),
-                widget.takeOut
-                    ? Icon(
-                      Icons.sports_tennis,
-                      color: MyColors.lightGray,
-                      size: 30,
-                    )
-                    : SizedBox(),
+
+                // widget.takeOut
+                //     ? Icon(
+                //       Icons.sports_tennis,
+                //       color: MyColors.lightGray,
+                //       size: 30,
+                //     )
+                //     : SizedBox(),
               ],
             ),
-            Text(
-              widget.playerScore.toString(),
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 150,
-                color: MyColors.lightGray,
+            Container(
+              alignment: Alignment.center,
+              width: 180, // Fixed width for circle shape stability
+              height: 180, // Fixed height for circle shape stability
+              decoration:
+                  widget.takeOut
+                      ? BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        shape: BoxShape.circle,
+                      )
+                      : null,
+              child: Text(
+                widget.playerScore.toString(),
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  height: 1.0, // Fix line height to center text vertically
+                  fontSize: 150,
+                  color:
+                      widget.takeOut ? MyColors.darkUltra : MyColors.lightGray,
+                  fontWeight:
+                      widget.takeOut ? FontWeight.bold : FontWeight.normal,
+                ),
               ),
             ),
           ],

@@ -238,26 +238,43 @@ class _LogInPageState extends State<LogInPage> {
                                       setState(() => isLoading = true);
 
                                       try {
-                                        final accessAllowed = await ApiService().authenticateAndVereficateAdmin(ci, psw);
+                                        final accessAllowed = await ApiService()
+                                            .authenticatePlayer(ci, psw);
 
                                         if (accessAllowed) {
+                                          final prefs =
+                                              await SharedPreferences.getInstance();
+                                          // Always save current session CI
+                                          await prefs.setString(
+                                            'session_ci',
+                                            ci,
+                                          );
+
                                           if (checkBoxState) {
-                                            final prefs = await SharedPreferences.getInstance();
                                             await prefs.setString('ci', ci);
                                           }
 
                                           if (mounted) {
-                                            ScaffoldMessenger.of(context).clearSnackBars(); // Limpia anteriores
-                                            await ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).clearSnackBars(); // Limpia anteriores
+                                            await ScaffoldMessenger.of(context)
+                                                .showSnackBar(
                                                   SnackBar(
                                                     content: Text(
                                                       "Inicio de sesión exitoso",
-                                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                            color: MyColors.light,
-                                                            fontWeight:FontWeight.w500,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                            color:
+                                                                MyColors.light,
+                                                            fontWeight:
+                                                                FontWeight.w500,
                                                           ),
                                                     ),
-                                                    backgroundColor: MyColors.secundary,
+                                                    backgroundColor:
+                                                        MyColors.secundary,
                                                     behavior:
                                                         SnackBarBehavior
                                                             .floating,
@@ -271,13 +288,16 @@ class _LogInPageState extends State<LogInPage> {
                                                           ),
                                                     ),
                                                   ),
-                                                ).closed;
+                                                )
+                                                .closed;
                                           }
 
                                           Navigator.of(
                                             // ignore: use_build_context_synchronously
-                                            context, ).pushReplacementNamed(AppRoutes.settings,);
-
+                                            context,
+                                          ).pushReplacementNamed(
+                                            AppRoutes.settings,
+                                          );
                                         } else {
                                           if (mounted) {
                                             setState(() => isLoading = false);
@@ -383,6 +403,22 @@ class _LogInPageState extends State<LogInPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(
+                            context,
+                          ).pushReplacementNamed(AppRoutes.offlineMode);
+                        },
+                        child: const Text(
+                          "Ingresar sin conexión",
+                          style: TextStyle(
+                            color: MyColors.lightGray,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ],

@@ -9,7 +9,8 @@ import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignalOff extends StatefulWidget {
-  const SignalOff({super.key});
+  final bool isOfflineMode;
+  const SignalOff({super.key, this.isOfflineMode = false});
 
   @override
   State<SignalOff> createState() => _SignalOffState();
@@ -201,11 +202,13 @@ class _SignalOffState extends State<SignalOff> {
             ],
           ),
           const SizedBox(height: 16),
-          JugadorDropdown(
-            selectedItem: selectedPlayer,
-            onChanged: onPlayerChanged,
-          ),
-          const SizedBox(height: 12),
+          if (!widget.isOfflineMode) ...[
+            JugadorDropdown(
+              selectedItem: selectedPlayer,
+              onChanged: onPlayerChanged,
+            ),
+            const SizedBox(height: 12),
+          ],
           TextField(
             controller: controller,
             cursorColor: color,

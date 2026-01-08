@@ -64,6 +64,8 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
       isRotate = prefs.getBool('isRotate') ?? true;
       marker.targetPoints = prefs.getInt('points') ?? 11;
       marker.targetSets = prefs.getInt('sets') ?? 3;
+      _player1Name = prefs.getString('player1') ?? 'Player 1';
+      _player2Name = prefs.getString('player2') ?? 'Player 2';
       print(
         'DEBUG: Loaded settings - Points: ${marker.targetPoints}, Sets: ${marker.targetSets}',
       );

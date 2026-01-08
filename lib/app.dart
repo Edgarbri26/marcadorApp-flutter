@@ -7,6 +7,7 @@ import 'package:marcador/pages/matches_page.dart';
 import 'package:marcador/pages/settings_page.dart';
 import 'package:marcador/pages/update_page.dart';
 import 'package:marcador/pages/login_page.dart';
+import 'package:marcador/pages/offline_mode_page.dart';
 
 import 'package:marcador/models/match.dart';
 
@@ -43,6 +44,8 @@ class MyApp extends StatelessWidget {
             );
           case AppRoutes.matches:
             return MaterialPageRoute(builder: (context) => MatchesPage());
+          case AppRoutes.offlineMode:
+            return MaterialPageRoute(builder: (context) => OfflineModePage());
           default:
             return MaterialPageRoute(builder: (context) => LogInPage());
         }

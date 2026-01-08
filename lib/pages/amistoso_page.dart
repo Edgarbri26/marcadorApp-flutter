@@ -2,15 +2,18 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:marcador/config/app_routes.dart';
 import 'package:marcador/design/my_colors.dart';
-import 'package:marcador/design/spacing.dart';
+
 import 'package:marcador/design/type_button.dart';
 import 'package:marcador/models/match_repository.dart';
 import 'package:marcador/widget/button_app.dart';
 import 'package:marcador/widget/jugador_dropdown.dart';
 import 'package:marcador/models/jugador.dart';
 import 'package:marcador/models/match.dart';
+import 'package:marcador/services/api_services.dart';
+import 'package:marcador/widget/double_auth_dialog.dart';
 import 'package:marcador/widget/set_and_points_selet.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AmistosoPage extends StatefulWidget {
   const AmistosoPage({super.key});
@@ -115,6 +118,9 @@ class _AmistosoPageState extends State<AmistosoPage> {
   //   }
   // }
 
+  // }
+  // }
+
   /// Guardar ajustes en SharedPreferences
   Future<void> _saveSettings() async {
     //para sincronizar los partidos pendientes
@@ -140,6 +146,56 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
       return;
     }
+
+    // AUTHENTICATION CHECK
+    if (_player1Seleccionado != null || _player2Seleccionado != null) {
+      final prefs = await SharedPreferences.getInstance();
+      final rawCurrentCI = prefs.getString('ci');
+      final rawSessionCI = prefs.getString('session_ci');
+
+      // Use ci (auto-login) or session_ci (current active session)
+      final currentCI = (rawCurrentCI ?? rawSessionCI)?.trim();
+
+      final admins = await ApiService().loadAuthorizedCI();
+      // Check if current user is admin (trimming both sides for safety)
+      final isAdmin =
+          currentCI != null &&
+          admins.any((adminCi) => adminCi.trim() == currentCI);
+
+      print('=== DEBUG AUTH START ===');
+      print('Current User CI: "$currentCI"');
+      print('Is Admin Result: $isAdmin');
+
+      if (!isAdmin) {
+        // Determine which players need authentication (skip if it's the current user)
+        // We trim the player CI as well just in case
+        final p1ToAuth =
+            (_player1Seleccionado != null &&
+                    _player1Seleccionado!.ci.trim() != currentCI)
+                ? _player1Seleccionado
+                : null;
+        final p2ToAuth =
+            (_player2Seleccionado != null &&
+                    _player2Seleccionado!.ci.trim() != currentCI)
+                ? _player2Seleccionado
+                : null;
+
+        // Only show dialog if at least one player needs auth
+        if (p1ToAuth != null || p2ToAuth != null) {
+          final bool? authorized = await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder:
+                (context) =>
+                    DoubleAuthDialog(player1: p1ToAuth, player2: p2ToAuth),
+          );
+
+          if (authorized != true) {
+            return; // User cancelled or failed auth
+          }
+        }
+      }
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -158,8 +214,8 @@ class _AmistosoPageState extends State<AmistosoPage> {
     }
 
     Match match = Match(
-      ci1: _player1Seleccionado!.ci,
-      ci2: _player2Seleccionado!.ci,
+      ci1: _player1Seleccionado?.ci,
+      ci2: _player2Seleccionado?.ci,
       matchId: null,
       tournamentId: tournament, // ID fijo para amistoso
       inscription1Id: null,
