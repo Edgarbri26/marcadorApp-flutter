@@ -23,9 +23,14 @@ class ApiService {
   // String localUrl = '';
 
   Future<List<Jugador>> fetchJugadores() async {
-    final response = await http.get(Uri.parse('$baseUrl/player'));
+    final url = Uri.parse('$baseUrl/player');
+    print('Fetching URL: $url');
+    final response = await http.get(url);
+    print('Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
     if (response.statusCode != 200) {
-      throw Exception('Error al cargar jugadores');
+      throw Exception('Error al cargar jugadores: ${response.statusCode}');
     }
 
     final decoded = json.decode(response.body);

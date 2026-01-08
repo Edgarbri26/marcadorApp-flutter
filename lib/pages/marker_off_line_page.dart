@@ -1,10 +1,15 @@
+import 'dart:math';
+
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/models/marker.dart';
 import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:marcador/widget/sets_points.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MarkerOffLinePage extends StatefulWidget {
   const MarkerOffLinePage({super.key});
@@ -16,17 +21,73 @@ class MarkerOffLinePage extends StatefulWidget {
 class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
   Marker marker = Marker();
   final TextEditingController controller = TextEditingController();
-  String player1Name = 'Player1';
-  String player2Name = 'Player2';
+  String _player1Name = 'Player1';
+  String _player2Name = 'Player2';
   bool swap = true;
-  int _selectedIndex = 0;
+  double blastDirection = 0;
+  Alignment blastDirectionality = Alignment.topCenter;
+  final confettiControllerLef = ConfettiController();
+  final confettiControllerRigh = ConfettiController();
+  bool isRotate = true;
 
-  Null get prefs => null;
+  @override
+  void initState() {
+    super.initState();
+    preferenceGet();
+    FullScreen.setFullScreen(true);
+  }
+
+  @override
+  void dispose() {
+    enterPortraitMode();
+    confettiControllerLef.dispose();
+    confettiControllerRigh.dispose();
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    FullScreen.setFullScreen(false);
+    super.dispose();
+  }
+
+  void enterLandscapeMode() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  void enterPortraitMode() {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
+
+  void preferenceGet() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isRotate = prefs.getBool('isRotate') ?? true;
+      marker.targetPoints = prefs.getInt('points') ?? 11;
+      marker.targetSets = prefs.getInt('sets') ?? 3;
+      print(
+        'DEBUG: Loaded settings - Points: ${marker.targetPoints}, Sets: ${marker.targetSets}',
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Configuración cargada: ${marker.targetSets} sets, ${marker.targetPoints} puntos',
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    });
+    isRotate ? enterLandscapeMode() : enterPortraitMode();
+  }
+
+  void preferenceSet() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool("isRotate", isRotate);
+  }
 
   Future<void> mostrarDialogoCambiarNombre({
     required BuildContext context,
     required String nombreActual,
-    required void Function(String nuevoNombre) onGuardar, // El callback
+    required void Function(String nuevoNombre) onGuardar,
   }) async {
     final TextEditingController controller = TextEditingController(
       text: nombreActual,
@@ -50,13 +111,12 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
-              // Retorna el texto del campo SÓLO si es diferente del actual y no está vacío
               onPressed: () {
                 final texto = controller.text.trim();
                 if (texto.isNotEmpty && texto != nombreActual) {
                   Navigator.pop(context, texto);
                 } else {
-                  Navigator.pop(context, null); // Cierra sin cambios
+                  Navigator.pop(context, null);
                 }
               },
               child: const Text('Guardar'),
@@ -66,30 +126,9 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
       },
     );
 
-    // 2. Ejecutar la función 'onGuardar' si el usuario ingresó un nombre válido
     if (nuevoNombre != null) {
       onGuardar(nuevoNombre);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    marker.targetPoints = 7;
-    marker.targetSets = 3;
-    // setState(() {
-    //   player1Name = prefs.getString('player1') ?? 'Player1';
-    //   player2Name = prefs.getString('player2') ?? 'Player2';
-    //   marker.targetPoints = prefs.getInt('points') ?? 7;
-    //   marker.targetSets = prefs.getInt('sets') ?? 1;
-    // });
-    // marker.targetSets = 3;
-    // marker.targetPoints = 11;
   }
 
   void _showMatchWinnerDialog(String winner) async {
@@ -103,9 +142,32 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Cerrar el diálogo de ganador
+                Navigator.of(context).pop();
+                confettiControllerLef.stop();
+                confettiControllerRigh.stop();
+                setState(() {
+                  if (winner == _player1Name) {
+                    marker.player1Sets--;
+                  } else {
+                    marker.player2Sets--;
+                  }
+                  // Revert swap since we swapped on win
+                  swap = !swap;
+                  marker.scoreHistoryUndo();
+                });
               },
-              child: const Text('Cargar partido'),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  marker.resetAll();
+                });
+                confettiControllerLef.stop();
+                confettiControllerRigh.stop();
+              },
+              child: const Text('Reiniciar Partido'),
             ),
           ],
         );
@@ -114,14 +176,16 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
   }
 
   void _checkWinCondition() {
-    int jugarWin = marker.checkMatchWinner();
-
     if (marker.checkWinSetCondition() != 0) {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
+          int setWinner = marker.checkWinSetCondition();
+          String winnerName = setWinner == 1 ? _player1Name : _player2Name;
+
           return AlertDialog(
-            title: Text('¡Set para $jugarWin!'),
+            title: Text('¡Set para $winnerName!'),
             content: Text(
               'El set ha terminado, el marcador de sets es: ${marker.player1Sets} - ${marker.player2Sets}.',
             ),
@@ -138,12 +202,16 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  marker.resetScores();
-                  _checkMatchWinner();
-                  marker.incrementSet(jugarWin);
-                  setState(() {
-                    swap = !swap;
-                  });
+                  marker.incrementSet(setWinner);
+
+                  if (marker.checkMatchWinner() != 0) {
+                    _checkMatchWinner();
+                  } else {
+                    marker.resetScores();
+                    setState(() {
+                      swap = !swap;
+                    });
+                  }
                 },
                 child: const Text('Continuar'),
               ),
@@ -158,96 +226,92 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
     int jugarWin = marker.checkMatchWinner();
     if (jugarWin != 0) {
       if (jugarWin == 1) {
-        _showMatchWinnerDialog(player1Name);
+        !swap ? confettiControllerLef.play() : confettiControllerRigh.play();
+        _showMatchWinnerDialog(_player1Name);
       } else {
-        _showMatchWinnerDialog(player2Name);
+        !swap ? confettiControllerRigh.play() : confettiControllerLef.play();
+        _showMatchWinnerDialog(_player2Name);
       }
-      marker.resetAll();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery(
-      // reescribimos los paddings a cero
-      data: MediaQuery.of(context).copyWith(
-        padding: EdgeInsets.zero,
-        viewPadding: EdgeInsets.zero,
-        viewInsets: EdgeInsets.zero,
-      ),
-      child: Scaffold(
-        appBar: null,
-        body: Stack(
-          children: [
-            Flex(
-              direction: Axis.horizontal,
-              textDirection: swap ? TextDirection.ltr : TextDirection.rtl, //
-              children: [
-                Expanded(
-                  child: PlayerGameArea(
-                    isTournament: false,
-                    onEdit: () {
-                      mostrarDialogoCambiarNombre(
-                        nombreActual: player1Name,
-                        context: context,
-                        onGuardar: (nuevoNombre) {
-                          player1Name = nuevoNombre;
-                        },
-                      );
-                    },
-                    takeOut: marker.playerTurn == 1,
-                    playerName: player1Name,
-                    playerNumber: 1,
-                    playerScore: marker.player1Score,
-                    backgroundColor: MyColors.secundary,
-                    onIncrement: () {
-                      setState(() {
-                        marker.incrementScore(1);
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Scaffold(
+          appBar: null,
+          body: Stack(
+            children: [
+              Flex(
+                direction: isRotate ? Axis.horizontal : Axis.vertical,
+                textDirection: swap ? TextDirection.ltr : TextDirection.rtl,
+                verticalDirection:
+                    swap ? VerticalDirection.up : VerticalDirection.down,
+                spacing: 4,
+                children: [
+                  Expanded(
+                    child: PlayerGameArea(
+                      isTournament: false,
+                      onEdit: () {
+                        mostrarDialogoCambiarNombre(
+                          nombreActual: _player1Name,
+                          context: context,
+                          onGuardar: (nuevoNombre) {
+                            setState(() {
+                              _player1Name = nuevoNombre;
+                            });
+                          },
+                        );
+                      },
+                      takeOut: marker.playerTurn == 1,
+                      playerName: _player1Name,
+                      playerNumber: 1,
+                      playerScore: marker.player1Score,
+                      backgroundColor: MyColors.secundary,
+                      onIncrement: () {
+                        setState(() {
+                          marker.incrementScore(1);
+                          _checkWinCondition();
+                        });
+                      },
+                    ),
+                  ),
+
+                  Expanded(
+                    child: PlayerGameArea(
+                      onEdit: () {
+                        mostrarDialogoCambiarNombre(
+                          nombreActual: _player2Name,
+                          context: context,
+                          onGuardar: (nuevoNombre) {
+                            setState(() {
+                              _player2Name = nuevoNombre;
+                            });
+                          },
+                        );
+                      },
+                      isTournament: false,
+                      takeOut: marker.playerTurn == 2,
+                      playerName: _player2Name,
+                      playerNumber: 2,
+                      playerScore: marker.player2Score,
+                      backgroundColor: MyColors.primary,
+                      onIncrement: () {
+                        setState(() {
+                          marker.incrementScore(2);
+                        });
                         _checkWinCondition();
-                      });
-                    },
+                      },
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: PlayerGameArea(
-                    onEdit: () {
-                      mostrarDialogoCambiarNombre(
-                        nombreActual: player1Name,
-                        context: context,
-                        onGuardar: (nuevoNombre) {
-                          player2Name = nuevoNombre;
-                        },
-                      );
-                    },
-                    isTournament: false,
-                    takeOut: marker.playerTurn == 2,
-                    playerName: player2Name,
-                    playerNumber: 2,
-                    playerScore: marker.player2Score,
-                    backgroundColor: MyColors.primary,
-                    onIncrement: () {
-                      setState(() {
-                        marker.incrementScore(2);
-                      });
-                      _checkWinCondition();
-                    },
-                  ),
-                ),
-              ],
-            ),
-            Flex(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              direction: Axis.vertical,
-              children: [
-                SetsPoints(
-                  rotate: true,
-                  swap: swap,
-                  player1Sets: marker.player1Sets,
-                  player2Sets: marker.player2Sets,
-                ),
-                CenterButtons(
-                  rotate: true,
+                ],
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: CenterButtons(
+                  rotate: isRotate,
                   onResetScores:
                       () => setState(() {
                         marker.resetScores();
@@ -267,138 +331,60 @@ class _MarkerOffLinePageState extends State<MarkerOffLinePage> {
                     });
                   },
                   onEvent: () {
-                    _showCustomDialog();
+                    confettiControllerLef.play();
+                    confettiControllerRigh.play();
+                  },
+                  onRorate: () {
+                    setState(() {
+                      isRotate = !isRotate;
+                    });
+                    preferenceSet();
+                    isRotate ? enterLandscapeMode() : enterPortraitMode();
                   },
                 ),
-              ],
-            ),
-          ],
+              ),
+              Align(
+                alignment:
+                    isRotate ? Alignment.topCenter : Alignment.centerLeft,
+                child: SetsPoints(
+                  rotate: isRotate,
+                  swap: swap,
+                  player1Sets: marker.player1Sets,
+                  player2Sets: marker.player2Sets,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  String selectedTab = "Orientación"; // Pestaña inicial
-
-  void _showCustomDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+        Positioned.fill(
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ConfettiWidget(
+                  confettiController: confettiControllerLef,
+                  blastDirection: 0, // derecha
+                  blastDirectionality: BlastDirectionality.directional,
+                  emissionFrequency: 0.8,
+                  numberOfParticles: 20,
+                  gravity: 0.3,
+                ),
               ),
-              contentPadding: EdgeInsets.all(16),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Menú superior (pestañas)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildTabButton("Amistoso", selectedTab, setState),
-                      _buildTabButton("Torneo", selectedTab, setState),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  // Contenido dinámico
-                  _getTabContent(selectedTab),
-                  SizedBox(height: 16),
-                  // Botones OK y Cancelar
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        child: Text("CANCELAR"),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      ElevatedButton(
-                        child: Text("OK"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          // Aquí aplicas los cambios
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+              Align(
+                alignment: Alignment.centerRight,
+                child: ConfettiWidget(
+                  confettiController: confettiControllerRigh,
+                  blastDirection: pi, // izquierda
+                  blastDirectionality: BlastDirectionality.directional,
+                  emissionFrequency: 0.8,
+                  numberOfParticles: 20,
+                  gravity: 0.2,
+                ),
               ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildTabButton(String title, String selected, Function setState) {
-    bool active = selected == title;
-    return GestureDetector(
-      onTap: () {
-        setState(() => selectedTab = title);
-      },
-      child: Column(
-        children: [
-          Icon(
-            Icons.circle,
-            color: active ? Colors.blue : Colors.grey,
-            size: 20,
+            ],
           ),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: active ? FontWeight.bold : FontWeight.normal,
-              color: active ? Colors.blue : Colors.grey,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
-  }
-
-  Widget _getTabContent(String selectedTab) {
-    switch (selectedTab) {
-      case "Orientación":
-        return Container(
-          color: Colors.green[50],
-          height: 100,
-          child: Center(child: Text("Opciones de Orientación")),
-        );
-      case "Oscuro":
-        return Container(
-          color: Colors.grey[200],
-          height: 100,
-          child: Center(child: Text("Opciones de Modo Oscuro")),
-        );
-      default:
-        return Container();
-    }
-  }
-
-  // Índice inicial en Configuración
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-}
-
-class Tournamen extends StatelessWidget {
-  const Tournamen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(child: Text("torneo"));
-  }
-}
-
-class Friendly extends StatelessWidget {
-  const Friendly({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(child: Text("amistoso"));
   }
 }

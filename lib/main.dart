@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:marcador/app.dart';
 import 'package:marcador/models/match_repository.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
+import 'package:provider/provider.dart';
+import 'package:marcador/providers/jugadores_provider.dart';
+import 'package:marcador/providers/match_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,5 +28,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FullScreen.ensureInitialized();
 
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => JugadoresProvider()..fetchJugadores(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MatchProvider()..fetchPendingMatches(),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }

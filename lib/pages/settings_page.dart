@@ -145,81 +145,72 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
         ),
-        // toolbarHeight: 60,
-        title: Container(
-          margin: const EdgeInsets.only(top: Spacing.xs),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                //padding: const EdgeInsets.only(left: Spacing.md),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: MyColors.lightGray,
-                  ),
-                ),
-              ),
-              kIsWeb
-                  ? const SizedBox.shrink()
-                  : IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.update);
-                    },
-                    icon: Icon(
-                      // Icons.account_circle,
-                      Icons.update,
-                      color: MyColors.lightGray,
-                      size: 25,
-                    ),
-                  ),
-              IconButton(
-                icon: const Icon(
-                  Icons.logout,
-                  color: MyColors.lightGray,
-                  size: 25,
-                ),
-
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.remove('ci');
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context).pushReplacementNamed(AppRoutes.logIn);
-                },
-              ),
-              IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.matches);
-                },
-                icon: const Icon(
-                  Icons.cloud_upload,
-                  color: MyColors.lightGray,
-                  size: 25,
-                ),
-              ),
-            ],
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: MyColors.light,
           ),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
+        elevation: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(Spacing.sm),
-              bottomRight: Radius.circular(Spacing.sm),
-            ), // PARA EL BORDE REDONDEADO DEL APPBAR
-            gradient: LinearGradient(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+            gradient: const LinearGradient(
               colors: [MyColors.secundary, MyColors.secundaryContraste],
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
         ),
+        actions: [
+          if (!kIsWeb)
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.update);
+              },
+              icon: const Icon(Icons.update, color: MyColors.light, size: 28),
+              tooltip: 'Buscar Actualización',
+            ),
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.matches);
+            },
+            icon: const Icon(
+              Icons.cloud_upload,
+              color: MyColors.light,
+              size: 28,
+            ),
+            tooltip: 'Sincronizar Partidos',
+          ),
+          IconButton(
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.remove('ci');
+              if (mounted) {
+                Navigator.of(context).pushReplacementNamed(AppRoutes.logIn);
+              }
+            },
+            icon: const Icon(Icons.logout, color: MyColors.light, size: 28),
+            tooltip: 'Cerrar Sesión',
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
 
       body: Padding(
@@ -232,23 +223,47 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: MyColors.darkUltra,
-        unselectedItemColor: Colors.white70,
-        selectedItemColor: MyColors.secundary,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.wifi_off_outlined),
-            label: 'sin conexion',
+      bottomNavigationBar: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          indicatorColor: MyColors.secundary.withOpacity(0.2),
+          labelTextStyle: MaterialStateProperty.all(
+            const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: MyColors.lightGray,
+            ),
           ),
-          BottomNavigationBarItem(icon: Icon(Symbols.swords), label: 'Duelo'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.emoji_events),
-            label: 'Torneo',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+          iconTheme: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.selected)) {
+              return const IconThemeData(color: MyColors.secundary);
+            }
+            return const IconThemeData(color: MyColors.lightGray);
+          }),
+        ),
+        child: NavigationBar(
+          height: 70,
+          backgroundColor: MyColors.darkUltra,
+          elevation: 10,
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: _onItemTapped,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.wifi_off_outlined),
+              selectedIcon: Icon(Icons.wifi_off),
+              label: 'Sin conexión',
+            ),
+            NavigationDestination(
+              icon: Icon(Symbols.swords),
+              selectedIcon: Icon(Symbols.swords, fill: 1),
+              label: 'Duelo',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.emoji_events_outlined),
+              selectedIcon: Icon(Icons.emoji_events),
+              label: 'Torneo',
+            ),
+          ],
+        ),
       ),
     );
   }

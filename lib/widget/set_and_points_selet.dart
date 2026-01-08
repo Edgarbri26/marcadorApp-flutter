@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:marcador/design/my_colors.dart';
 
 class SetAndPointsSelet extends StatefulWidget {
-  int targetPoints;
-  int targetSets;
-  // final Function? onSelectedSave;
-  SetAndPointsSelet({
+  final int targetPoints;
+  final int targetSets;
+  final ValueChanged<int> onPointsChanged;
+  final ValueChanged<int> onSetsChanged;
+
+  const SetAndPointsSelet({
     super.key,
     required this.targetPoints,
     required this.targetSets,
-    // this.onSelectedSave,
+    required this.onPointsChanged,
+    required this.onSetsChanged,
   });
 
   @override
@@ -38,7 +41,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<int>(
-          initialValue: widget.targetPoints,
+          value: widget.targetPoints,
           items:
               pointsOptions.map((int value) {
                 return DropdownMenuItem<int>(
@@ -55,11 +58,8 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
             ),
           ),
           onChanged: (newValue) {
-            setState(() {
-              widget.targetPoints = newValue!;
-              print("Puntos seleccionados: ${widget.targetPoints}");
-            });
-            // widget.onSelectedSave?.call();
+            widget.onPointsChanged(newValue!);
+            print("Puntos seleccionados: $newValue");
           },
         ),
         const SizedBox(height: 30),
@@ -75,7 +75,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
         ),
         const SizedBox(height: 10),
         DropdownButtonFormField<int>(
-          initialValue: widget.targetSets,
+          value: widget.targetSets,
           items:
               setsOptions.map((int value) {
                 return DropdownMenuItem<int>(
@@ -98,10 +98,7 @@ class _SetAndPointsSeletState extends State<SetAndPointsSelet> {
             //   borderSide: BorderSide(color: MyColors.primary),
           ),
           onChanged: (newValue) {
-            setState(() {
-              widget.targetSets = newValue!;
-            });
-            // widget.onSelectedSave?.call();
+            widget.onSetsChanged(newValue!);
           },
         ),
         const SizedBox(height: 40),

@@ -157,9 +157,9 @@ class Marker {
   int checkMatchWinner() {
     int matchWinner = 0;
 
-    if (player1Sets == (targetSets - 1) / 2 + 1) {
+    if (player1Sets == (targetSets - 1) ~/ 2 + 1) {
       matchWinner = 1;
-    } else if (player2Sets == (targetSets - 1) / 2 + 1) {
+    } else if (player2Sets == (targetSets - 1) ~/ 2 + 1) {
       matchWinner = 2;
     }
 

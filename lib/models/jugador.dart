@@ -2,7 +2,13 @@ class Jugador {
   final String ci;
   final String nombreCompleto;
 
-  Jugador({required this.ci, required this.nombreCompleto});
+  final bool status;
+
+  Jugador({
+    required this.ci,
+    required this.nombreCompleto,
+    required this.status,
+  });
 
   factory Jugador.fromJson(Map<String, dynamic> json) {
     // Toma CI de mayúscula o minúscula; si fuera int, conviértelo a String
@@ -19,6 +25,7 @@ class Jugador {
     return Jugador(
       ci: cedula,
       nombreCompleto: '$primerNombre $primerApellido',
+      status: json['status'] ?? true, // Default to true if not present
     );
   }
 }

@@ -1,9 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/models/jugador.dart';
-import 'package:marcador/services/api_services.dart';
+import 'package:provider/provider.dart';
+import 'package:marcador/providers/jugadores_provider.dart';
 
 class JugadorDropdown extends StatefulWidget {
   final Jugador? selectedItem;
@@ -26,24 +26,13 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
   Widget build(BuildContext context) {
     return DropdownSearch<Jugador>(
       items: (String? filtro, _) async {
-        late List<Jugador> todos;
+        final provider = context.read<JugadoresProvider>();
 
-        if (kIsWeb) {
-          todos = await ApiService().fetchJugadores();
-        } else {
-          todos = await ApiService().loadPlayerLocal();
+        if (provider.jugadores.isEmpty) {
+          await provider.fetchJugadores();
         }
 
-        /*for (var j in todos) {
-          await ApiService().crearInscripcion(
-            tournamentId: 1,
-            playerCi: j.ci,
-            teamId: null,
-            seed: null,
-          );
-          print('Jugador: ${j.nombreCompleto}');
-        }*/
-        return todos
+        return provider.jugadores
             .where(
               (j) => j.nombreCompleto.toLowerCase().contains(
                 filtro?.toLowerCase() ?? '',

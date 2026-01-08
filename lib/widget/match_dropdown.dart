@@ -3,6 +3,8 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:marcador/design/my_colors.dart';
 import 'package:marcador/services/api_services.dart';
 import 'package:marcador/models/match.dart';
+import 'package:provider/provider.dart';
+import 'package:marcador/providers/match_provider.dart';
 
 class MatchDropdown extends StatefulWidget {
   final Match? selectedItem;
@@ -34,7 +36,13 @@ class _MatchDropdownState extends State<MatchDropdown> {
 
   Future<List<Match>> _loadMatches(String? filtro, _) async {
     await _cargarNombresDeJugadores();
-    final matches = await ApiService().fetchMatches();
+    final provider = context.read<MatchProvider>();
+
+    if (provider.matches.isEmpty) {
+      await provider.fetchPendingMatches();
+    }
+
+    final matches = provider.matches;
 
     return matches.where((match) {
       if (match.status == 'Finalizado') return false;
@@ -65,8 +73,10 @@ class _MatchDropdownState extends State<MatchDropdown> {
         if (nuevo == null) return;
         setState(() => _matchSeleccionado = nuevo);
 
-        final name1 = _nombresPorInscriptionId[nuevo.inscription1Id] ?? 'Jugador 1';
-        final nombre2 = _nombresPorInscriptionId[nuevo.inscription2Id] ?? 'Jugador 2';
+        final name1 =
+            _nombresPorInscriptionId[nuevo.inscription1Id] ?? 'Jugador 1';
+        final nombre2 =
+            _nombresPorInscriptionId[nuevo.inscription2Id] ?? 'Jugador 2';
 
         nuevo.nombre1 = name1;
         nuevo.nombre2 = nombre2;

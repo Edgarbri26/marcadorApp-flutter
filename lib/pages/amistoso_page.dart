@@ -186,27 +186,42 @@ class _AmistosoPageState extends State<AmistosoPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
+          // Switch de Ranked/Amistoso
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: MyColors.dark,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: ifRanked ? MyColors.primary : MyColors.secundary,
+                width: 1,
+              ),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  Symbols.handshake,
-                  color: ifRanked ? Colors.grey : MyColors.secundary,
+                Row(
+                  children: [
+                    Icon(
+                      Symbols.handshake,
+                      color: ifRanked ? Colors.grey : MyColors.secundary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Amistoso',
+                      style: TextStyle(
+                        color: ifRanked ? Colors.grey : MyColors.secundary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'Amistoso',
-                  style: TextStyle(
-                    color: ifRanked ? Colors.grey : MyColors.secundary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
                 Switch(
-                  activeThumbColor: MyColors.primary,
-                  inactiveThumbColor: MyColors.secundaryContraste,
-                  inactiveTrackColor: MyColors.secundary,
+                  activeColor: MyColors.primary,
+                  activeTrackColor: MyColors.primary.withOpacity(0.5),
+                  inactiveThumbColor: MyColors.secundary,
+                  inactiveTrackColor: MyColors.secundary.withOpacity(0.5),
                   value: ifRanked,
                   onChanged: (bool value) {
                     setState(() {
@@ -214,36 +229,34 @@ class _AmistosoPageState extends State<AmistosoPage> {
                     });
                   },
                 ),
-                Text(
-                  'Ranked',
-                  style: TextStyle(
-                    color: !ifRanked ? Colors.grey : MyColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                Icon(
-                  Symbols.swords,
-                  color: !ifRanked ? Colors.grey : MyColors.primary,
+                Row(
+                  children: [
+                    Text(
+                      'Ranked',
+                      style: TextStyle(
+                        color: !ifRanked ? Colors.grey : MyColors.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Symbols.swords,
+                      color: !ifRanked ? Colors.grey : MyColors.primary,
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: Spacing.xl),
+          const SizedBox(height: 25),
 
-          // Nombres de jugadores
-          const Text(
-            "Selecciona Jugador 1",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: MyColors.lightGray,
-            ),
-          ),
-          const SizedBox(height: 10),
-          JugadorDropdown(
-            selectedItem: _player1Seleccionado,
+          // Seleccion Jugador 1
+          _buildPlayerSection(
+            label: "Jugador 1",
+            color: MyColors.secundary,
+            selectedPlayer: _player1Seleccionado,
             onChanged: (jugador) {
               setState(() {
                 _player1Seleccionado = jugador;
@@ -251,18 +264,14 @@ class _AmistosoPageState extends State<AmistosoPage> {
               });
             },
           ),
-          const SizedBox(height: 15),
-          const Text(
-            "Selecciona Jugador 2",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: MyColors.lightGray,
-            ),
-          ),
-          const SizedBox(height: 10),
-          JugadorDropdown(
-            selectedItem: _player2Seleccionado,
+
+          const SizedBox(height: 20),
+
+          // Seleccion Jugador 2
+          _buildPlayerSection(
+            label: "Jugador 2",
+            color: MyColors.primary,
+            selectedPlayer: _player2Seleccionado,
             onChanged: (jugador) {
               setState(() {
                 _player2Seleccionado = jugador;
@@ -270,33 +279,77 @@ class _AmistosoPageState extends State<AmistosoPage> {
               });
             },
           ),
-          const SizedBox(height: Spacing.xl),
+          const SizedBox(height: 25),
 
-          SetAndPointsSelet(
-            targetPoints: targetPoints,
-            targetSets: targetSets,
-            // onSelectedSave: () {
-            //   print("Puntos seleccionados: $targetPoints");
-            //   print("Sets seleccionados: $targetSets");
-            //   // setState(() {
-            //   //   targetPoints = targetPoints;
-            //   //   targetSets = targetSets;
-            //   // });
-            //   // _saveSetAndPointsSelec();
-            // },
+          // Configuración Puntos/Sets
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: MyColors.dark,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: SetAndPointsSelet(
+              targetPoints: targetPoints,
+              targetSets: targetSets,
+              onPointsChanged: (val) => setState(() => targetPoints = val),
+              onSetsChanged: (val) => setState(() => targetSets = val),
+            ),
           ),
+
+          const SizedBox(height: 30),
 
           Center(
             child: ButtonApp(
               onPressed: _saveSettings,
               title: const Text(
                 "Comenzar juego",
-                style: TextStyle(color: MyColors.lightGray),
+                style: TextStyle(color: MyColors.lightGray, fontSize: 18),
               ),
-              icon: const Icon(Icons.play_arrow_rounded, color: MyColors.light),
+              icon: const Icon(
+                Icons.play_arrow_rounded,
+                color: MyColors.light,
+                size: 30,
+              ),
               typeButton: !ifRanked ? TypeButton.secundary : TypeButton.primary,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlayerSection({
+    required String label,
+    required Color color,
+    required Jugador? selectedPlayer,
+    required ValueChanged<Jugador?> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: MyColors.dark,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.5), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.person, color: color),
+              const SizedBox(width: 10),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          JugadorDropdown(selectedItem: selectedPlayer, onChanged: onChanged),
         ],
       ),
     );
