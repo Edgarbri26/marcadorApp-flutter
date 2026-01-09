@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:confetti/confetti.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
@@ -15,6 +14,8 @@ import 'package:marcador/widget/center_buttons.dart';
 import 'package:marcador/widget/player_game_area.dart';
 import 'package:marcador/widget/sets_points.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:marcador/services/offline_service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class MarkerTournamentPage extends StatefulWidget {
   final Match match;
@@ -153,16 +154,38 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
                               setsResults: _sets,
                             );
                             repo.savePendingMatch(finishedMatch);
+                            OfflineService().tryUploadMatch(finishedMatch);
 
                             try {
-                              Navigator.of(dialogContext).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '¡Ganador del partido: $winner! | partido guardado exitosamente',
-                                  ),
-                                ),
+                              // Check connectivity for user feedback
+                              final connectivityResult =
+                                  await Connectivity().checkConnectivity();
+                              final isOffline = connectivityResult.contains(
+                                ConnectivityResult.none,
                               );
+
+                              if (!context.mounted) return;
+                              Navigator.of(dialogContext).pop();
+
+                              if (isOffline) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Sin conexión. Partido guardado y pendiente de sincronización.',
+                                    ),
+                                    backgroundColor: Colors.orange,
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '¡Ganador del partido: $winner! | partido guardado exitosamente',
+                                    ),
+                                  ),
+                                );
+                              }
+
                               setState(() {
                                 marker.resetAll();
                               });
@@ -171,19 +194,7 @@ class _MarkerTournamentPageState extends State<MarkerTournamentPage> {
 
                               Navigator.of(context).pop();
                             } catch (e) {
-                              setStateSB(() => dialogIsLoading = false);
-                              if (Navigator.of(dialogContext).canPop()) {
-                                Navigator.of(dialogContext).pop();
-                              }
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Error al guardar el partido: $e',
-                                  ),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
+                              // ...
                             }
                           },
                   child:

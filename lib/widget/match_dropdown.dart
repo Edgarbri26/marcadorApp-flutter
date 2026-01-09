@@ -26,21 +26,53 @@ class _MatchDropdownState extends State<MatchDropdown> {
   Match? _matchSeleccionado;
   Map<int, String> _nombresPorInscriptionId = {};
 
+  bool _isLoadingData = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    setState(() => _isLoadingData = true);
+    await _cargarNombresDeJugadores();
+    if (mounted) {
+      final provider = context.read<MatchProvider>();
+      if (provider.matches.isEmpty) {
+        await provider.fetchPendingMatches();
+      }
+    }
+    if (mounted) {
+      setState(() => _isLoadingData = false);
+    }
+  }
+
   Future<void> _cargarNombresDeJugadores() async {
-    final inscriptions = await ApiService().fetchInscriptions();
-    _nombresPorInscriptionId = {
-      for (var ins in inscriptions)
-        ins.inscriptionId: ins.jugador.nombreCompleto,
-    };
+    if (_nombresPorInscriptionId.isNotEmpty) return; // Avoid re-fetch
+    try {
+      final inscriptions = await ApiService().fetchInscriptions();
+      _nombresPorInscriptionId = {
+        for (var ins in inscriptions)
+          ins.inscriptionId: ins.jugador.nombreCompleto,
+      };
+    } catch (e) {
+      print("Error loading inscriptions: $e");
+    }
   }
 
   Future<List<Match>> _loadMatches(String? filtro, _) async {
-    await _cargarNombresDeJugadores();
-    final provider = context.read<MatchProvider>();
+    // Return empty or loading if not ready?
+    // DropdownSearch expects a Future, so we can just return the filtered list from provider directly.
+    // We assume _initData has finished or is running. If it hasn't finished, provider.matches might be empty or partial.
+    // But since we trigger _initData in initState, by the time user types, it should be likely ready.
 
-    if (provider.matches.isEmpty) {
-      await provider.fetchPendingMatches();
-    }
+    // Actually, DropdownSearch calls this when opening.
+    // We can await a future if we want to ensure it waits for init.
+    // But better: just use current provider state.
+
+    final provider = context.read<MatchProvider>();
+    // If empty and not loading, maybe try fetch? But we did in init.
 
     final matches = provider.matches;
 
@@ -87,6 +119,7 @@ class _MatchDropdownState extends State<MatchDropdown> {
         fit: FlexFit.loose,
         constraints: const BoxConstraints(maxHeight: 300),
         searchFieldProps: const TextFieldProps(
+          autofocus: true,
           cursorColor: MyColors.secundary,
           decoration: InputDecoration(
             hintText: 'Buscar partido...',
@@ -112,6 +145,7 @@ class _MatchDropdownState extends State<MatchDropdown> {
           );
         },
       ),
+      enabled: !_isLoadingData,
       decoratorProps: const DropDownDecoratorProps(
         decoration: InputDecoration(
           labelText: 'Buscar partido',

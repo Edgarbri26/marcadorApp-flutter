@@ -230,6 +230,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
     );
 
     print("torneo asignado: ${match.tournamentId}");
+    print("DEBUG: points=${match.pointsSelected}, sets=${match.setsSelected}");
 
     Navigator.of(
       context,
@@ -261,6 +262,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
                     Icon(
                       Symbols.handshake,
                       color: ifRanked ? Colors.grey : MyColors.secundary,
+                      size: 28, // Increased icon size
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -268,7 +270,7 @@ class _AmistosoPageState extends State<AmistosoPage> {
                       style: TextStyle(
                         color: ifRanked ? Colors.grey : MyColors.secundary,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 20, // 16 -> 20
                       ),
                     ),
                   ],
@@ -282,6 +284,10 @@ class _AmistosoPageState extends State<AmistosoPage> {
                   onChanged: (bool value) {
                     setState(() {
                       ifRanked = value;
+                      if (ifRanked) {
+                        targetPoints = 11;
+                        targetSets = 3;
+                      }
                     });
                   },
                 ),
@@ -292,13 +298,14 @@ class _AmistosoPageState extends State<AmistosoPage> {
                       style: TextStyle(
                         color: !ifRanked ? Colors.grey : MyColors.primary,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 20, // 16 -> 20
                       ),
                     ),
                     const SizedBox(width: 8),
                     Icon(
                       Symbols.swords,
                       color: !ifRanked ? Colors.grey : MyColors.primary,
+                      size: 28, // Increased icon size
                     ),
                   ],
                 ),
@@ -308,47 +315,99 @@ class _AmistosoPageState extends State<AmistosoPage> {
 
           const SizedBox(height: 25),
 
-          // Seleccion Jugador 1
-          _buildPlayerSection(
-            label: "Jugador 1",
-            color: MyColors.secundary,
-            selectedPlayer: _player1Seleccionado,
-            onChanged: (jugador) {
-              setState(() {
-                _player1Seleccionado = jugador;
-                _player1Controller.text = jugador?.nombreCompleto ?? '';
-              });
-            },
-          ),
-
-          const SizedBox(height: 20),
-
-          // Seleccion Jugador 2
-          _buildPlayerSection(
-            label: "Jugador 2",
-            color: MyColors.primary,
-            selectedPlayer: _player2Seleccionado,
-            onChanged: (jugador) {
-              setState(() {
-                _player2Seleccionado = jugador;
-                _player2Controller.text = jugador?.nombreCompleto ?? '';
-              });
+          // Seleccion Jugadores (Responsive)
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 650) {
+                // Wide screen: 2 Columns
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildPlayerSection(
+                        label: "Jugador 1",
+                        color: MyColors.secundary,
+                        selectedPlayer: _player1Seleccionado,
+                        onChanged: (jugador) {
+                          setState(() {
+                            _player1Seleccionado = jugador;
+                            _player1Controller.text =
+                                jugador?.nombreCompleto ?? '';
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: _buildPlayerSection(
+                        label: "Jugador 2",
+                        color: MyColors.primary,
+                        selectedPlayer: _player2Seleccionado,
+                        onChanged: (jugador) {
+                          setState(() {
+                            _player2Seleccionado = jugador;
+                            _player2Controller.text =
+                                jugador?.nombreCompleto ?? '';
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                // Narrow screen: 1 Column
+                return Column(
+                  children: [
+                    _buildPlayerSection(
+                      label: "Jugador 1",
+                      color: MyColors.secundary,
+                      selectedPlayer: _player1Seleccionado,
+                      onChanged: (jugador) {
+                        setState(() {
+                          _player1Seleccionado = jugador;
+                          _player1Controller.text =
+                              jugador?.nombreCompleto ?? '';
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    _buildPlayerSection(
+                      label: "Jugador 2",
+                      color: MyColors.primary,
+                      selectedPlayer: _player2Seleccionado,
+                      onChanged: (jugador) {
+                        setState(() {
+                          _player2Seleccionado = jugador;
+                          _player2Controller.text =
+                              jugador?.nombreCompleto ?? '';
+                        });
+                      },
+                    ),
+                  ],
+                );
+              }
             },
           ),
           const SizedBox(height: 25),
 
           // Configuración Puntos/Sets
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: MyColors.dark,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: SetAndPointsSelet(
-              targetPoints: targetPoints,
-              targetSets: targetSets,
-              onPointsChanged: (val) => setState(() => targetPoints = val),
-              onSetsChanged: (val) => setState(() => targetSets = val),
+          Opacity(
+            opacity: ifRanked ? 0.5 : 1.0,
+            child: AbsorbPointer(
+              absorbing: ifRanked,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: MyColors.dark,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: SetAndPointsSelet(
+                  targetPoints: targetPoints,
+                  targetSets: targetSets,
+                  onPointsChanged: (val) => setState(() => targetPoints = val),
+                  onSetsChanged: (val) => setState(() => targetSets = val),
+                ),
+              ),
             ),
           ),
 
@@ -359,12 +418,15 @@ class _AmistosoPageState extends State<AmistosoPage> {
               onPressed: _saveSettings,
               title: const Text(
                 "Comenzar juego",
-                style: TextStyle(color: MyColors.lightGray, fontSize: 18),
+                style: TextStyle(
+                  color: MyColors.lightGray,
+                  fontSize: 22,
+                ), // 18 -> 22
               ),
               icon: const Icon(
                 Icons.play_arrow_rounded,
                 color: MyColors.light,
-                size: 30,
+                size: 35, // 30 -> 35
               ),
               typeButton: !ifRanked ? TypeButton.secundary : TypeButton.primary,
             ),
@@ -392,12 +454,12 @@ class _AmistosoPageState extends State<AmistosoPage> {
         children: [
           Row(
             children: [
-              Icon(Icons.person, color: color),
+              Icon(Icons.person, color: color, size: 28), // Added size
               const SizedBox(width: 10),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 22, // 18 -> 22
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),

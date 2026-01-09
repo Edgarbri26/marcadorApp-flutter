@@ -7,11 +7,13 @@ import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:provider/provider.dart';
 import 'package:marcador/providers/jugadores_provider.dart';
 import 'package:marcador/providers/match_provider.dart';
+import 'package:marcador/services/offline_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await MatchRepository().init();
+  OfflineService().init();
 
   try {
     if (!kIsWeb) {

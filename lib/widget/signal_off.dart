@@ -91,43 +91,92 @@ class _SignalOffState extends State<SignalOff> {
           const Text(
             "Configuración del Partido",
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 28, // 24 -> 28
               fontWeight: FontWeight.bold,
               color: MyColors.light,
             ),
           ),
           const SizedBox(height: 20),
 
-          // Sección Jugador 1
-          _buildPlayerSection(
-            label: "Jugador 1",
-            color: MyColors.secundary,
-            controller: _player1Controller,
-            selectedPlayer: _player1Seleccionado,
-            onPlayerChanged: (jugador) {
-              setState(() {
-                _player1Seleccionado = jugador;
-                if (jugador != null) {
-                  _player1Controller.text = jugador.nombreCompleto;
-                }
-              });
-            },
-          ),
-          const SizedBox(height: 20),
-
-          // Sección Jugador 2
-          _buildPlayerSection(
-            label: "Jugador 2",
-            color: MyColors.primary,
-            controller: _player2Controller,
-            selectedPlayer: _player2Seleccionado,
-            onPlayerChanged: (jugador) {
-              setState(() {
-                _player2Seleccionado = jugador;
-                if (jugador != null) {
-                  _player2Controller.text = jugador.nombreCompleto;
-                }
-              });
+          // Seleccion Jugadores (Responsive)
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 650) {
+                // Wide screen: 2 Columns
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildPlayerSection(
+                        label: "Jugador 1",
+                        color: MyColors.secundary,
+                        controller: _player1Controller,
+                        selectedPlayer: _player1Seleccionado,
+                        onPlayerChanged: (jugador) {
+                          setState(() {
+                            _player1Seleccionado = jugador;
+                            if (jugador != null) {
+                              _player1Controller.text = jugador.nombreCompleto;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: _buildPlayerSection(
+                        label: "Jugador 2",
+                        color: MyColors.primary,
+                        controller: _player2Controller,
+                        selectedPlayer: _player2Seleccionado,
+                        onPlayerChanged: (jugador) {
+                          setState(() {
+                            _player2Seleccionado = jugador;
+                            if (jugador != null) {
+                              _player2Controller.text = jugador.nombreCompleto;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                // Narrow screen: 1 Column
+                return Column(
+                  children: [
+                    _buildPlayerSection(
+                      label: "Jugador 1",
+                      color: MyColors.secundary,
+                      controller: _player1Controller,
+                      selectedPlayer: _player1Seleccionado,
+                      onPlayerChanged: (jugador) {
+                        setState(() {
+                          _player1Seleccionado = jugador;
+                          if (jugador != null) {
+                            _player1Controller.text = jugador.nombreCompleto;
+                          }
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    _buildPlayerSection(
+                      label: "Jugador 2",
+                      color: MyColors.primary,
+                      controller: _player2Controller,
+                      selectedPlayer: _player2Seleccionado,
+                      onPlayerChanged: (jugador) {
+                        setState(() {
+                          _player2Seleccionado = jugador;
+                          if (jugador != null) {
+                            _player2Controller.text = jugador.nombreCompleto;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                );
+              }
             },
           ),
           const SizedBox(height: 30),
@@ -155,12 +204,15 @@ class _SignalOffState extends State<SignalOff> {
               onPressed: _saveSettings,
               title: const Text(
                 "Comenzar juego",
-                style: TextStyle(color: MyColors.lightGray, fontSize: 18),
+                style: TextStyle(
+                  color: MyColors.lightGray,
+                  fontSize: 22,
+                ), // 18 -> 22
               ),
               icon: const Icon(
                 Icons.play_arrow_rounded,
                 color: MyColors.light,
-                size: 30,
+                size: 35, // 30 -> 35
               ),
               typeButton: TypeButton.secundary,
             ),
@@ -189,12 +241,12 @@ class _SignalOffState extends State<SignalOff> {
         children: [
           Row(
             children: [
-              Icon(Icons.person, color: color),
+              Icon(Icons.person, color: color, size: 28), // Added size
               const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 22, // 18 -> 22
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),

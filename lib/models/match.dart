@@ -30,6 +30,7 @@ class Match {
     this.setsSelected,
     this.ci1,
     this.ci2,
+    this.ciWiner,
   });
 
   Map<String, dynamic> toJson() => {
@@ -68,6 +69,16 @@ class Match {
       date: json['round'],
       ci1: '',
       ci2: '',
+    );
+  }
+  factory Match.fromJsonResult(Map<String, dynamic> json) {
+    return Match(
+      winnerInscriptionId: json['winner_inscription_id'],
+      // Dummy data required by constructor
+      tournamentId: 0,
+      status: '',
+      round: '',
+      date: '',
     );
   }
 }

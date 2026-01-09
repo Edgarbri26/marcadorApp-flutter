@@ -217,9 +217,12 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
         child: Center(
-          child: IndexedStack(
-            index: _selectedIndex,
-            children: [SignalOff(), AmistosoPage(), const PartidoPage()],
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: IndexedStack(
+              index: _selectedIndex,
+              children: [SignalOff(), AmistosoPage(), const PartidoPage()],
+            ),
           ),
         ),
       ),

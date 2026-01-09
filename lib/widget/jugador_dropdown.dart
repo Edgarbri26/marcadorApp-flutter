@@ -54,6 +54,7 @@ class _JugadorDropdownState extends State<JugadorDropdown> {
         fit: FlexFit.loose,
         constraints: const BoxConstraints(maxHeight: 300),
         searchFieldProps: const TextFieldProps(
+          autofocus: true,
           cursorColor: MyColors.secundary,
           decoration: InputDecoration(
             hintText: 'Escribe el nombre...',
