@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:marcador/firebase_options.dart';
 import 'package:marcador/app.dart';
 import 'package:marcador/models/match_repository.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
@@ -11,6 +13,7 @@ import 'package:marcador/services/offline_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await MatchRepository().init();
   OfflineService().init();

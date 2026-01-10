@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:marcador/models/inscription.dart';
 import 'package:marcador/models/jugador.dart';
@@ -279,9 +280,45 @@ class ApiService {
   }
 
   Future<List<String>> loadAuthorizedCI() async {
-    final content = await rootBundle.loadString('assets/config/admin.json');
-    final data = jsonDecode(content);
-    return List<String>.from(data["ci"]);
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+
+      // Configuración de desarrollo: fetch frecuente
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(minutes: 1),
+          minimumFetchInterval: const Duration(minutes: 1), // Cambiar en prod
+        ),
+      );
+
+      // Cargar valores por defecto desde el archivo local por si falla remote
+      final content = await rootBundle.loadString('assets/config/admin.json');
+      final defaultData = jsonDecode(content);
+
+      await remoteConfig.setDefaults({
+        "admin_ci_list": jsonEncode(defaultData),
+      });
+
+      await remoteConfig.fetchAndActivate();
+
+      final jsonString = remoteConfig.getString('admin_ci_list');
+      final data = jsonDecode(jsonString);
+
+      if (data['ci'] is List) {
+        return List<String>.from(data['ci']);
+      }
+      return [];
+    } catch (e) {
+      print('Error loading authorized CI from Remote Config: $e');
+      // Fallback a local si falla todo
+      try {
+        final content = await rootBundle.loadString('assets/config/admin.json');
+        final data = jsonDecode(content);
+        return List<String>.from(data["ci"]);
+      } catch (_) {
+        return [];
+      }
+    }
   }
 
   Future<bool> authenticateAndVereficateAdmin(
