@@ -76,6 +76,104 @@ class _LogInPageState extends State<LogInPage> {
     return null;
   }
 
+  Future<void> _submit() async {
+    if (isLoading) return;
+    if (_formLoginKey.currentState!.validate()) {
+      final ci = userInputController.text;
+      final psw = pswInputController.text;
+
+      setState(() => isLoading = true);
+
+      try {
+        final accessAllowed = await ApiService().authenticatePlayer(ci, psw);
+
+        if (accessAllowed) {
+          final prefs = await SharedPreferences.getInstance();
+          // Always save current session CI
+          await prefs.setString('session_ci', ci);
+
+          if (checkBoxState) {
+            await prefs.setString('ci', ci);
+          }
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            await ScaffoldMessenger.of(context)
+                .showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Inicio de sesión exitoso",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: MyColors.light,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    backgroundColor: MyColors.secundary,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                )
+                .closed;
+          }
+
+          if (mounted) {
+            Navigator.of(context).pushReplacementNamed(AppRoutes.settings);
+          }
+        } else {
+          if (mounted) {
+            setState(() => isLoading = false);
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Contraseña incorrecta",
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                backgroundColor: Colors.redAccent,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                e.toString(),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              backgroundColor: Colors.redAccent,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() => isLoading = false);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,6 +215,10 @@ class _LogInPageState extends State<LogInPage> {
                             controller: userInputController,
                             style: Theme.of(context).textTheme.bodyLarge,
                             validator: (value) => validateInput(value),
+                            textInputAction:
+                                TextInputAction.next, // Next Action
+                            onEditingComplete:
+                                () => FocusScope.of(context).nextFocus(),
                             onTap: () {
                               userFieldKey.currentState?.reset();
                               setState(() {
@@ -155,6 +257,9 @@ class _LogInPageState extends State<LogInPage> {
                             key: pswFieldKey,
                             controller: pswInputController,
                             style: Theme.of(context).textTheme.bodyLarge,
+                            textInputAction:
+                                TextInputAction.done, // Done Action
+                            onFieldSubmitted: (_) => _submit(), // Auto-Submit
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Ingrese una contraseña';
@@ -228,162 +333,7 @@ class _LogInPageState extends State<LogInPage> {
                           width: 394,
                           height: 64,
                           child: ElevatedButton(
-                            onPressed:
-                                isLoading
-                                    ? null
-                                    : () async {
-                                      if (_formLoginKey.currentState!
-                                          .validate()) {
-                                        final ci = userInputController.text;
-                                        final psw = pswInputController.text;
-
-                                        setState(() => isLoading = true);
-
-                                        try {
-                                          final accessAllowed =
-                                              await ApiService()
-                                                  .authenticatePlayer(ci, psw);
-
-                                          if (accessAllowed) {
-                                            final prefs =
-                                                await SharedPreferences.getInstance();
-                                            // Always save current session CI
-                                            await prefs.setString(
-                                              'session_ci',
-                                              ci,
-                                            );
-
-                                            if (checkBoxState) {
-                                              await prefs.setString('ci', ci);
-                                            }
-
-                                            if (mounted) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).clearSnackBars(); // Limpia anteriores
-                                              await ScaffoldMessenger.of(
-                                                    context,
-                                                  )
-                                                  .showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                        "Inicio de sesión exitoso",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                              color:
-                                                                  MyColors
-                                                                      .light,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                      ),
-                                                      backgroundColor:
-                                                          MyColors.secundary,
-                                                      behavior:
-                                                          SnackBarBehavior
-                                                              .floating,
-                                                      duration: const Duration(
-                                                        seconds: 2,
-                                                      ),
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              8,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                  .closed;
-                                            }
-
-                                            Navigator.of(
-                                              // ignore: use_build_context_synchronously
-                                              context,
-                                            ).pushReplacementNamed(
-                                              AppRoutes.settings,
-                                            );
-                                          } else {
-                                            if (mounted) {
-                                              setState(() => isLoading = false);
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).clearSnackBars(); // Limpia anteriores
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                    "Contraseña incorrecta",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium
-                                                        ?.copyWith(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                  ),
-                                                  backgroundColor:
-                                                      Colors.redAccent,
-                                                  behavior:
-                                                      SnackBarBehavior.floating,
-                                                  duration: const Duration(
-                                                    seconds: 3,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          }
-                                        } catch (e) {
-                                          if (mounted) {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).clearSnackBars(); // Limpia anteriores
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  e.toString(),
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium
-                                                      ?.copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                ),
-                                                backgroundColor:
-                                                    Colors.redAccent,
-                                                behavior:
-                                                    SnackBarBehavior.floating,
-                                                duration: const Duration(
-                                                  seconds: 3,
-                                                ),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        } finally {
-                                          if (mounted) {
-                                            setState(() => isLoading = false);
-                                          }
-                                        }
-                                      }
-                                    },
+                            onPressed: isLoading ? null : _submit,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: MyColors.secundary,
                               shape: const RoundedRectangleBorder(
@@ -416,7 +366,6 @@ class _LogInPageState extends State<LogInPage> {
                                     ),
                           ),
                         ),
-
                         const SizedBox(height: 20),
                         TextButton(
                           onPressed: () {

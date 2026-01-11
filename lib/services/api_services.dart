@@ -10,12 +10,32 @@ import 'package:marcador/models/tournament.dart';
 
 class ApiService {
   // variable de entorno de render
-  String baseUrl = String.fromEnvironment(
-    'api_backend',
-    defaultValue:
-        'https://lpp-backend-ss9l.onrender.com/api', // Valor para desarrollo local
-    // 'http://192.168.1.125:3000/api',
-  );
+  // Fallback URL
+  static const String _defaultBaseUrl =
+      'https://lpp-backend-ss9l.onrender.com/api';
+
+  Future<String> getBackendUrl() async {
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      await remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(minutes: 1),
+          minimumFetchInterval: const Duration(minutes: 1),
+        ),
+      );
+
+      // Intentar obtener valor remoto
+      await remoteConfig.fetchAndActivate();
+      final remoteUrl = remoteConfig.getString('api_backend_url');
+
+      if (remoteUrl.isNotEmpty) {
+        return remoteUrl;
+      }
+    } catch (e) {
+      print('Error fetching backend URL from Remote Config: $e');
+    }
+    return _defaultBaseUrl;
+  }
 
   // String baseUrl = ;
 
@@ -24,6 +44,7 @@ class ApiService {
   // String localUrl = '';
 
   Future<List<Jugador>> fetchJugadores() async {
+    final baseUrl = await getBackendUrl();
     final url = Uri.parse('$baseUrl/player');
     print('Fetching URL: $url');
     final response = await http.get(url);
@@ -61,6 +82,7 @@ class ApiService {
   }
 
   Future<List<Tournament>> fetchTournaments() async {
+    final baseUrl = await getBackendUrl();
     final response = await http.get(Uri.parse('$baseUrl/tournament'));
 
     if (response.statusCode == 200) {
@@ -80,6 +102,7 @@ class ApiService {
   }
 
   Future<List<Match>> fetchMatches() async {
+    final baseUrl = await getBackendUrl();
     final response = await http.get(Uri.parse('$baseUrl/match'));
 
     if (response.statusCode == 200) {
@@ -97,6 +120,7 @@ class ApiService {
   }
 
   Future<List<Inscription>> fetchInscriptions() async {
+    final baseUrl = await getBackendUrl();
     final response = await http.get(Uri.parse('$baseUrl/inscription'));
 
     if (response.statusCode == 200) {
@@ -116,6 +140,7 @@ class ApiService {
   }
 
   Future<int?> postMatch(Match match) async {
+    final baseUrl = await getBackendUrl();
     final url = Uri.parse('$baseUrl/match');
 
     final response = await http.post(
@@ -134,6 +159,7 @@ class ApiService {
   }
 
   Future<int?> postSet(SetResult setResult) async {
+    final baseUrl = await getBackendUrl();
     final url = Uri.parse('$baseUrl/set');
     final response = await http.post(
       url,
@@ -161,6 +187,7 @@ class ApiService {
   }
 
   Future<int?> createMatch(Match match) async {
+    final baseUrl = await getBackendUrl();
     final url = Uri.parse('$baseUrl/match');
 
     final response = await http.post(
@@ -180,6 +207,7 @@ class ApiService {
   }
 
   Future<bool> putMatch(Match matchSave) async {
+    final baseUrl = await getBackendUrl();
     final url = Uri.parse('$baseUrl/match/${matchSave.matchId}/result');
 
     final response = await http.put(
@@ -200,6 +228,7 @@ class ApiService {
   }
 
   Future<int?> obtenerInscriptionIdPorCI(String ci, int idTournament) async {
+    final baseUrl = await getBackendUrl();
     // Se asume el endpoint: '$localUrl/inscription/player/$ci'
     final response = await http.get(
       Uri.parse('$baseUrl/inscription/player/$ci'),
@@ -248,7 +277,8 @@ class ApiService {
     int? teamId,
     int? seed,
   }) async {
-    final url = Uri.parse('https://lpp-backend.onrender.com/api/inscription');
+    final baseUrl = await getBackendUrl();
+    final url = Uri.parse('$baseUrl/inscription');
 
     final payload = {
       'tournament_id': tournamentId,
@@ -331,6 +361,7 @@ class ApiService {
       throw Exception('Cédula no autorizada');
     }
 
+    final baseUrl = await getBackendUrl();
     final response = await http.post(
       Uri.parse("$baseUrl/credential/authenticate"),
       headers: {
@@ -349,6 +380,7 @@ class ApiService {
 
   Future<bool> authenticatePlayer(String ci, String password) async {
     try {
+      final baseUrl = await getBackendUrl();
       final response = await http.post(
         Uri.parse("$baseUrl/credential/authenticate"),
         headers: {
